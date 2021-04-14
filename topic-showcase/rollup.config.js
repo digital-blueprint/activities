@@ -176,7 +176,7 @@ Dependencies:
                 {src: 'assets/icon-*.png', dest: 'dist/' + await getDistPath(pkg.name)},
                 {src: 'assets/manifest.json', dest: 'dist', rename: pkg.name + '.manifest.json'},
                 {src: 'assets/silent-check-sso.html', dest:'dist'},
-                // {src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files/*'), dest: 'dist/' + await getDistPath(pkg.name, 'fonts/source-sans-pro')},
+                {src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files/*'), dest: 'dist/' + await getDistPath(pkg.name, 'fonts/source-sans-pro')},
                 {src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'), dest: 'dist/' + await getDistPath(pkg.name)},
                 {src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'), dest: 'dist/' + await getDistPath(pkg.name)},
                 {src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'), dest: 'dist/' + await getDistPath('@dbp-toolkit/common', 'icons')},

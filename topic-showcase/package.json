@@ -44,6 +44,12 @@
     "selfsigned": "^1.10.7"
   },
   "dependencies": {
+    "@dbp-toolkit/app-shell": "^0.2.0",
+    "@dbp-toolkit/auth": "^0.2.0",
+    "@dbp-toolkit/common": "^0.2.0",
+    "@dbp-toolkit/font-source-sans-pro": "^0.2.0",
+    "@dbp-toolkit/language-select": "^0.2.0",
+    "@dbp-toolkit/provider": "^0.2.0",
     "@dbp-topics/clipboard": "^0.1.0",
     "@open-wc/scoped-elements": "^1.1.1",
     "highlight.js": "^10.1.2",

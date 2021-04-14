@@ -865,7 +865,34 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@dbp-toolkit/common@^0.2.2":
+"@dbp-toolkit/app-shell@^0.2.0":
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/@dbp-toolkit/app-shell/-/app-shell-0.2.2.tgz#bc8189931550814d46115176cd686c8984e720ec"
+  integrity sha512-avWCaT5YyVL3NrXiWLDHTTN1J7PmBEKBuFX4AfsEj56W2qDBJMBMVl+136ZvG34u4l13WwA+IVzM1aiW4EAdSQ==
+  dependencies:
+    "@dbp-toolkit/auth" "^0.2.2"
+    "@dbp-toolkit/common" "^0.2.2"
+    "@dbp-toolkit/language-select" "^0.2.2"
+    "@dbp-toolkit/matomo" "^0.2.2"
+    "@dbp-toolkit/notification" "^0.2.2"
+    "@dbp-toolkit/person-profile" "^0.2.2"
+    "@open-wc/scoped-elements" "^1.3.2"
+    i18next "^19.8.4"
+    lit-element "^2.4.0"
+    lit-html "^1.3.0"
+    universal-router "^9.0.1"
+
+"@dbp-toolkit/auth@^0.2.0", "@dbp-toolkit/auth@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/@dbp-toolkit/auth/-/auth-0.2.2.tgz#76a212fcfa449d55c54bc60a8e180c6ccbb3fdd0"
+  integrity sha512-xodL9G6KHwrftubq4mFrHO0u7d8+vMPWi0xDHSDR9eFtwRPy/mGbyCN1fcDj+mUANrxwrzc+MV7sFBVBQ4f7Bg==
+  dependencies:
+    "@dbp-toolkit/common" "^0.2.2"
+    "@open-wc/scoped-elements" "^1.3.2"
+    event-target-shim "^6.0.0"
+    lit-element "^2.4.0"
+
+"@dbp-toolkit/common@^0.2.0", "@dbp-toolkit/common@^0.2.2":
   version "0.2.2"
   resolved "https://registry.npmjs.org/@dbp-toolkit/common/-/common-0.2.2.tgz#56254a1516cba347c652c40169446f9b8cc4597d"
   integrity sha512-k7n4CPRbl0FQbycsUkj5I3Q1EMaec+ou7maJX3oNB/Y0vDMaGsiwsBWBQmXcIF3epm8LuN2AQCJCcsDMOhfJ+w==
@@ -873,6 +900,73 @@
     "@open-wc/scoped-elements" "^1.3.2"
     "@sentry/browser" "^6.0.0"
     i18next "^19.8.4"
+    lit-element "^2.4.0"
+
+"@dbp-toolkit/font-source-sans-pro@^0.2.0":
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/@dbp-toolkit/font-source-sans-pro/-/font-source-sans-pro-0.2.2.tgz#5adebb65d46278bfc7622041d81279c08f20ce43"
+  integrity sha512-GixflAW3DOKkIPDEVNZoYexIcZY8t7rOXPH5a2bGvy8934yANQftHNCLg2IijEyxAfMTdwzdGwamWPJutD5oRQ==
+
+"@dbp-toolkit/language-select@^0.2.0", "@dbp-toolkit/language-select@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/@dbp-toolkit/language-select/-/language-select-0.2.2.tgz#b580d95a994ba7cdc50e0c144b906f074e112f17"
+  integrity sha512-Q0NIbI/+nOFS5yvz0X3x0PvxXK9y3CxoT5T+Kbo4+EDsq6gTA5q2OdK3s2Uxe8nC0h6A0GqDblRTV4CiuqiW6w==
+  dependencies:
+    "@dbp-toolkit/common" "^0.2.2"
+    "@open-wc/scoped-elements" "^1.3.2"
+    lit-element "^2.4.0"
+
+"@dbp-toolkit/matomo@^0.2.2":
+  version "0.2.3"
+  resolved "https://registry.npmjs.org/@dbp-toolkit/matomo/-/matomo-0.2.3.tgz#30beaf5af3e2b3ea59df22648d8e3d356abdcc78"
+  integrity sha512-8bGhiDidC2MtscLgSEHk8uYnl+YKTP0ZXV66cciJO0fa4Tdjd7Kh6NumC2Lj38wEg6fQGFa7/H4ki41jFJqKCA==
+  dependencies:
+    "@dbp-toolkit/auth" "^0.2.2"
+    "@dbp-toolkit/common" "^0.2.2"
+    "@open-wc/scoped-elements" "^1.3.2"
+    lit-element "^2.4.0"
+
+"@dbp-toolkit/notification@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/@dbp-toolkit/notification/-/notification-0.2.2.tgz#986a511084009bf2349693efd1da7bd37fd5fde9"
+  integrity sha512-AGuXBYKHhdkkENKsGYvMusYMcAn3A6WepgskpiLgIOgTVdQ3DTya6gggH1Jh67INu9r3UpTDui3m5rqAcdrLgw==
+  dependencies:
+    "@dbp-toolkit/common" "^0.2.2"
+    "@open-wc/scoped-elements" "^1.3.2"
+    lit-element "^2.4.0"
+
+"@dbp-toolkit/person-profile@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/@dbp-toolkit/person-profile/-/person-profile-0.2.2.tgz#30cc0b4cfeb0606b1dcd8b0c8169e758b331ac3a"
+  integrity sha512-EDAcQA5YoO1I5F5D9SMZFh4j2drRteP3BDx6H2aOtIDpWC+JNGUyeM2SHDUbqXf+3DTnOddx10EGBnJkyStSOA==
+  dependencies:
+    "@dbp-toolkit/auth" "^0.2.2"
+    "@dbp-toolkit/common" "^0.2.2"
+    "@dbp-toolkit/person-select" "^0.2.2"
+    "@open-wc/scoped-elements" "^1.3.2"
+    jquery "^3.4.1"
+    lit-element "^2.4.0"
+
+"@dbp-toolkit/person-select@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/@dbp-toolkit/person-select/-/person-select-0.2.2.tgz#f4efe26c9324409902249682ca3386ad9132c07f"
+  integrity sha512-DX0VYgorQywxmc6oqRHJp53qUIyDsG5OmkegSRtVPY+LZ4GNOzFTUmJL05TOgEHfefgg9we55rRWOQiIE1wZiw==
+  dependencies:
+    "@dbp-toolkit/auth" "^0.2.2"
+    "@dbp-toolkit/common" "^0.2.2"
+    "@open-wc/scoped-elements" "^1.3.2"
+    jquery "^3.4.1"
+    lit-element "^2.4.0"
+    select2 "^4.0.10"
+
+"@dbp-toolkit/provider@^0.2.0":
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/@dbp-toolkit/provider/-/provider-0.2.2.tgz#95e6e527989dd3aecd184e492a33397715c2e84f"
+  integrity sha512-qGHzkSbuAIOIL/CX3AcucNVDGyqVDt9PENAxkd0Fc9BkU1LLpIn0C5VUoatlWeUC0KV2/3qPOkXWCSVagu5qfw==
+  dependencies:
+    "@dbp-toolkit/auth" "^0.2.2"
+    "@dbp-toolkit/common" "^0.2.2"
+    "@open-wc/scoped-elements" "^1.1.1"
     lit-element "^2.4.0"
 
 "@eslint/eslintrc@^0.4.0":
@@ -2681,6 +2775,11 @@ jest-worker@^26.2.1:
     merge-stream "^2.0.0"
     supports-color "^7.0.0"
 
+jquery@^3.4.1:
+  version "3.6.0"
+  resolved "https://registry.npmjs.org/jquery/-/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"
+  integrity sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==
+
 js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -3587,6 +3686,11 @@ safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "2.1.2"
   resolved "https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
+
+select2@^4.0.10:
+  version "4.0.13"
+  resolved "https://registry.npmjs.org/select2/-/select2-4.0.13.tgz#0dbe377df3f96167c4c1626033e924372d8ef44d"
+  integrity sha512-1JeB87s6oN/TDxQQYCvS5EFoQyvV6eYMZZ0AeA4tdFDYWN3BAGZ8npr17UBFddU0lgAt3H0yjX3X6/ekOj1yjw==
 
 selfsigned@^1.10.7:
   version "1.10.8"
