@@ -6046,6 +6046,11 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
+tabulator-tables@^4.8.4:
+  version "4.9.3"
+  resolved "https://registry.npmjs.org/tabulator-tables/-/tabulator-tables-4.9.3.tgz#89ea8f9bffc11ba9a789369b5165ac82da26f4f0"
+  integrity sha512-iwwQqAEGGxlgrBpcmJJvMJrfjGLcCXOB3AOb/DGkXqBy1YKoYA36hIl7qXGp6Jo8dSkzFAlDT6pKLZgyhs9OnQ==
+
 tar@^4.4.12:
   version "4.4.13"
   resolved "https://registry.yarnpkg.com/tar/-/tar-4.4.13.tgz#43b364bc52888d555298637b10d60790254ab525"
