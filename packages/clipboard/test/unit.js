@@ -1,5 +1,3 @@
-// TODO: Implement
-
 import {assert} from 'chai';
 
 import '../src/dbp-clipboard';
