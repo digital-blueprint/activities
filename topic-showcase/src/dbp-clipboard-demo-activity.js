@@ -1,6 +1,6 @@
-import {css, html, LitElement} from 'lit-element';
+import {css, html} from 'lit-element';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
-import {DbpClipboard} from '@dbp-toolkit/clipboard/dbp-clipboard';
+import {DbpClipboard} from '@dbp-topics/clipboard/src/clipboard';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
