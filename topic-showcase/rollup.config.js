@@ -176,16 +176,11 @@ Dependencies:
                 {src: 'assets/icon-*.png', dest: 'dist/' + await getDistPath(pkg.name)},
                 {src: 'assets/manifest.json', dest: 'dist', rename: pkg.name + '.manifest.json'},
                 {src: 'assets/silent-check-sso.html', dest:'dist'},
-                {src: await getPackagePath('pdfjs-dist', 'cmaps/*'), dest: 'dist/' + await getDistPath(pkg.name, 'pdfjs')}, // do we want all map files?
-                {src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files/*'), dest: 'dist/' + await getDistPath(pkg.name, 'fonts/source-sans-pro')},
+                // {src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files/*'), dest: 'dist/' + await getDistPath(pkg.name, 'fonts/source-sans-pro')},
                 {src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'), dest: 'dist/' + await getDistPath(pkg.name)},
                 {src: await getPackagePath('@dbp-toolkit/common', 'misc/browser-check.js'), dest: 'dist/' + await getDistPath(pkg.name)},
                 {src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'), dest: 'dist/' + await getDistPath('@dbp-toolkit/common', 'icons')},
-                {src: await getPackagePath('tabulator-tables', 'dist/css'), dest: 'dist/' + await getDistPath('@dbp-toolkit/file-handling', 'tabulator-tables')},
-                {src: await getPackagePath('datatables.net-dt', 'css'), dest: 'dist/' + await getDistPath('@dbp-toolkit/data-table-view')},
-                {src: await getPackagePath('datatables.net-dt', 'images'), dest: 'dist/' + await getDistPath('@dbp-toolkit/data-table-view')},
-                {src: await getPackagePath('datatables.net-responsive-dt', 'css'), dest: 'dist/' + await getDistPath('@dbp-toolkit/data-table-view')},
-                {src: await getPackagePath('datatables.net-buttons-dt', 'css'), dest: 'dist/' + await getDistPath('@dbp-toolkit/data-table-view')},
+                {src: await getPackagePath('tabulator-tables', 'dist/css'), dest: 'dist/' + await getDistPath('@dbp-topics/clipboard', 'tabulator-tables')},
             ],
         }),
         useBabel && getBabelOutputPlugin({
