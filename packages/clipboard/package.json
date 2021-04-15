@@ -36,6 +36,7 @@
     "@dbp-toolkit/common": "^0.2.2",
     "@dbp-toolkit/provider": "^0.2.0",
     "@open-wc/scoped-elements": "^1.3.2",
+    "@dbp-toolkit/file-handling": "^0.2.0",
     "lit-element": "^2.4.0",
     "tabulator-tables": "^4.8.4"
   },

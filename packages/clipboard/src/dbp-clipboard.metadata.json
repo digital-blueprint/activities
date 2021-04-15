@@ -1,0 +1,18 @@
+{
+  "element": "dbp-clipboard-managing",
+  "module_src": "dbp-clipboard-managing.js",
+  "routing_name": "clipboard-managing",
+  "name": {
+    "de": "Zwischenablage verwalten",
+    "en": "Manage clipboard"
+  },
+  "short_name": {
+    "de": "Zwischenablage verwalten",
+    "en": "Manage clipboard"
+  },
+  "description": {
+    "de": "Erlaubt das Verwalten der temporären Zwischenablage",
+    "en": "Allows managing of the temporarily clipboard"
+  },
+  "subscribe": "lang,entry-point-url,show-nextcloud-file-picker,auth,allow-annotating,clipboard-files"
+}
