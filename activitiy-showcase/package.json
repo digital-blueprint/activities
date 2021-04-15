@@ -1,7 +1,7 @@
 {
-  "name": "dbp-topic-showcase",
+  "name": "dbp-activitiy-showcase",
   "version": "0.1.0",
-  "main": "src/topic-showcase.js",
+  "main": "src/activitiy-showcase.js",
   "license": "LGPL-2.1-or-later",
   "private": true,
   "workspaces": [

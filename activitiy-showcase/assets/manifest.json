@@ -1,15 +1,15 @@
 {
-  "short_name": "Topic Showcase",
-  "name": "Topic Showcase",
-  "start_url": "./dbp-topic-showcase.html",
+  "short_name": "Activity Showcase",
+  "name": "Activity Showcase",
+  "start_url": "./dbp-activitiy-showcase.html",
   "icons": [
     {
-      "src": "local/dbp-topic-showcase/icon-192.png",
+      "src": "local/dbp-activitiy-showcase/icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "local/dbp-topic-showcase/icon-512.png",
+      "src": "local/dbp-activitiy-showcase/icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
