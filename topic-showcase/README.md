@@ -1,4 +1,4 @@
-# Common Topics Showcase
+# Common Activities Showcase
 
 ## Setup
 

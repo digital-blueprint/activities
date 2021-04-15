@@ -30,12 +30,12 @@ set('rsync_dest','{{release_path}}');
 host('demo')
     ->stage('demo')
     ->hostname('mw@mw01-dev.tugraz.at')
-    ->set('deploy_path', '/home/mw/demo/deploy/apps/common-topics');
+    ->set('deploy_path', '/home/mw/demo/deploy/apps/common');
 
 host('development')
     ->stage('development')
     ->hostname('mw@mw01-dev.tugraz.at')
-    ->set('deploy_path', '/home/mw/dev/deploy/apps/common-topics');
+    ->set('deploy_path', '/home/mw/dev/deploy/apps/common');
 
 task('build', function () {
     $stage = get('stage');
