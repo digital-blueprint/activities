@@ -54,6 +54,10 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
         };
     }
 
+    _(selector) {
+        return this.shadowRoot === null ? this.querySelector(selector) : this.shadowRoot.querySelector(selector);
+    }
+
     update(changedProperties) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
@@ -398,7 +402,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                     context="Add files to clipboard"
                     subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
                     allowed-mime-types="application/pdf"
-                    enabled-targets="local${this.showNextcloudFilePicker ? ",nextcloud" : ""}"
+                    enabled-targets="local,nextcloud"
                     decompress-zip
                     lang="${this.lang}"
                     ?disabled="${this.signingProcessActive}"

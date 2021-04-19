@@ -59,7 +59,10 @@ class DbpClipboardDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
     render() {
         return html`
                 ${unsafeHTML(readme)}
-                <dbp-clipboard lang="${this.lang}" entry-point-url="${this.entryPointUrl}"></dbp-clipboard>
+                <dbp-clipboard lang="${this.lang}"
+                subscribe="clipboard-files:clipboard-files"
+                entry-point-url="${this.entryPointUrl}
+                "></dbp-clipboard>
         `;
     }
 }
