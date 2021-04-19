@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "main": "src/index.js",
   "license": "LGPL-2.1-or-later",
+  "workspaces": [
+    "vendor/*"
+  ],
   "repository": {
     "type": "git",
     "url": "https://gitlab.tugraz.at/dbp/topics/common.git",
