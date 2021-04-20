@@ -5,17 +5,18 @@
   "main": "index.js",
   "private": true,
   "workspaces": [
+    "packages/*",
     "vendor/toolkit/packages/*"
   ],
   "scripts": {
-    "test": "lerna run test",
-    "build": "lerna run build",
+    "test": "lerna run --scope '@dbp-topics/*' test",
+    "build": "lerna run --scope '@dbp-topics/*' build",
     "version-patch": "lerna version patch",
     "version-minor": "lerna version minor",
     "version": "lerna version",
     "yarn-install": "for d in ./packages/*/ ; do (cd \"$d\" && yarn install); done;",
     "rm-dist": "for d in ./packages/*/ ; do (cd \"$d\" && rm dist -Rf); done;",
-    "lint": "lerna run lint",
+    "lint": "lerna run --scope '@dbp-topics/*' lint",
     "publish": "lerna publish from-package --yes"
   },
   "author": "",
