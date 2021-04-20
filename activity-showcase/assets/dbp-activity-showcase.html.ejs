@@ -53,31 +53,28 @@
 </head>
 
 <body>
-<dbp-provider id="root"
-              lang="de"
-              entry-point-url="<%= entryPointURL %>"
-              nextcloud-web-app-password-url="<%= nextcloudWebAppPasswordURL %>"
-              nextcloud-webdav-url="<%= nextcloudWebDavURL %>"
-              nextcloud-name="<%= nextcloudName %>"
-              nextcloud-file-url="<%= nextcloudFileURL %>"
-              clipboard-files>
->
-    <<%= name %>
-        src="<%= getUrl(name + '.topic.metadata.json') %>"
-        subscribe="lang,entry-point-url"
-        auth
-        requested-login-status
-        analytics-event
-        lang="en"
-        base-path="<%= getUrl('') %>"
-        keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "tugraz", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>"}'
-        matomo-url="<%= matomoUrl %>" matomo-site-id="<%= matomoSiteId %>"
-        git-info='<%= buildInfo.info %>'
-        build-url='<%= buildInfo.url %>'
-        build-time='<%= buildInfo.time %>'
-        env='<%= buildInfo.env %>'
-    ><dbp-loading-spinner></dbp-loading-spinner></<%= name %>>
-</dbp-provider>
+<<%= name %>
+    lang="de"
+    entry-point-url="<%= entryPointURL %>"
+    nextcloud-web-app-password-url="<%= nextcloudWebAppPasswordURL %>"
+    nextcloud-webdav-url="<%= nextcloudWebDavURL %>"
+    nextcloud-name="<%= nextcloudName %>"
+    nextcloud-file-url="<%= nextcloudFileURL %>"
+    clipboard-files
+    src="<%= getUrl(name + '.topic.metadata.json') %>"
+    subscribe="lang,entry-point-url"
+    auth
+    requested-login-status
+    analytics-event
+    lang="en"
+    base-path="<%= getUrl('') %>"
+    keycloak-config='{"url": "<%= keyCloakBaseURL %>", "realm": "tugraz", "clientId": "<%= keyCloakClientId %>", "silentCheckSsoRedirectUri": "<%= getUrl('silent-check-sso.html') %>"}'
+    matomo-url="<%= matomoUrl %>" matomo-site-id="<%= matomoSiteId %>"
+    git-info='<%= buildInfo.info %>'
+    build-url='<%= buildInfo.url %>'
+    build-time='<%= buildInfo.time %>'
+    env='<%= buildInfo.env %>'
+><dbp-loading-spinner></dbp-loading-spinner></<%= name %>>
 
 <!-- Error handling for too old browsers -->
 <script src="<%= getPrivateUrl('browser-check.js') %>" defer></script>
