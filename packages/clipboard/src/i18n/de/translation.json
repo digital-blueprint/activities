@@ -1,2 +1,20 @@
 {
+  "clipboard": "Zwischenablage",
+  "clipboard-manual": "Hier können Sie eine oder mehrere Dateien in die Zwischenablage temporär speichern, diese löschen oder aus der Zwischenablage herunterladen.",
+  "save-to-clipboard-warning": "Vorsicht! Wenn Sie den Browser schließen, die Seite neu laden oder neue Dateien hinzufügen, wird die bestehende Zwischenablage automatisch verworfen!",
+  "add-files": "Dateien der Zwischenablage hinzufügen",
+  "add-files-btn": "Dateien hinzufügen",
+  "remove-all": "Alle Dateien aus der Zwischenablage entfernen.",
+  "remove-all-btn": "Alle entfernen",
+  "save-all": "Alle Dateien aus der Zwischenablage speichern",
+  "save-all-btn": "Alle speichern",
+  "upload-area-text": "Sie können in diesem Bereich Dokumente mit einer Maximalgröße von bis zu 32MB pro Dokument per Drag & Drop oder per Direktauswahl hochladen.",
+  "upload-button-label": "Dokumente in die Zwischenablage laden",
+  "clipboard-files": "Aktuell vorhandene Dateien in der Zwischenablage",
+  "clear-clipboard-title": "Zwischenablage geleert",
+  "clear-clipboard-body": "Die Zwischenablage wurde erfolgreich geleert.",
+  "saved-files-title": "Datei erfolgreich abgelegt",
+  "saved-files-title_plural": "Dateien erfolgreich abgelegt",
+  "saved-files-body": "Eine Datei wurde erfolgreich temporär in der Zwischenablage abgelegt und kann jetzt innerhalb dieser Applikation verwendet werden.",
+  "saved-files-body_plural": "{{count}} Dateien wurde erfolgreich temporär in der Zwischenablage abgelegt und können jetzt innerhalb dieser Applikation verwendet werden."
 }

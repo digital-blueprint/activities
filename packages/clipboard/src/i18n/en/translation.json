@@ -1,2 +1,21 @@
 {
+  "clipboard": "Clipboard",
+  "clipboard-manual": "Here you can temporarily save one or more files to the clipboard, delete them or download them from the clipboard.",
+  "save-to-clipboard-warning": "Attention! When you close the browser, reload the page or add new files, the clipboard will automatically be emptied!",
+  "add-files": "Add files to clipboard",
+  "add-files-btn": "Add files",
+  "remove-all": "Remove all files from the clipboard.",
+  "remove-all-btn": "Remove all",
+  "save-all": "Save all files from the clipboard",
+  "save-all-btn": "Save all",
+  "upload-area-text": "In this area you can upload documents up to a size of 32MB via Drag & Drop or by selecting them directly. ",
+  "upload-button-label": "Load documents to the clipboard",
+  "clipboard-files": "Files currently available in the clipboard",
+  "clear-clipboard-title": "Clipboard cleared",
+  "clear-clipboard-body": "The clipboard was successfully cleared.",
+  "saved-files-title": "File successfully filed",
+  "saved-files-title_plural": "Files successfully filed",
+  "saved-files-body": "A file was successfully stored temporarily in the clipboard and can now be used within this application.",
+  "saved-files-body_plural": "{{count}} files were successfully stored temporarily in the clipboard and can now be used within this application."
+
 }

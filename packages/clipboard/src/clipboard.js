@@ -29,7 +29,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
         this.showSelectAllButton = true;
         this.tabulatorTable = null;
         this._onReceiveBeforeUnload = this.onReceiveBeforeUnload.bind(this);
-        this.filesToSave = null;
+        this.filesToSave = [];
 
     }
 
@@ -50,7 +50,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             showSelectAllButton: { type: Boolean, attribute: true },
             clipboardSelectBtnDisabled: { type: Boolean, attribute: true },
             clipboardFiles: {type: Object, attribute: 'clipboard-files'},
-            filesToSave: {type: Object, attribute: 'files-to-save'},
+            filesToSave: {type: Array, attribute: 'files-to-save'},
         };
     }
 
@@ -302,22 +302,38 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
         //save it
         console.log("----------", ev.detail.file);
         let data = {};
-        //TODO add ev.detail.file to this.filesToSave
-        this.filesToSave = [ev.detail.file];
-        if (this.filesToSave && this.filesToSave.length !== 0) {
-            data = {"files": this.filesToSave};
+        let files = [];
+        if (this.clipboardFiles && this.clipboardFiles.files.length !== 0) {
+            files = files.concat(this.clipboardFiles.files);
+            files = files.concat(ev.detail.file);
+        } else {
+            files = files.concat(ev.detail.file);
+        }
+        this.filesToSave = files;
+        console.log("files", files);
+        if (files && files.length !== 0) {
+            data = {"files": files};
             this.sendSetPropertyEvent('clipboard-files', data);
             const event = new CustomEvent("dbp-clipboard-file-picker-file-uploaded",
                 {  bubbles: true, composed: true });
             this.dispatchEvent(event);
-            send({
-                "summary": "##x files saved to clipboard",
-                "body": "##x files saved to clipboard",
-                "type": "success",
-                "timeout": 5,
-            });
-        }
 
+        }
+    }
+
+    finishedSaveFilesToClipboard(ev) {
+        console.log("hiii");
+        send({
+            "summary": i18n.t('saved-files-title', {count: ev.detail}),
+            "body": i18n.t('saved-files-body', {count: ev.detail}),
+            "type": "success",
+            "timeout": 5,
+        });
+    }
+
+    saveFilesFromClipboard() {
+        this._("#file-sink-clipboard").files = Object.create(this.clipboardFiles.files);
+        this._("#file-sink-clipboard").openDialog();
     }
 
 
@@ -338,6 +354,20 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
         this._("#file-sink-clipboard").files = Object.create(this.clipboardFiles.files);
         console.log("------ this.clipboardFiles.files;", this.clipboardFiles.files);
         this._("#file-sink-clipboard").openDialog();
+    }
+
+    clearClipboard() {
+        let data = {"files": []};
+        this.sendSetPropertyEvent('clipboard-files', data);
+        const event = new CustomEvent("dbp-clipboard-file-picker-file-uploaded",
+            {  bubbles: true, composed: true });
+        this.dispatchEvent(event);
+        send({
+            "summary": i18n.t('clear-clipboard-title'),
+            "body": i18n.t('clear-clipboard-body'),
+            "type": "success",
+            "timeout": 5,
+        });
     }
 
 
@@ -375,6 +405,21 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 /*line-height: 1.8;*/
                 margin-bottom: 1.2em;
             }
+            
+            .warning-container{
+                display: flex;
+                flex-direction: inherit;
+                align-items: center;
+            }
+            
+            .warning-icon{
+                margin-right: 20px;
+                font-size: 1.5rem;
+            }
+            
+            .container{
+                margin-top: 2rem;
+            }
         `;
     }
 
@@ -387,33 +432,51 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 ${activity.getDescription(this.lang)}
             </p>
             <p>
-              verwalten clipboard bla bla
+                ${i18n.t('clipboard-manual')}
             </p>
-            // Add data to Clipboard
+            <div class="warning-container">
+                <dbp-icon name="warning" class="warning-icon"></dbp-icon>
+                <p>${i18n.t('save-to-clipboard-warning')}</p>
+            </div>
             // save data from clipboard
             //remove data from clipboard
-            <h3>Add files to clipboard</h3>
-            <button @click="${() => { this._("#file-source").setAttribute("dialog-open", ""); }}"
-                    class="button is-primary">
-               ##Add files to clipboard
-            </button>
-            <dbp-file-source
-                    id="file-source"
-                    context="Add files to clipboard"
-                    subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
-                    allowed-mime-types="application/pdf"
+            <div class="container">
+                <h3> ${i18n.t('clipboard')}</h3>
+                <button @click="${() => { this._("#file-source").setAttribute("dialog-open", ""); }}"
+                        class="button is-primary" title="${i18n.t('add-files')}">
+                    ${i18n.t('add-files-btn')}
+                </button>
+                <dbp-file-source
+                        id="file-source"
+                        context="${i18n.t('add-files')}"
+                        subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
+                        enabled-targets="local,nextcloud"
+                        decompress-zip
+                        lang="${this.lang}"
+                        text="${i18n.t('upload-area-text')}"
+                        button-label="${i18n.t('upload-button-label')}"
+                        @dbp-file-source-file-selected="${this.saveFilesToClipboard}"
+                        @dbp-file-source-file-upload-finished="${this.finishedSaveFilesToClipboard}"
+                ></dbp-file-source>
+                <button @click="${() => { this.clearClipboard() }}"
+                        class="button" title="${i18n.t('remove-all')}">
+                    ${i18n.t('remove-all-btn')}
+                </button>
+                <button @click="${() => { this.saveFilesFromClipboard()}}"
+                        class="button" title="${i18n.t('save-all')}">
+                    ${i18n.t('save-all-btn')}
+                </button>
+                <dbp-file-sink id="file-sink-clipboard"
+                    context="${i18n.t('save-all')}"
+                    filename="clipboard-documents.zip"
                     enabled-targets="local,nextcloud"
-                    decompress-zip
+                    subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
                     lang="${this.lang}"
-                    ?disabled="${this.signingProcessActive}"
-                    text="${i18n.t('official-pdf-upload.upload-area-text')}"
-                    button-label="${i18n.t('official-pdf-upload.upload-button-label')}"
-                    @dbp-file-source-file-selected="${this.saveFilesToClipboard}"
-            ></dbp-file-source>
-            
-            <h3>## Clipboardinhalt</h3>
-            <link rel="stylesheet" href="${tabulatorCss}">
-            <div><table id="clipboard-content-table" class="force-no-select"></table></div>
+                    ></dbp-file-sink>
+                <p>${i18n.t('clipboard-files')}</p>
+                <link rel="stylesheet" href="${tabulatorCss}">
+                <div><table id="clipboard-content-table" class="force-no-select"></table></div>
+            </div>
         `;/*
            <div class="${classMap({"hidden": this.clipboardFiles.files.length === 0})}">
                     <button id="clipboard-download-button"
