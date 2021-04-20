@@ -14,7 +14,7 @@ import md from 'rollup-plugin-md';
 import emitEJS from 'rollup-plugin-emit-ejs'
 import {getBabelOutputPlugin} from '@rollup/plugin-babel';
 import appConfig from './app.config.js';
-import {generateTLSConfig, getBuildInfo, getPackagePath, getDistPath} from '../rollup.utils.js';
+import {generateTLSConfig, getBuildInfo, getPackagePath, getDistPath} from '../vendor/toolkit/rollup.utils.js';
 
 const pkg = require('./package.json');
 const appEnv = (typeof process.env.APP_ENV !== 'undefined') ? process.env.APP_ENV : 'local';
