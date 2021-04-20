@@ -458,11 +458,11 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                         @dbp-file-source-file-selected="${this.saveFilesToClipboard}"
                         @dbp-file-source-file-upload-finished="${this.finishedSaveFilesToClipboard}"
                 ></dbp-file-source>
-                <button @click="${() => { this.clearClipboard() }}"
+                <button @click="${() => { this.clearClipboard(); }}"
                         class="button" title="${i18n.t('remove-all')}">
                     ${i18n.t('remove-all-btn')}
                 </button>
-                <button @click="${() => { this.saveFilesFromClipboard()}}"
+                <button @click="${() => { this.saveFilesFromClipboard(); }}"
                         class="button" title="${i18n.t('save-all')}">
                     ${i18n.t('save-all-btn')}
                 </button>
