@@ -32,5 +32,9 @@
   "file-name": "Name",
   "file-size": "Size",
   "file-type": "Type",
-  "file-mod": "Last modified"
+  "file-mod": "Last modified",
+  "select-all": "Alle auswählen",
+  "select-all-title": "Alle verfügbaren Dateien in diesem Ordner auswählen",
+  "select-nothing": "Nichts auswählen",
+  "select-nothing-title": "Alle gewählten Dateien nicht mehr selektieren"
 }

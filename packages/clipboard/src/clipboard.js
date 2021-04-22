@@ -201,6 +201,27 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
         super.disconnectedCallback();
     }
 
+    /**
+     * Select all files from tabulator table
+     *
+     */
+    selectAll() {
+        this.tabulatorTable.selectRow(this.tabulatorTable.getRows().filter(row => row.getData().type != 'directory' && this.checkFileType(row.getData(), this.allowedMimeTypes)));
+        if (this.tabulatorTable.getSelectedRows().length > 0) {
+            this.showSelectAllButton = false;
+        }
+    }
+
+    /**
+     * Deselect files from tabulator table
+     *
+     */
+    deselectAll() {
+        this.showSelectAllButton = true;
+        this.tabulatorTable.getSelectedRows().forEach(row => row.deselect());
+    }
+
+
     checkFileType(file) {
         // check if file is allowed
         const [fileMainType, fileSubType] = file.type.split('/');
@@ -325,10 +346,9 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
     }
 
     finishedSaveFilesToClipboard(ev) {
-        console.log("hiii");
         send({
-            "summary": i18n.t('saved-files-title', {count: ev.detail}),
-            "body": i18n.t('saved-files-body', {count: ev.detail}),
+            "summary": i18n.t('saved-files-title', {count: ev.detail.count}),
+            "body": i18n.t('saved-files-body', {count: ev.detail.count}),
             "type": "success",
             "timeout": 5,
         });
@@ -478,7 +498,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                         text="${i18n.t('upload-area-text')}"
                         button-label="${i18n.t('upload-button-label')}"
                         @dbp-file-source-file-selected="${this.saveFilesToClipboard}"
-                        @dbp-file-source-file-upload-finished="${this.finishedSaveFilesToClipboard}"
+                        @dbp-nextcloud-file-picker-number-files="${this.finishedSaveFilesToClipboard}"
                 ></dbp-file-source>
                 <button @click="${() => { this.clearClipboard(); }}"
                         class="button" title="${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('remove-count', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('remove-all')}"
@@ -497,6 +517,20 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                     subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
                     lang="${this.lang}"
                     ></dbp-file-sink>
+                 
+                    <button class="button ${classMap({"hidden": !this.showSelectAllButton})}"
+                            title="${i18n.t('select-all-title')}"
+                            @click="${() => {this.selectAll();}}"
+                            ?disabled="${this.clipboardFiles.files.length === 0}">
+                        ${i18n.t('select-all')}
+                    </button>
+                    <button class="button ${classMap({"hidden": this.showSelectAllButton})}"
+                            title="${i18n.t('select-nothing-title')}"
+                            ?disabled="${this.clipboardFiles.files.length === 0}"
+                            @click="${() => {this.deselectAll();}}">
+                        ${i18n.t('select-nothing')}
+                    </button>
+                      
                 <link rel="stylesheet" href="${tabulatorCss}">
                 <div class="${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}"><table id="clipboard-content-table" class="force-no-select"></table></div>
             </div>
