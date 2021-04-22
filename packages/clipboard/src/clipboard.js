@@ -14,6 +14,8 @@ import {FileSource} from "@dbp-toolkit/file-handling/src/file-source";
 import {name as pkgName} from "@dbp-toolkit/file-handling/package.json";
 import {send} from "@dbp-toolkit/common/notification";
 import {AdapterLitElement} from "@dbp-toolkit/provider/src/adapter-lit-element";
+import {classMap} from 'lit-html/directives/class-map.js';
+
 
 const i18n = createI18nInstance();
 
@@ -86,6 +88,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 selectableRangeMode: "drag",
                 responsiveLayout: true,
                 resizableColumns: false,
+                placeholder: "no data",
                 columns: [
                     {
                         title: "",
@@ -101,7 +104,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                         }
                     },
                     {
-                        title: '##filename',
+                        title: i18n.t("file-name"),
                         responsive: 0,
                         widthGrow: 5,
                         minWidth: 150,
@@ -116,7 +119,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                         }
                     },
                     {
-                        title: '##size',
+                        title: i18n.t("file-size"),
                         responsive: 4,
                         widthGrow: 1,
                         minWidth: 50,
@@ -126,7 +129,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                         }
                     },
                     {
-                        title: '##mimetype',
+                        title: i18n.t("file-type"),
                         responsive: 2,
                         widthGrow: 1,
                         minWidth: 20,
@@ -140,7 +143,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                         }
                     },
                     {
-                        title: "##lastmod",
+                        title: i18n.t("file-mod"),
                         responsive: 3,
                         widthGrow: 1,
                         minWidth: 150,
@@ -332,7 +335,9 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
     }
 
     saveFilesFromClipboard() {
-        this._("#file-sink-clipboard").files = Object.create(this.clipboardFiles.files);
+        //wenn keins ausgewählt alle sonst die ausgewählten
+        //button switch machen!
+        this._("#file-sink-clipboard").files = Object.create(this.tabulatorTable.getSelectedData().length > 0 ? this.tabulatorTable.getSelectedData() : this.clipboardFiles.files);
         this._("#file-sink-clipboard").openDialog();
     }
 
@@ -357,17 +362,35 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
     }
 
     clearClipboard() {
-        let data = {"files": []};
-        this.sendSetPropertyEvent('clipboard-files', data);
-        const event = new CustomEvent("dbp-clipboard-file-picker-file-uploaded",
-            {  bubbles: true, composed: true });
-        this.dispatchEvent(event);
-        send({
-            "summary": i18n.t('clear-clipboard-title'),
-            "body": i18n.t('clear-clipboard-body'),
-            "type": "success",
-            "timeout": 5,
-        });
+        if(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) {
+            let data = {"files": this.clipboardFiles.files};
+            this.tabulatorTable.getSelectedData().forEach(toRemove =>
+                data.files = data.files.filter(file => toRemove.name !== file.name)
+            );
+            this.sendSetPropertyEvent('clipboard-files', data);
+            const event = new CustomEvent("dbp-clipboard-file-picker-file-uploaded",
+                {  bubbles: true, composed: true });
+            this.dispatchEvent(event);
+            send({
+                "summary": i18n.t('clear-count-clipboard-title', {count: this.tabulatorTable.getSelectedData().length}),
+                "body": i18n.t('clear-count-clipboard-body', {count: this.tabulatorTable.getSelectedData().length}),
+                "type": "success",
+                "timeout": 5,
+            });
+
+        } else {
+            let data = {"files": []};
+            this.sendSetPropertyEvent('clipboard-files', data);
+            const event = new CustomEvent("dbp-clipboard-file-picker-file-uploaded",
+                {  bubbles: true, composed: true });
+            this.dispatchEvent(event);
+            send({
+                "summary": i18n.t('clear-clipboard-title'),
+                "body": i18n.t('clear-clipboard-body'),
+                "type": "success",
+                "timeout": 5,
+            });
+        }
     }
 
 
@@ -436,12 +459,11 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             </p>
             <div class="warning-container">
                 <dbp-icon name="warning" class="warning-icon"></dbp-icon>
-                <p>${i18n.t('save-to-clipboard-warning')}</p>
+                <p class="">${i18n.t('save-to-clipboard-warning')}</p>
             </div>
-            // save data from clipboard
-            //remove data from clipboard
             <div class="container">
                 <h3> ${i18n.t('clipboard')}</h3>
+                <p class="${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}">${i18n.t('clipboard-files')}</p>
                 <button @click="${() => { this._("#file-source").setAttribute("dialog-open", ""); }}"
                         class="button is-primary" title="${i18n.t('add-files')}">
                     ${i18n.t('add-files-btn')}
@@ -459,23 +481,24 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                         @dbp-file-source-file-upload-finished="${this.finishedSaveFilesToClipboard}"
                 ></dbp-file-source>
                 <button @click="${() => { this.clearClipboard(); }}"
-                        class="button" title="${i18n.t('remove-all')}">
-                    ${i18n.t('remove-all-btn')}
+                        class="button" title="${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('remove-count', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('remove-all')}"
+                        ?disabled="${this.clipboardFiles.files.length === 0}">
+                    ${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('remove-count-btn', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('remove-all-btn')}
                 </button>
                 <button @click="${() => { this.saveFilesFromClipboard(); }}"
-                        class="button" title="${i18n.t('save-all')}">
-                    ${i18n.t('save-all-btn')}
+                        ?disabled="${this.clipboardFiles.files.length === 0}"
+                        class="button" title="${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('save-count', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('save-all')}">
+                    ${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('save-count-btn', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('save-all-btn')}
                 </button>
                 <dbp-file-sink id="file-sink-clipboard"
-                    context="${i18n.t('save-all')}"
+                    context="${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('save-count', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('save-all')}"
                     filename="clipboard-documents.zip"
                     enabled-targets="local,nextcloud"
                     subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
                     lang="${this.lang}"
                     ></dbp-file-sink>
-                <p>${i18n.t('clipboard-files')}</p>
                 <link rel="stylesheet" href="${tabulatorCss}">
-                <div><table id="clipboard-content-table" class="force-no-select"></table></div>
+                <div class="${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}"><table id="clipboard-content-table" class="force-no-select"></table></div>
             </div>
         `;/*
            <div class="${classMap({"hidden": this.clipboardFiles.files.length === 0})}">

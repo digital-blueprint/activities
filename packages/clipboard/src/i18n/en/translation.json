@@ -6,6 +6,10 @@
   "add-files-btn": "Add files",
   "remove-all": "Remove all files from the clipboard.",
   "remove-all-btn": "Remove all",
+  "remove-count": "Remove file from the clipboard.",
+  "remove-count_plural": "Remove {{count}} files from the clipboard.",
+  "remove-count-btn": "Remove file",
+  "remove-count-btn_plural": "Remove {{count}} files",
   "save-all": "Save all files from the clipboard",
   "save-all-btn": "Save all",
   "upload-area-text": "In this area you can upload documents up to a size of 32MB via Drag & Drop or by selecting them directly. ",
@@ -13,9 +17,20 @@
   "clipboard-files": "Files currently available in the clipboard",
   "clear-clipboard-title": "Clipboard cleared",
   "clear-clipboard-body": "The clipboard was successfully cleared.",
+  "clear-count-clipboard-title": "File removed",
+  "clear-count-clipboard-title_plural": "Files removed",
+  "clear-count-clipboard-body": "One file was successfully removed from clipboard.",
+  "clear-count-clipboard-body_plural": "{{count}} files were successfully removed from clipboard.",
   "saved-files-title": "File successfully filed",
   "saved-files-title_plural": "Files successfully filed",
   "saved-files-body": "A file was successfully stored temporarily in the clipboard and can now be used within this application.",
-  "saved-files-body_plural": "{{count}} files were successfully stored temporarily in the clipboard and can now be used within this application."
-
+  "saved-files-body_plural": "{{count}} files were successfully stored temporarily in the clipboard and can now be used within this application.",
+  "save-count-btn": "Save file",
+  "save-count-btn_plural": "Save {{count}} files",
+  "save-count": "Save one file from the clipboard",
+  "save-count_plural": "Save {{count}} files from the clipboard",
+  "file-name": "Name",
+  "file-size": "Size",
+  "file-type": "Type",
+  "file-mod": "Last modified"
 }
