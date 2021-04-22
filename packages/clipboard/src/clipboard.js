@@ -32,6 +32,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
         this.tabulatorTable = null;
         this._onReceiveBeforeUnload = this.onReceiveBeforeUnload.bind(this);
         this.filesToSave = [];
+        this.numberOfSelectedFiles = 0;
 
     }
 
@@ -53,6 +54,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             clipboardSelectBtnDisabled: { type: Boolean, attribute: true },
             clipboardFiles: {type: Object, attribute: 'clipboard-files'},
             filesToSave: {type: Array, attribute: 'files-to-save'},
+            numberOfSelectedFiles: {type: Number, attribute: false },
         };
     }
 
@@ -170,6 +172,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                     {column: "type", dir: "asc"},
                 ],
                 rowClick: (e, row) => {
+                    this.numberOfSelectedFiles = this.tabulatorTable !== null ? this.tabulatorTable.getSelectedRows().length : 0;
                     if (this.tabulatorTable !== null
                         && this.tabulatorTable.getSelectedRows().length === this.tabulatorTable.getRows().filter(row => this.checkFileType(row.getData())).length) {
                         this.showSelectAllButton = false;
@@ -210,6 +213,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
         if (this.tabulatorTable.getSelectedRows().length > 0) {
             this.showSelectAllButton = false;
         }
+        this.numberOfSelectedFiles = 0;
     }
 
     /**
@@ -219,6 +223,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
     deselectAll() {
         this.showSelectAllButton = true;
         this.tabulatorTable.getSelectedRows().forEach(row => row.deselect());
+        this.numberOfSelectedFiles = 0;
     }
 
 
@@ -501,17 +506,17 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                         @dbp-nextcloud-file-picker-number-files="${this.finishedSaveFilesToClipboard}"
                 ></dbp-file-source>
                 <button @click="${() => { this.clearClipboard(); }}"
-                        class="button" title="${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('remove-count', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('remove-all')}"
+                        class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all')}"
                         ?disabled="${this.clipboardFiles.files.length === 0}">
-                    ${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('remove-count-btn', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('remove-all-btn')}
+                    ${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all-btn')}
                 </button>
                 <button @click="${() => { this.saveFilesFromClipboard(); }}"
                         ?disabled="${this.clipboardFiles.files.length === 0}"
-                        class="button" title="${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('save-count', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('save-all')}">
-                    ${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('save-count-btn', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('save-all-btn')}
+                        class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}">
+                    ${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('save-all-btn')}
                 </button>
                 <dbp-file-sink id="file-sink-clipboard"
-                    context="${(this.tabulatorTable && this.tabulatorTable.getSelectedData().length > 0) ? i18n.t('save-count', {count: this.tabulatorTable.getSelectedData().length}) : i18n.t('save-all')}"
+                    context="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}"
                     filename="clipboard-documents.zip"
                     enabled-targets="local,nextcloud"
                     subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
@@ -534,61 +539,6 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 <link rel="stylesheet" href="${tabulatorCss}">
                 <div class="${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}"><table id="clipboard-content-table" class="force-no-select"></table></div>
             </div>
-        `;/*
-           <div class="${classMap({"hidden": this.clipboardFiles.files.length === 0})}">
-                    <button id="clipboard-download-button"
-                                class="button is-right clipboard-btn"
-                                @click="${this.openClipboardFileSink}"
-                                >##save from clipboard</button>
-                    </div>
-
-                    <dbp-file-sink id="file-sink-clipboard"
-                    context="## save x files"
-                    filename="clipboard-documents.zip"
-                    enabled-targets="local,nextcloud"
-                    nextcloud-auth-url="${this.nextcloudAuthUrl}"
-                    nextcloud-web-dav-url="${this.nextcloudWebDavUrl}"
-                    nextcloud-name="${this.nextcloudName}"
-                    nextcloud-file-url="${this.nextcloudFileURL}"
-                    fullsize-modal="true"
-                    lang="${this.lang}"
-                    ></dbp-file-sink>
-
-            <link rel="stylesheet" href="${tabulatorCss}">
-            <div class="block clipboard-container">
-                <div class="wrapper ${classMap({"table": this.clipboardFiles.files.length !== 0})}">
-                    <div class="inner">
-                        <p class="${classMap({"hidden": this.clipboardFiles.files.length !== 0})}">
-                          ##keine files da</p>
-                        <div class="clipboard-table ">
-                            <div id="select-all-wrapper">
-                                <button class="button ${classMap({"hidden": !this.showSelectAllButton})}"
-                                        title="##selectall"
-                                        @click="${() => {
-                                            this.selectAll();
-                                        }}">
-                                    ##select all
-                                </button>
-                                <button class="button ${classMap({"hidden": this.showSelectAllButton})}"
-                                        title="##selectnothing"
-                                        @click="${() => {
-                                            this.deselectAll();
-                                        }}">
-                                    ##select nothing
-                                </button>
-                            </div>
-                            <table id="clipboard-content-table" class="force-no-select"></table>
-                        </div>
-                    </div>
-                </div>
-                <div class="clipboard-footer  ${classMap({"hidden": this.clipboardFiles.files.length === 0})}">
-                    <button class="button select-button is-primary" ?disabled="${this.clipboardSelectBtnDisabled}"
-                            @click="${() => {
-                                this.sendClipboardFiles(this.tabulatorTable.getSelectedData());
-                            }}">##Select files
-                    </button>
-                </div>
-            </div>
-        */
+        `;
     }
 }
