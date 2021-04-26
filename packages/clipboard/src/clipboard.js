@@ -468,6 +468,20 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             .container{
                 margin-top: 2rem;
             }
+            
+            .flex-container{
+                margin-bottom: 5px;
+            }
+
+            @media only screen
+            and (orientation: portrait)
+            and (max-device-width: 765px) {
+                .flex-container{
+                    justify-content: space-between;
+                    display: flex;
+                }
+            }
+
         `;
     }
 
@@ -489,45 +503,31 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             <div class="container">
                 <h3> ${i18n.t('clipboard')}</h3>
                 <p class="${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}">${i18n.t('clipboard-files')}</p>
-                <button @click="${() => { this._("#file-source").setAttribute("dialog-open", ""); }}"
-                        class="button is-primary" title="${i18n.t('add-files')}">
-                    ${i18n.t('add-files-btn')}
-                </button>
-                <dbp-file-source
-                        id="file-source"
-                        context="${i18n.t('add-files')}"
-                        subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
-                        enabled-targets="local,nextcloud"
-                        decompress-zip
-                        lang="${this.lang}"
-                        text="${i18n.t('upload-area-text')}"
-                        button-label="${i18n.t('upload-button-label')}"
-                        @dbp-file-source-file-selected="${this.saveFilesToClipboard}"
-                        @dbp-nextcloud-file-picker-number-files="${this.finishedSaveFilesToClipboard}"
-                ></dbp-file-source>
-                <button @click="${() => { this.clearClipboard(); }}"
-                        class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all')}"
-                        ?disabled="${this.clipboardFiles.files.length === 0}">
-                    ${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all-btn')}
-                </button>
-                <button @click="${() => { this.saveFilesFromClipboard(); }}"
-                        ?disabled="${this.clipboardFiles.files.length === 0}"
-                        class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}">
-                    ${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('save-all-btn')}
-                </button>
-                <dbp-file-sink id="file-sink-clipboard"
-                    context="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}"
-                    filename="clipboard-documents.zip"
-                    enabled-targets="local,nextcloud"
-                    subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
-                    lang="${this.lang}"
-                    ></dbp-file-sink>
-                 
+                <div class="flex-container">
+                    <button @click="${() => { this._("#file-source").setAttribute("dialog-open", ""); }}"
+                            class="button is-primary" title="${i18n.t('add-files')}">
+                        ${i18n.t('add-files-btn')}
+                    </button>
+                
+                    <dbp-file-source
+                            id="file-source"
+                            context="${i18n.t('add-files')}"
+                            subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
+                            enabled-targets="local,nextcloud,clipboard"
+                            decompress-zip
+                            lang="${this.lang}"
+                            text="${i18n.t('upload-area-text')}"
+                            button-label="${i18n.t('upload-button-label')}"
+                            show-clipboard
+                            @dbp-file-source-file-selected="${this.saveFilesToClipboard}"
+                            @dbp-nextcloud-file-picker-number-files="${this.finishedSaveFilesToClipboard}"
+                    ></dbp-file-source>
+                    
                     <button class="button ${classMap({"hidden": !this.showSelectAllButton})}"
-                            title="${i18n.t('select-all-title')}"
-                            @click="${() => {this.selectAll();}}"
-                            ?disabled="${this.clipboardFiles.files.length === 0}">
-                        ${i18n.t('select-all')}
+                                title="${i18n.t('select-all-title')}"
+                                @click="${() => {this.selectAll();}}"
+                                ?disabled="${this.clipboardFiles.files.length === 0}">
+                            ${i18n.t('select-all')}
                     </button>
                     <button class="button ${classMap({"hidden": this.showSelectAllButton})}"
                             title="${i18n.t('select-nothing-title')}"
@@ -535,6 +535,28 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                             @click="${() => {this.deselectAll();}}">
                         ${i18n.t('select-nothing')}
                     </button>
+                </div>
+                <div class="flex-container">
+
+                    <button @click="${() => { this.clearClipboard(); }}"
+                            class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all')}"
+                            ?disabled="${this.clipboardFiles.files.length === 0}">
+                        ${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all-btn')}
+                    </button>
+                    <button @click="${() => { this.saveFilesFromClipboard(); }}"
+                            ?disabled="${this.clipboardFiles.files.length === 0}"
+                            class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}">
+                        ${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('save-all-btn')}
+                    </button>
+                </div>
+                <dbp-file-sink id="file-sink-clipboard"
+                               context="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}"
+                               filename="clipboard-documents.zip"
+                               enabled-targets="local,nextcloud,clipboard"
+                               show-clipboard
+                               subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
+                               lang="${this.lang}"
+                ></dbp-file-sink>
                       
                 <link rel="stylesheet" href="${tabulatorCss}">
                 <div class="${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}"><table id="clipboard-content-table" class="force-no-select"></table></div>
