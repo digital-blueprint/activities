@@ -329,7 +329,6 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
     saveFilesToClipboard(ev)
     {
         //save it
-        console.log("----------", ev.detail.file);
         let data = {};
         let files = [];
         if (this.clipboardFiles && this.clipboardFiles.files.length !== 0) {
@@ -339,14 +338,12 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             files = files.concat(ev.detail.file);
         }
         this.filesToSave = files;
-        console.log("files", files);
         if (files && files.length !== 0) {
             data = {"files": files};
             this.sendSetPropertyEvent('clipboard-files', data);
             const event = new CustomEvent("dbp-clipboard-file-picker-file-uploaded",
                 {  bubbles: true, composed: true });
             this.dispatchEvent(event);
-
         }
     }
 
@@ -360,8 +357,6 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
     }
 
     saveFilesFromClipboard() {
-        //wenn keins ausgewählt alle sonst die ausgewählten
-        //button switch machen!
         this._("#file-sink-clipboard").files = Object.create(this.tabulatorTable.getSelectedData().length > 0 ? this.tabulatorTable.getSelectedData() : this.clipboardFiles.files);
         this._("#file-sink-clipboard").openDialog();
     }
@@ -521,6 +516,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                             show-clipboard
                             @dbp-file-source-file-selected="${this.saveFilesToClipboard}"
                             @dbp-nextcloud-file-picker-number-files="${this.finishedSaveFilesToClipboard}"
+                            @dbp-file-source-file-upload-finished="${this.finishedSaveFilesToClipboard}"
                     ></dbp-file-source>
                     
                     <button class="button ${classMap({"hidden": !this.showSelectAllButton})}"
