@@ -191,8 +191,10 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             that.generateClipboardTable();
 
         });
-        // window.addEventListener('beforeunload', this._onReceiveBeforeUnload);
-        console.log("finished");
+        if(!window.clipboardWarning)  {
+            window.addEventListener('beforeunload', this._onReceiveBeforeUnload, false);
+            window.clipboardWarning = true;
+        }
 
     }
 
@@ -299,16 +301,15 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             return;
         }
 
-        send({
-            "summary": i18n.t('clipboard.file-warning'),
-            "body": i18n.t('clipboard.file-warning-body', {count: this.clipboardFiles.files.length}),
-            "type": "warning",
-            "timeout": 5,
-        });
-
         // we need to handle custom events ourselves
         if(event.target && event.target.activeElement && event.target.activeElement.nodeName) {
 
+            send({
+                "summary": i18n.t('file-warning'),
+                "body": i18n.t('file-warning-body', {count: this.clipboardFiles.files.length}),
+                "type": "warning",
+                "timeout": 5,
+            });
             if (!event.isTrusted) {
                 // note that this only works with custom event since calls of "confirm" are ignored
                 // in the non-custom event, see https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event
@@ -320,7 +321,6 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             }
             // Cancel the event as stated by the standard
             event.preventDefault();
-
             // Chrome requires returnValue to be set
             event.returnValue = '';
         }

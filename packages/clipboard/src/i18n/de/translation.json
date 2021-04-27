@@ -36,5 +36,8 @@
   "select-all": "Alle auswählen",
   "select-all-title": "Alle verfügbaren Dateien in diesem Ordner auswählen",
   "select-nothing": "Nichts auswählen",
-  "select-nothing-title": "Alle gewählten Dateien nicht mehr selektieren"
+  "select-nothing-title": "Alle gewählten Dateien nicht mehr selektieren",
+  "file-warning": "Achtung!",
+  "file-warning-body": "Es befindet sich noch eine Datei in der Zwischenablage. Die Zwischenablage wird beim Verlassen der Seite automatisch verworfen.",
+  "file-warning-body_plural": "Es befinden sich noch {{count}} Dateien in der Zwischenablage. Die Zwischenablage wird beim Verlassen der Seite automatisch verworfen."
 }
