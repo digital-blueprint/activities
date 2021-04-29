@@ -357,8 +357,11 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
     }
 
     saveFilesFromClipboard() {
-        this._("#file-sink-clipboard").files = Object.create(this.tabulatorTable.getSelectedData().length > 0 ? this.tabulatorTable.getSelectedData() : this.clipboardFiles.files);
-        this._("#file-sink-clipboard").openDialog();
+        const fileSink = this._("#file-sink-clipboard");
+        if ( fileSink ) {
+            this._("#file-sink-clipboard").files = Object.create(this.tabulatorTable.getSelectedData().length > 0 ? this.tabulatorTable.getSelectedData() : this.clipboardFiles.files);
+            this._("#file-sink-clipboard").openDialog();
+        }
     }
 
 
@@ -376,9 +379,11 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
      * Open Filesink for multiple files
      */
     async openClipboardFileSink() {
-        this._("#file-sink-clipboard").files = Object.create(this.clipboardFiles.files);
-        console.log("------ this.clipboardFiles.files;", this.clipboardFiles.files);
-        this._("#file-sink-clipboard").openDialog();
+        const fileSink = this._("#file-sink-clipboard");
+        if (fileSink) {
+            this._("#file-sink-clipboard").files = Object.create(this.clipboardFiles.files);
+            this._("#file-sink-clipboard").openDialog();
+        }
     }
 
     clearClipboard() {
@@ -410,6 +415,13 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 "type": "success",
                 "timeout": 5,
             });
+        }
+    }
+
+    openFilesink() {
+        const fileSink = this._("#file-source");
+        if (fileSink) {
+            this._("#file-source").setAttribute("dialog-open", "");
         }
     }
 
@@ -499,7 +511,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 <h3> ${i18n.t('clipboard')}</h3>
                 <p class="${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}">${i18n.t('clipboard-files')}</p>
                 <div class="flex-container">
-                    <button @click="${() => { this._("#file-source").setAttribute("dialog-open", ""); }}"
+                    <button @click="${() => { this.openFilesink() }}"
                             class="button is-primary" title="${i18n.t('add-files')}">
                         ${i18n.t('add-files-btn')}
                     </button>
