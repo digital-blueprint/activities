@@ -402,6 +402,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 "type": "success",
                 "timeout": 5,
             });
+            this.numberOfSelectedFiles = 0;7
 
         } else {
             let data = {"files": []};
@@ -465,6 +466,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 display: flex;
                 flex-direction: inherit;
                 align-items: center;
+                margin-bottom: 1.5rem;
             }
             
             .warning-icon{
@@ -478,6 +480,14 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             
             .flex-container{
                 margin-bottom: 5px;
+            }
+            
+            .select-btn-wrapper{
+                float: right;
+            }
+            
+            .init{
+                margin: 0px;
             }
 
             @media only screen
@@ -505,12 +515,10 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             </p>
             <div class="warning-container">
                 <dbp-icon name="warning" class="warning-icon"></dbp-icon>
-                <p class="">${i18n.t('save-to-clipboard-warning')}</p>
+                <p class="init">${i18n.t('save-to-clipboard-warning')}</p>
+                
             </div>
-            <div class="container">
-                <h3> ${i18n.t('clipboard')}</h3>
-                <p class="${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}">${i18n.t('clipboard-files')}</p>
-                <div class="flex-container">
+            <div class="flex-container">
                     <button @click="${() => { this.openFilesink() }}"
                             class="button is-primary" title="${i18n.t('add-files')}">
                         ${i18n.t('add-files-btn')}
@@ -530,20 +538,11 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                             @dbp-nextcloud-file-picker-number-files="${this.finishedSaveFilesToClipboard}"
                             @dbp-file-source-file-upload-finished="${this.finishedSaveFilesToClipboard}"
                     ></dbp-file-source>
-                    
-                    <button class="button ${classMap({"hidden": !this.showSelectAllButton})}"
-                                title="${i18n.t('select-all-title')}"
-                                @click="${() => {this.selectAll();}}"
-                                ?disabled="${this.clipboardFiles.files.length === 0}">
-                            ${i18n.t('select-all')}
-                    </button>
-                    <button class="button ${classMap({"hidden": this.showSelectAllButton})}"
-                            title="${i18n.t('select-nothing-title')}"
-                            ?disabled="${this.clipboardFiles.files.length === 0}"
-                            @click="${() => {this.deselectAll();}}">
-                        ${i18n.t('select-nothing')}
-                    </button>
                 </div>
+            <div class="container ${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}">
+                <h3> ${i18n.t('clipboard')}</h3>
+                <p class="">${i18n.t('clipboard-files')}</p>
+                
                 <div class="flex-container">
 
                     <button @click="${() => { this.clearClipboard(); }}"
@@ -553,9 +552,23 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                     </button>
                     <button @click="${() => { this.saveFilesFromClipboard(); }}"
                             ?disabled="${this.clipboardFiles.files.length === 0}"
-                            class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}">
+                            class="button is-primary" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}">
                         ${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('save-all-btn')}
                     </button>
+                    <div class="select-btn-wrapper">
+                        <button class="button ${classMap({"hidden": !this.showSelectAllButton})}"
+                                    title="${i18n.t('select-all-title')}"
+                                    @click="${() => {this.selectAll();}}"
+                                    ?disabled="${this.clipboardFiles.files.length === 0}">
+                                ${i18n.t('select-all')}
+                        </button>
+                        <button class="button ${classMap({"hidden": this.showSelectAllButton})}"
+                                title="${i18n.t('select-nothing-title')}"
+                                ?disabled="${this.clipboardFiles.files.length === 0}"
+                                @click="${() => {this.deselectAll();}}">
+                            ${i18n.t('select-nothing')}
+                        </button>
+                    </div>
                 </div>
                 <dbp-file-sink id="file-sink-clipboard"
                                context="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}"
