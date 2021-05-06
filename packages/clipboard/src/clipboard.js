@@ -402,7 +402,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 "type": "success",
                 "timeout": 5,
             });
-            this.numberOfSelectedFiles = 0;7
+            this.numberOfSelectedFiles = 0;
 
         } else {
             let data = {"files": []};
@@ -542,7 +542,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 
             </div>
             <div class="flex-container">
-                    <button @click="${() => { this.openFilesink() }}"
+                    <button @click="${() => { this.openFilesink(); }}"
                             class="button is-primary" title="${i18n.t('add-files')}">
                         ${i18n.t('add-files-btn')}
                     </button>
