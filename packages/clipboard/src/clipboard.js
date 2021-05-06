@@ -489,6 +489,11 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             .init{
                 margin: 0px;
             }
+            
+            .flex-container{
+                display: flex;
+                justify-content: space-between;
+            }
 
             @media only screen
             and (orientation: portrait)
@@ -496,6 +501,24 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 .flex-container{
                     justify-content: space-between;
                     display: flex;
+                }
+                
+                .btn-flex-container-mobile{
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 5px;
+                }
+                
+                .select-btn-wrapper{
+                    width: 100%;
+                    display: flex;
+                    justify-content: end;
+                    float: none;
+                }
+                
+                .flex-container{
+                    display: block;
                 }
             }
 
@@ -544,17 +567,18 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 <p class="">${i18n.t('clipboard-files')}</p>
                 
                 <div class="flex-container">
-
-                    <button @click="${() => { this.clearClipboard(); }}"
-                            class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all')}"
-                            ?disabled="${this.clipboardFiles.files.length === 0}">
-                        ${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all-btn')}
-                    </button>
-                    <button @click="${() => { this.saveFilesFromClipboard(); }}"
-                            ?disabled="${this.clipboardFiles.files.length === 0}"
-                            class="button is-primary" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}">
-                        ${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('save-all-btn')}
-                    </button>
+                    <div class="btn-flex-container-mobile">
+                        <button @click="${() => { this.clearClipboard(); }}"
+                                class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all')}"
+                                ?disabled="${this.clipboardFiles.files.length === 0}">
+                            ${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all-btn')}
+                        </button>
+                        <button @click="${() => { this.saveFilesFromClipboard(); }}"
+                                ?disabled="${this.clipboardFiles.files.length === 0}"
+                                class="button is-primary" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}">
+                            ${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('save-all-btn')}
+                        </button>
+                    </div>
                     <div class="select-btn-wrapper">
                         <button class="button ${classMap({"hidden": !this.showSelectAllButton})}"
                                     title="${i18n.t('select-all-title')}"

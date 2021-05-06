@@ -13,7 +13,7 @@
   "save-all": "Save all files from the clipboard",
   "save-all-btn": "Save all",
   "upload-area-text": "In this area you can upload documents up to a size of 32MB via Drag & Drop or by selecting them directly. ",
-  "upload-button-label": "Load documents to the clipboard",
+  "upload-button-label": "Load to clipboard",
   "clipboard-files": "Files currently available in the clipboard",
   "clear-clipboard-title": "Clipboard cleared",
   "clear-clipboard-body": "The clipboard was successfully cleared.",

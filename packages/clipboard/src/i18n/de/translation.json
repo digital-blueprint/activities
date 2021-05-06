@@ -13,7 +13,7 @@
   "save-all": "Alle Dateien aus der Zwischenablage speichern",
   "save-all-btn": "Alle speichern",
   "upload-area-text": "Sie können in diesem Bereich Dokumente mit einer Maximalgröße von bis zu 32MB pro Dokument per Drag & Drop oder per Direktauswahl hochladen.",
-  "upload-button-label": "Dokumente in die Zwischenablage laden",
+  "upload-button-label": "In Zwischenablage laden",
   "clipboard-files": "Aktuell vorhandene Dateien in der Zwischenablage:",
   "clear-clipboard-title": "Zwischenablage geleert",
   "clear-clipboard-body": "Die Zwischenablage wurde erfolgreich geleert.",
