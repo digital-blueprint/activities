@@ -1,7 +1,7 @@
 {
   "clipboard": "Clipboard",
   "clipboard-manual": "Here you can temporarily save one or more files to the clipboard, delete them or download them from the clipboard.",
-  "save-to-clipboard-warning": "Attention! When you close the browser, reload the page or add new files, the clipboard will automatically be emptied!",
+  "save-to-clipboard-warning": "Attention! When you close the browser, reload the page or add new files, the clipboard will be emptied!",
   "add-files": "Add files to clipboard",
   "add-files-btn": "Add files",
   "remove-all": "Remove all files from the clipboard.",
@@ -38,6 +38,6 @@
   "select-nothing": "Nichts auswählen",
   "select-nothing-title": "Alle gewählten Dateien nicht mehr selektieren",
   "file-warning": "Attention!",
-  "file-warning-body": "There is still a file on the clipboard. The clipboard is automatically discarded when you exit the page.",
-  "file-warning-body_plural": "There are still {{count}} files on the clipboard. The clipboard is automatically discarded when you exit the page."
+  "file-warning-body": "There is still a file on the clipboard. The clipboard is discarded when you exit the page.",
+  "file-warning-body_plural": "There are still {{count}} files on the clipboard. The clipboard is discarded when you exit the page."
 }

@@ -563,8 +563,8 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                     ></dbp-file-source>
                 </div>
             <div class="container ${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}">
-                <h3> ${i18n.t('clipboard')}</h3>
-                <p class="">${i18n.t('clipboard-files')}</p>
+                <!--<h3> ${i18n.t('clipboard')}</h3>
+                <p class="">${i18n.t('clipboard-files')}</p>-->
                 
                 <div class="flex-container">
                     <div class="btn-flex-container-mobile">
@@ -575,7 +575,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                         </button>
                         <button @click="${() => { this.saveFilesFromClipboard(); }}"
                                 ?disabled="${this.clipboardFiles.files.length === 0}"
-                                class="button is-primary" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}">
+                                class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}">
                             ${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('save-all-btn')}
                         </button>
                     </div>
