@@ -122,7 +122,6 @@ export default (async () => {
           }
         }),
         resolve({
-          moduleDirectories: [path.join(process.cwd(), 'node_modules')],
           browser: true,
           preferBuiltins: true
         }),
@@ -143,9 +142,7 @@ Dependencies:
             },
           },
         }),
-        commonjs({
-            include: 'node_modules/**',
-        }),
+        commonjs(),
         json(),
         md({
             include: ["../../**/*.md"],
@@ -158,9 +155,8 @@ Dependencies:
         urlPlugin({
           limit: 0,
           include: [
-            "node_modules/suggestions/**/*.css",
-            "node_modules/select2/**/*.css",
-            "node_modules/highlight.js/**/*.css",
+            await getPackagePath('select2', '**/*.css'),
+            await getPackagePath('highlight.js', '**/*.css'),
           ],
           emitFiles: true,
           fileName: 'shared/[name].[hash][extname]'
