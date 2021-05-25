@@ -89,7 +89,7 @@ e2e_tests:
     refs:
       - master
   variables:
-    E2E_PROJECT: toolkit-showcase
+    E2E_PROJECT: activity-showcase
   stage: e2e
   trigger:
     project: dbp/e2e-tests
