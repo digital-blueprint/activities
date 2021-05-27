@@ -90,7 +90,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 selectableRangeMode: "drag",
                 responsiveLayout: true,
                 resizableColumns: false,
-                placeholder: "no data",
+                placeholder: i18n.t("no-data"),
                 columns: [
                     {
                         title: "",
@@ -495,6 +495,10 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 justify-content: space-between;
             }
 
+            .tabulator .tabulator-tableHolder .tabulator-placeholder span{
+                margin: initial;
+            }
+
             @media only screen
             and (orientation: portrait)
             and (max-device-width: 765px) {
@@ -541,13 +545,8 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 <p class="init">${i18n.t('save-to-clipboard-warning')}</p>
                 
             </div>
-            <div class="flex-container">
-                    <button @click="${() => { this.openFilesink(); }}"
-                            class="button is-primary" title="${i18n.t('add-files')}">
-                        ${i18n.t('add-files-btn')}
-                    </button>
-                
-                    <dbp-file-source
+            <div class="container">
+                 <dbp-file-source
                             id="file-source"
                             context="${i18n.t('add-files')}"
                             subscribe="nextcloud-auth-url:nextcloud-web-app-password-url,nextcloud-web-dav-url:nextcloud-webdav-url,nextcloud-name:nextcloud-name,nextcloud-file-url:nextcloud-file-url"
@@ -561,12 +560,14 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                             @dbp-nextcloud-file-picker-number-files="${this.finishedSaveFilesToClipboard}"
                             @dbp-file-source-file-upload-finished="${this.finishedSaveFilesToClipboard}"
                     ></dbp-file-source>
-                </div>
-            <div class="container ${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}">
-                <!--<h3> ${i18n.t('clipboard')}</h3>
-                <p class="">${i18n.t('clipboard-files')}</p>-->
+                <h3> ${i18n.t('clipboard')}</h3>
+                <!--<p class="">${i18n.t('clipboard-files')}</p>-->
                 
                 <div class="flex-container">
+                    <button @click="${() => { this.openFilesink(); }}"
+                            class="button" title="${i18n.t('add-files')}">
+                        ${i18n.t('add-files-btn')}
+                    </button>
                     <div class="btn-flex-container-mobile">
                         <button @click="${() => { this.clearClipboard(); }}"
                                 class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all')}"
@@ -604,7 +605,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 ></dbp-file-sink>
                       
                 <link rel="stylesheet" href="${tabulatorCss}">
-                <div class="${classMap({"hidden": this.clipboardFiles && this.clipboardFiles.files.length === 0})}"><table id="clipboard-content-table" class="force-no-select"></table></div>
+                <div class=""><table id="clipboard-content-table" class="force-no-select"></table></div>
             </div>
         `;
     }
