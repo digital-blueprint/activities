@@ -28,7 +28,6 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
         this.clipboardFiles = {files: ''};
         this.clipboardSelectBtnDisabled = true;
         this.clipboardSelectBtnDisabled = true;
-        this.showSelectAllButton = true;
         this.tabulatorTable = null;
         this._onReceiveBeforeUnload = this.onReceiveBeforeUnload.bind(this);
         this.filesToSave = [];
@@ -50,7 +49,6 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             lang: { type: String },
             authUrl: { type: String, attribute: 'auth-url' },
             allowedMimeTypes: { type: String, attribute: 'allowed-mime-types' },
-            showSelectAllButton: { type: Boolean, attribute: true },
             clipboardSelectBtnDisabled: { type: Boolean, attribute: true },
             clipboardFiles: {type: Object, attribute: 'clipboard-files'},
             filesToSave: {type: Array, attribute: 'files-to-save'},
@@ -175,14 +173,10 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                     this.numberOfSelectedFiles = this.tabulatorTable !== null ? this.tabulatorTable.getSelectedRows().length : 0;
                     if (this.tabulatorTable !== null
                         && this.tabulatorTable.getSelectedRows().length === this.tabulatorTable.getRows().filter(row => this.checkFileType(row.getData())).length) {
-                        this.showSelectAllButton = false;
                         this._("#select_all").checked = true;
-                        console.log("checked = true");
 
                     } else {
-                        this.showSelectAllButton = true;
                         this._("#select_all").checked = false;
-                        console.log("checked = false");
 
                     }
                 },
@@ -213,28 +207,9 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
     }
 
     /**
-     * Select all files from tabulator table
+     * Select or deselect all files from tabulator table
      *
      */
-    selectAll() {
-        this.tabulatorTable.selectRow(this.tabulatorTable.getRows().filter(row => row.getData().type != 'directory' && this.checkFileType(row.getData(), this.allowedMimeTypes)));
-        if (this.tabulatorTable.getSelectedRows().length > 0) {
-            this.showSelectAllButton = false;
-        }
-        this.numberOfSelectedFiles = 0;
-    }
-
-    /**
-     * Deselect files from tabulator table
-     *
-     */
-    deselectAll() {
-        this.showSelectAllButton = true;
-        this.tabulatorTable.getSelectedRows().forEach(row => row.deselect());
-        this.numberOfSelectedFiles = 0;
-    }
-
-
     selectAllFiles() {
         let maxSelected = this.tabulatorTable.getRows().filter(row => row.getData().type != 'directory' && this.checkFileType(row.getData(), this.allowedMimeTypes)).length;
         let selected = this.tabulatorTable.getSelectedRows().length;
@@ -244,7 +219,7 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             this.numberOfSelectedFiles = 0;
         } else {
             this.tabulatorTable.selectRow(this.tabulatorTable.getRows().filter(row => row.getData().type != 'directory' && this.checkFileType(row.getData(), this.allowedMimeTypes)));
-            this.numberOfSelectedFiles = selected;
+            this.numberOfSelectedFiles = maxSelected;
         }
     }
 
@@ -519,20 +494,16 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 margin: initial;
             }
             
-            .select-all-icon{
-                height: 40px;
-            }
-            
             .checkmark{
-                height: 30px;
-                width:30px;
+                height: 20px;
+                width:20px;
             }
             
             .button-container .checkmark::after{
-                left: 11px;
-                top: 4px;
-                width: 8px;
-                height: 15px;
+                left: 8px;
+                top: 3px;
+                width: 4px;
+                height: 11px;
             }
             
             .table-wrapper{
@@ -541,9 +512,10 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             
             .select-all-icon{
                 position: absolute;
-                top: 10px;
+                top: 17px;
                 left: 10px;
                 z-index: 100;
+                height: 40px;
             }
 
             @media only screen
@@ -570,6 +542,32 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 
                 .flex-container{
                     display: block;
+                }
+
+                .checkmark{
+                    height: 30px;
+                    width:30px;
+                }
+
+                .button-container .checkmark::after{
+                    left: 11px;
+                    top: 4px;
+                    width: 8px;
+                    height: 15px;
+                }
+                
+
+                .select-all-icon{
+                    top: 10px;
+                    left: 10px;
+                }
+                
+                .btn-flex-container-mobile{
+                    flex-direction: column;
+                }
+                
+                .btn-flex-container-mobile button:nth-child(2){
+                    margin-top: 5px;
                 }
             }
 
@@ -611,36 +609,26 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 <!--<p class="">${i18n.t('clipboard-files')}</p>-->
                 
                 <div class="flex-container">
-                    <button @click="${() => { this.openFilesink(); }}"
-                            class="button" title="${i18n.t('add-files')}">
-                        ${i18n.t('add-files-btn')}
-                    </button>
+                   
                     <div class="btn-flex-container-mobile">
+                        <button @click="${() => { this.openFilesink(); }}"
+                                class="button" title="${i18n.t('add-files')}">
+                            <dbp-icon class="nav-icon" name="clipboard"></dbp-icon> ${i18n.t('add-files-btn')}
+                        </button>
                         <button @click="${() => { this.clearClipboard(); }}"
                                 class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all')}"
                                 ?disabled="${this.clipboardFiles.files.length === 0}">
                             ${(this.numberOfSelectedFiles > 0) ? i18n.t('remove-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('remove-all-btn')}
                         </button>
+                    </div>
+                    <div class="btn-flex-container-mobile">
                         <button @click="${() => { this.saveFilesFromClipboard(); }}"
                                 ?disabled="${this.clipboardFiles.files.length === 0}"
                                 class="button" title="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}">
                             ${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count-btn', {count: this.numberOfSelectedFiles}) : i18n.t('save-all-btn')}
                         </button>
                     </div>
-                    <div class="select-btn-wrapper">
-                        <button class="button ${classMap({"hidden": !this.showSelectAllButton})}"
-                                    title="${i18n.t('select-all-title')}"
-                                    @click="${() => {this.selectAll();}}"
-                                    ?disabled="${this.clipboardFiles.files.length === 0}">
-                                ${i18n.t('select-all')}
-                        </button>
-                        <button class="button ${classMap({"hidden": this.showSelectAllButton})}"
-                                title="${i18n.t('select-nothing-title')}"
-                                ?disabled="${this.clipboardFiles.files.length === 0}"
-                                @click="${() => {this.deselectAll();}}">
-                            ${i18n.t('select-nothing')}
-                        </button>
-                    </div>
+                    
                 </div>
                 <dbp-file-sink id="file-sink-clipboard"
                                context="${(this.numberOfSelectedFiles > 0) ? i18n.t('save-count', {count: this.numberOfSelectedFiles}) : i18n.t('save-all')}"
