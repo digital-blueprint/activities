@@ -176,8 +176,14 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                     if (this.tabulatorTable !== null
                         && this.tabulatorTable.getSelectedRows().length === this.tabulatorTable.getRows().filter(row => this.checkFileType(row.getData())).length) {
                         this.showSelectAllButton = false;
+                        this._("#select_all").checked = true;
+                        console.log("checked = true");
+
                     } else {
                         this.showSelectAllButton = true;
+                        this._("#select_all").checked = false;
+                        console.log("checked = false");
+
                     }
                 },
                 rowSelectionChanged: (data, rows) => {
@@ -226,6 +232,20 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
         this.showSelectAllButton = true;
         this.tabulatorTable.getSelectedRows().forEach(row => row.deselect());
         this.numberOfSelectedFiles = 0;
+    }
+
+
+    selectAllFiles() {
+        let maxSelected = this.tabulatorTable.getRows().filter(row => row.getData().type != 'directory' && this.checkFileType(row.getData(), this.allowedMimeTypes)).length;
+        let selected = this.tabulatorTable.getSelectedRows().length;
+
+        if (selected === maxSelected) {
+            this.tabulatorTable.getSelectedRows().forEach(row => row.deselect());
+            this.numberOfSelectedFiles = 0;
+        } else {
+            this.tabulatorTable.selectRow(this.tabulatorTable.getRows().filter(row => row.getData().type != 'directory' && this.checkFileType(row.getData(), this.allowedMimeTypes)));
+            this.numberOfSelectedFiles = selected;
+        }
     }
 
 
@@ -498,6 +518,33 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
             .tabulator .tabulator-tableHolder .tabulator-placeholder span{
                 margin: initial;
             }
+            
+            .select-all-icon{
+                height: 40px;
+            }
+            
+            .checkmark{
+                height: 30px;
+                width:30px;
+            }
+            
+            .button-container .checkmark::after{
+                left: 11px;
+                top: 4px;
+                width: 8px;
+                height: 15px;
+            }
+            
+            .table-wrapper{
+                position: relative;
+            }
+            
+            .select-all-icon{
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                z-index: 100;
+            }
 
             @media only screen
             and (orientation: portrait)
@@ -605,7 +652,15 @@ export class DbpClipboard extends ScopedElementsMixin(AdapterLitElement) {
                 ></dbp-file-sink>
                       
                 <link rel="stylesheet" href="${tabulatorCss}">
-                <div class=""><table id="clipboard-content-table" class="force-no-select"></table></div>
+             
+               
+                <div class="table-wrapper">
+                    <label class="button-container select-all-icon">
+                        <input type="checkbox" id="select_all" name="select_all" value="select_all" @click="${() => {this.selectAllFiles();}}">
+                        <span class="checkmark"></span>
+                    </label>
+                    <table id="clipboard-content-table" class="force-no-select"></table>
+                </div>
             </div>
         `;
     }
