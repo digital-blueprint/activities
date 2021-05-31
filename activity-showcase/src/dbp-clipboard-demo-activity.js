@@ -1,6 +1,5 @@
 import {css, html} from 'lit-element';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
-import {DbpClipboard} from '@dbp-topics/clipboard/src/clipboard';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
@@ -8,6 +7,7 @@ import readme from '@dbp-topics/clipboard/README.md';
 import highlightCSSPath from 'highlight.js/styles/default.css';
 import * as demoStyles from "./styles";
 import {AdapterLitElement} from "@dbp-toolkit/provider/src/adapter-lit-element";
+import {DbpClipboardManagement} from "@dbp-topics/clipboard";
 
 class DbpClipboardDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
     constructor() {
@@ -18,7 +18,7 @@ class DbpClipboardDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
     static get scopedElements() {
         return {
-            'dbp-clipboard': DbpClipboard,
+            'dbp-clipboard-management': DbpClipboardManagement,
         };
     }
 
@@ -59,10 +59,10 @@ class DbpClipboardDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
     render() {
         return html`
                 ${unsafeHTML(readme)}
-                <dbp-clipboard lang="${this.lang}"
-                subscribe="clipboard-files:clipboard-files"
+                <dbp-clipboard-management lang="${this.lang}" 
+                subscribe="nextcloud-web-app-password-url,nextcloud-webdav-url,nextcloud-name,nextcloud-file-url"
                 entry-point-url="${this.entryPointUrl}
-                "></dbp-clipboard>
+                "></dbp-clipboard-management>
         `;
     }
 }

@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 
-import '../src/dbp-clipboard';
+import '../src/dbp-clipboard-managmenent';
 
 suite('dbp-clipboard basics', () => {
   let node;

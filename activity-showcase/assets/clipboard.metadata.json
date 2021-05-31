@@ -14,5 +14,5 @@
     "de": "Zwischenablage für Dateien",
     "en": "Clipboard for files"
   },
-  "subscribe": "lang,entry-point-url"
+  "subscribe": "lang,entryPointUrl"
 }

@@ -1,1 +1,1 @@
-export {DbpClipboard} from './clipboard';
+export {DbpClipboardManagement} from './clipboard-management';
