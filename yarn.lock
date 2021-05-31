@@ -901,15 +901,6 @@
     "@babel/helper-validator-identifier" "^7.14.0"
     to-fast-properties "^2.0.0"
 
-"@es-joy/jsdoccomment@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@es-joy/jsdoccomment/-/jsdoccomment-0.6.0.tgz#8926a8184df0968860f8c69b3bfc52efa6aeaa30"
-  integrity sha512-zT1EtysKMITJ7vE4RvOJqitxk/Str6It8hq+fykxkwLuTyzgak+TnVuVSIyovT/qrEz3i46ypCSXgNtIDYwNOg==
-  dependencies:
-    comment-parser "^1.1.5"
-    esquery "^1.4.0"
-    jsdoctypeparser "^9.0.0"
-
 "@es-joy/jsdoccomment@^0.8.0-alpha.2":
   version "0.8.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@es-joy/jsdoccomment/-/jsdoccomment-0.8.0-alpha.2.tgz#78585147d8e6231270374dae528fe5b7b5587b5a"
@@ -3678,21 +3669,6 @@ escape-string-regexp@^1.0.5:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
 
-eslint-plugin-jsdoc@^34.0.0:
-  version "34.6.3"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-34.6.3.tgz#5a4770ae33fa429785936d6a3b61576d088b8c39"
-  integrity sha512-ixty4/Zl7cZ0fcvqQAWKuTzQ5hnWIirZOuJrzLtWV0RwF4E70/WG5vLXyppxDFbLCiwmYXjSkiqBfcKfm4VA3Q==
-  dependencies:
-    "@es-joy/jsdoccomment" "^0.6.0"
-    comment-parser "1.1.5"
-    debug "^4.3.1"
-    esquery "^1.4.0"
-    jsdoctypeparser "^9.0.0"
-    lodash "^4.17.21"
-    regextras "^0.7.1"
-    semver "^7.3.5"
-    spdx-expression-parse "^3.0.1"
-
 eslint-plugin-jsdoc@^35.0.0:
   version "35.1.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-35.1.0.tgz#7a28bd53b2dfec2ab0e6eb8ee59dfabf40449f04"
@@ -5238,11 +5214,6 @@ jsdoc-type-pratt-parser@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/jsdoc-type-pratt-parser/-/jsdoc-type-pratt-parser-1.0.0.tgz#a35e76edcc70fd4c399d3e7cbcd570c8fadd4da1"
   integrity sha512-aFubex6uQ7gdoU173Sqdw9Abm6EOCYDhXWhP7YlS201Z+e5Ik38AiDHlKMqoqd/WiiU3/aWz/NHV5X8GQipOTQ==
-
-jsdoctypeparser@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/jsdoctypeparser/-/jsdoctypeparser-9.0.0.tgz#8c97e2fb69315eb274b0f01377eaa5c940bd7b26"
-  integrity sha512-jrTA2jJIL6/DAEILBEh2/w9QxCuwmvNXIry39Ay/HVfhE3o2yVV0U44blYkqdHA/OKloJEqvJy0xU+GSdE2SIw==
 
 jsesc@^2.5.1:
   version "2.5.2"
@@ -7129,11 +7100,6 @@ regexpu-core@^4.7.1:
     regjsparser "^0.6.4"
     unicode-match-property-ecmascript "^1.0.4"
     unicode-match-property-value-ecmascript "^1.2.0"
-
-regextras@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/regextras/-/regextras-0.7.1.tgz#be95719d5f43f9ef0b9fa07ad89b7c606995a3b2"
-  integrity sha512-9YXf6xtW+qzQ+hcMQXx95MOvfqXFgsKDZodX3qZB0x2n5Z94ioetIITsBtvJbiOyxa/6s9AtyweBLCdPmPko/w==
 
 regextras@^0.8.0:
   version "0.8.0"
