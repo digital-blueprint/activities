@@ -6,7 +6,7 @@ suite('dbp-clipboard basics', () => {
   let node;
 
   setup(async () => {
-    node = document.createElement('dbp-clipboard');
+    node = document.createElement('dbp-clipboard-management');
     node.setAttribute('url', 'someurl');
     node.setAttribute('realm', 'somerealm');
     node.setAttribute('client-id', 'someId');

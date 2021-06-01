@@ -3,7 +3,7 @@ import {css, html} from 'lit-element';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {Icon} from '@dbp-toolkit/common';
-import metadata from './dbp-clipboard.metadata.json';
+import metadata from './dbp-clipboard-management.metadata.json';
 import {Activity} from './activity.js';
 import {Clipboard} from "@dbp-toolkit/file-handling/src/clipboard";
 import {AdapterLitElement} from "@dbp-toolkit/provider/src/adapter-lit-element";
