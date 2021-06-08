@@ -8,6 +8,8 @@ export default {
         matomoSiteId: 131,
         nextcloudBaseURL: 'http://localhost:8081',
         nextcloudName: 'TU Graz cloud',
+        siteName: 'TU Graz',
+        siteSubName: 'Graz University of Technology'
     },
     development: {
         basePath: '/apps/common/',
@@ -18,5 +20,7 @@ export default {
         matomoSiteId: 131,
         nextcloudBaseURL: 'https://nc-dev.tugraz.at/pers',
         nextcloudName: 'TU Graz cloud',
+        siteName: 'TU Graz',
+        siteSubName: 'Graz University of Technology'
     },
 };
