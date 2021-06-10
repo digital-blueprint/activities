@@ -97,6 +97,10 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
                 font-size: 1.5rem;
             }
             
+            .container{
+                margin-top: 2rem;
+            }
+            
         `;
     }
 
@@ -109,27 +113,27 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
                 ${activity.getDescription(this.lang)}
             </p>
             <p>
-                ${i18n.t('clipboard-manual')}
+                ${i18n.t('clipboard-manual')} <br>
+                <dbp-icon name="warning" class="warning-icon"></dbp-icon> ${i18n.t('save-to-clipboard-warning')}
             </p>
-            <div class="warning-container">
-                <dbp-icon name="warning" class="warning-icon"></dbp-icon>
-                <p class="init">${i18n.t('save-to-clipboard-warning')}</p>
+            
+            <div class="container">
+                <h3>${i18n.t('clipboard-files')}</h3>
+                <dbp-clipboard
+                    id="clipboard"
+                    lang="${this.lang}"
+                    show-additional-buttons
+                    subscribe="clipboard-files:clipboard-files"
+                    nextcloud-auth-url="${this.nextcloudWebAppPasswordURL}"
+                    nextcloud-web-dav-url="${this.nextcloudWebDavURL}"
+                    nextcloud-name="${this.nextcloudName}"
+                    nextcloud-file-url="${this.nextcloudFileURL}"
+                    enabled-targets="${this.enabledTargets}"
+                    demo-clipboard="${this.demoClipboard}"
+                    decompress-zip
+                >
+                </dbp-clipboard>
             </div>
-            <h3>${i18n.t('clipboard-files')}</h3>
-            <dbp-clipboard
-                id="clipboard"
-                lang="${this.lang}"
-                show-additional-buttons
-                subscribe="clipboard-files:clipboard-files"
-                nextcloud-auth-url="${this.nextcloudWebAppPasswordURL}"
-                nextcloud-web-dav-url="${this.nextcloudWebDavURL}"
-                nextcloud-name="${this.nextcloudName}"
-                nextcloud-file-url="${this.nextcloudFileURL}"
-                enabled-targets="${this.enabledTargets}"
-                demo-clipboard="${this.demoClipboard}"
-                decompress-zip
-            >
-            </dbp-clipboard>
         `;
     }
 }
