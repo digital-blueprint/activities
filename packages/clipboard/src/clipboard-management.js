@@ -93,8 +93,9 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
             }
             
             .warning-icon{
-                margin-right: 20px;
+                margin-right: 10px;
                 font-size: 1.5rem;
+                margin-bottom: -3px;
             }
             
             .container{
