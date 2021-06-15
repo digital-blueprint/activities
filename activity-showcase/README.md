@@ -29,6 +29,6 @@ You can then open <http://127.0.0.1:8001/>.
 - Add the class to scopedElements
     - example ` static get scopedElements() {
                        return {
-                         'dbp-clipboard': Clipboard,
+                         ''dbp-clipboard-management': DbpClipboardManagement,
                        };
                    }'`

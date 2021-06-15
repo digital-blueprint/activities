@@ -63,7 +63,7 @@ class DbpClipboardDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                 subscribe="nextcloud-web-app-password-url,nextcloud-webdav-url,nextcloud-name,nextcloud-file-url"
                 entry-point-url="${this.entryPointUrl}"
                 enabled-targets="local,nextcloud,clipboard"
-                demo-clipboard
+                allow-nesting
                 "></dbp-clipboard-management>
         `;
     }
