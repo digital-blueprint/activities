@@ -13,9 +13,9 @@ and then save these files permanently, instead of navigating to the `dbp-file-si
 
 ## Usage
 
-```html
-<dbp-clipboard-management></dbp-clipboard-management>
-```
+`
+<dbp-clipboard-management> </dbp-clipboard-management>
+`
 
 ## Attributes
 
