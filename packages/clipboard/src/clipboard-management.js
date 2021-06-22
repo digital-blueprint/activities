@@ -117,7 +117,7 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
             </p>
             <p>
                 ${i18n.t('clipboard-manual')} <br>
-                <dbp-icon name="warning" class="warning-icon"></dbp-icon> ${i18n.t('save-to-clipboard-warning')}
+                <dbp-icon name="warning-high" class="warning-icon"></dbp-icon> ${i18n.t('save-to-clipboard-warning')}
             </p>
             
             <div class="container">
