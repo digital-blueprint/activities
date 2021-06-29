@@ -39,6 +39,6 @@ and then save these files permanently, instead of navigating to the `dbp-file-si
     - example `<dbp-clipboard-management subscribe="clipboard-files:clipboard-files-global-name" nextcloud-auth-info="You need special permissions for this function"></dbp-clipboard-management>`
 
 ## Design Note
-To ensure a uniform and responsive design the activity should occupy 100% width of the window when the activity width is under 768 px.
+To ensure a uniform and responsive design the activity should occupy 100% of the window width when the activity width is less than 768 px.
 
 <br><br>
