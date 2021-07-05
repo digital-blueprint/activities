@@ -38,7 +38,5 @@ and then save these files permanently, instead of navigating to the `dbp-file-si
 - `nextcloud-auth-info` (optional): Additional authentication information text that is shown in the Nextcloud file picker
     - example `<dbp-clipboard-management subscribe="clipboard-files:clipboard-files-global-name" nextcloud-auth-info="You need special permissions for this function"></dbp-clipboard-management>`
 
-## Design Note
-To ensure a uniform and responsive design the activity should occupy 100% of the window width when the activity width is less than 768 px.
-
+a
 <br><br>
