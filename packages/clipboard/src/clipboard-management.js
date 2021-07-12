@@ -1,4 +1,4 @@
-import {createI18nInstance} from './i18n.js';
+import {createInstance} from './i18n.js';
 import {css, html} from 'lit-element';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonStyles from '@dbp-toolkit/common/styles';
@@ -9,12 +9,11 @@ import {Clipboard} from "@dbp-toolkit/file-handling/src/clipboard";
 import {AdapterLitElement} from "@dbp-toolkit/provider/src/adapter-lit-element";
 
 
-const i18n = createI18nInstance();
-
 export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElement) {
     constructor() {
         super();
-        this.lang = 'de';
+        this._i18n = createInstance();
+        this.lang = this._i18n.language;
         this.nextcloudWebAppPasswordURL = "";
         this.nextcloudWebDavURL = "";
         this.nextcloudName = "";
@@ -50,7 +49,7 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
                 case "lang":
-                    i18n.changeLanguage(this.lang);
+                    this._i18n.changeLanguage(this.lang);
                     break;
             }
         });
@@ -109,6 +108,7 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
 
     render() {
         const activity = new Activity(metadata);
+        const i18n = this._i18n;
 
         return html`
             <h2>${activity.getName(this.lang)}</h2>
