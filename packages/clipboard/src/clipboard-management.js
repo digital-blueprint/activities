@@ -18,7 +18,7 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
         this.nextcloudWebDavURL = "";
         this.nextcloudName = "";
         this.nextcloudFileURL = "";
-        this.enabledTargets = 'local';
+        this.fileHandlingEnabledTargets = 'local';
         this.allowNesting = false;
         this.authInfo = '';
     }
@@ -34,7 +34,7 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
         return {
             ...super.properties,
             lang: { type: String },
-            enabledTargets: {type: String, attribute: 'enabled-targets'},
+            fileHandlingEnabledTargets: {type: String, attribute: 'file-handling-enabled-targets'},
             nextcloudWebAppPasswordURL: { type: String, attribute: 'nextcloud-web-app-password-url' },
             nextcloudWebDavURL: { type: String, attribute: 'nextcloud-webdav-url' },
             nextcloudName: { type: String, attribute: 'nextcloud-name' },
@@ -132,7 +132,7 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
                     nextcloud-name="${this.nextcloudName}"
                     nextcloud-file-url="${this.nextcloudFileURL}"
                     nexcloud-auth-info="${this.nextcloudAuthInfo}"
-                    enabled-targets="${this.enabledTargets}"
+                    enabled-targets="${this.fileHandlingEnabledTargets}"
                     allow-nesting="${this.allowNesting}"
                     decompress-zip
                 >
