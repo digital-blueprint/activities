@@ -15,5 +15,6 @@
   },
   "poetry": {
     "enabled": false
-  }
+  },
+  "cloneSubmodules": true
 }
