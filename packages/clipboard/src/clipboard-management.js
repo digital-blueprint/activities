@@ -109,7 +109,6 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
     render() {
         const activity = new Activity(metadata);
         const i18n = this._i18n;
-
         return html`
             <h2>${activity.getName(this.lang)}</h2>
             <p class="subheadline">
