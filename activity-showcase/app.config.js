@@ -25,4 +25,17 @@ export default {
         siteName: 'TU Graz',
         siteSubName: 'Graz University of Technology'
     },
+    demo: {
+        basePath: '/apps/common/',
+        entryPointURL: 'https://api-demo.tugraz.at',
+        keyCloakBaseURL: 'https://auth-demo.tugraz.at/auth',
+        keyCloakRealm: 'tugraz-vpu',
+        keyCloakClientId: 'dbp-common',
+        matomoUrl: 'https://analytics.tugraz.at/',
+        matomoSiteId: 131,
+        nextcloudBaseURL: 'https://cloud-dev.tugraz.at',
+        nextcloudName: 'TU Graz cloud',
+        siteName: 'TU Graz',
+        siteSubName: 'Graz University of Technology'
+    },
 };
