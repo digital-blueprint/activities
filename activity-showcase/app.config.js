@@ -17,10 +17,10 @@ export default {
         entryPointURL: 'https://api-dev.tugraz.at',
         keyCloakBaseURL: 'https://auth-dev.tugraz.at/auth',
         keyCloakRealm: 'tugraz-vpu',
-        keyCloakClientId: 'common-dev_tugraz_at-COMMON',
+        keyCloakClientId: 'dbp-common',
         matomoUrl: 'https://analytics.tugraz.at/',
         matomoSiteId: 131,
-        nextcloudBaseURL: 'https://nc-dev.tugraz.at/pers',
+        nextcloudBaseURL: 'https://cloud-dev.tugraz.at',
         nextcloudName: 'TU Graz cloud',
         siteName: 'TU Graz',
         siteSubName: 'Graz University of Technology'
