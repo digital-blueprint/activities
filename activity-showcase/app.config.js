@@ -7,7 +7,7 @@ export default {
         keyCloakClientId: 'auth-dev-mw-frontend-local',
         matomoUrl: 'https://analytics.tugraz.at/',
         matomoSiteId: 131,
-        nextcloudBaseURL: 'http://localhost:8081',
+        nextcloudBaseURL: 'https://cloud-dev.tugraz.at',
         nextcloudName: 'TU Graz cloud',
         siteName: 'TU Graz',
         siteSubName: 'Graz University of Technology'
@@ -33,7 +33,7 @@ export default {
         keyCloakClientId: 'dbp-common',
         matomoUrl: 'https://analytics.tugraz.at/',
         matomoSiteId: 131,
-        nextcloudBaseURL: 'https://cloud-dev.tugraz.at',
+        nextcloudBaseURL: 'https://cloud-demo.tugraz.at',
         nextcloudName: 'TU Graz cloud',
         siteName: 'TU Graz',
         siteSubName: 'Graz University of Technology'
