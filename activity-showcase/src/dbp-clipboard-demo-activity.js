@@ -60,6 +60,7 @@ class DbpClipboardDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                 <!-- ${unsafeHTML(readme)} -->
                 <dbp-clipboard-management lang="${this.lang}" 
                 subscribe="auth,nextcloud-web-app-password-url,nextcloud-webdav-url,nextcloud-name,nextcloud-file-url"
+                nextcloud-store-session
                 entry-point-url="${this.entryPointUrl}"
                 file-handling-enabled-targets="local,nextcloud,clipboard"
                 allow-nesting
