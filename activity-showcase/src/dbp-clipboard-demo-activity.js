@@ -57,7 +57,7 @@ class DbpClipboardDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
     render() {
         return html`
-                <!-- ${unsafeHTML(readme)} -->
+                ${unsafeHTML(readme)}
                 <dbp-clipboard-management lang="${this.lang}" 
                 subscribe="auth,nextcloud-web-app-password-url,nextcloud-webdav-url,nextcloud-name,nextcloud-file-url"
                 nextcloud-store-session
