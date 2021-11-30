@@ -2,8 +2,6 @@ import {css, html} from 'lit';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import * as commonStyles from '@dbp-toolkit/common/styles';
-import {unsafeHTML} from 'lit/directives/unsafe-html.js';
-import readme from '@dbp-topics/clipboard/README.md';
 import * as demoStyles from "./styles";
 import {AdapterLitElement} from "@dbp-toolkit/provider/src/adapter-lit-element";
 import {classMap} from 'lit/directives/class-map.js';
@@ -76,13 +74,13 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
     checkWCAGLevel(ratio) {
         if (ratio < 1/7)
-            return "AAA-level small text";
+            return "✅ AAA-level small text";
         if (ratio < 1/4.5)
-            return "AA-level small text";
+            return "✅ AA-level small text";
         if (ratio < 1/3)
-            return "AA-level large text"
+            return "~ AA-level large text";
         else
-            return "ratio: " + ratio + ", it should < " + 1/4.5;
+            return "❌ ratio: " + ratio + ", it should < " + 1/4.5;
     }
 
     getWCAGfromHex(hex1, hex2) {
@@ -552,9 +550,6 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const border = docStyle.getPropertyValue('--border-dark');
         const borderRadius = docStyle.getPropertyValue('--border-radius');
 
-
-
-        const i18n = this._i18n;
         return html`
             <h2>Our colors</h2>
             <p class="subheadline">
