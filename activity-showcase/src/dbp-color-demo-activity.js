@@ -14,6 +14,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.lang = 'en';
         this.entryPointUrl = '';
         this.dbpColors = true;
+        this.checkerLevel = '';
     }
 
     static get scopedElements() {
@@ -27,6 +28,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             lang: { type: String },
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             dbpColors: { type: Boolean, attribute: false },
+            checkerLevel: { type: String, attribute: false },
         };
     }
 
@@ -35,6 +37,10 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
         this.updateComplete.then(()=>{
         });
+    }
+
+    _(selector) {
+        return this.shadowRoot === null ? this.querySelector(selector) : this.shadowRoot.querySelector(selector);
     }
 
     hexToRgb(hex) {
@@ -70,11 +76,13 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
     checkWCAGLevel(ratio) {
         if (ratio < 1/7)
-            return "AAA";
+            return "AAA-level small text";
         if (ratio < 1/4.5)
-            return "AA";
+            return "AA-level small text";
+        if (ratio < 1/3)
+            return "AA-level large text"
         else
-            return ratio + " should < " + 1/4.5;
+            return "ratio: " + ratio + ", it should < " + 1/4.5;
     }
 
     getWCAGfromHex(hex1, hex2) {
@@ -90,6 +98,12 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         let ratio = this.calcContrastRatio(lum1, lum2);
 
         return this.checkWCAGLevel(ratio);
+    }
+
+    contrastChecker() {
+        let color1 = this._("#color1").value;
+        let color2 = this._("#color2").value;
+        this.checkerLevel = this.getWCAGfromHex(color1, color2);
     }
 
     toggleDarkMode() {
@@ -243,7 +257,6 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
     }
 
-
     static get styles() {
         // language=css
         return [
@@ -287,6 +300,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
             table tr td:first-child{
                 border: none;
+                padding-left: 0px;
             }
 
             .additional-information{
@@ -474,8 +488,16 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             }
             
 
-            
+            .contrastChecker {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                padding-bottom: 50px;
+                margin-bottom: 50px;
+                border-bottom: 1px solid black;
+            }
          
+            
             
             `
         ];
@@ -538,6 +560,21 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             <p class="subheadline">
                 Example Page for dbp colors
             </p>
+
+            <h3>Contrast Checker:</h3>
+            <div class="contrastChecker">
+                <input type="color" id="color1" name="color1" value="#ffffff">
+                <label for="color1">Color 1</label>
+                <input type="color" id="color2" name="color2" value="#000000">
+                <label for="color2">Color 2</label>
+
+                <button id="checkContrast" @click="${() => { this.contrastChecker(this.checker1, this.checker2); }}" class="button"">
+                Contrast Checker
+                </button>
+                
+                <div class="contrastCheckerOutput">${this.checkerLevel}</div>
+            </div>
+            
             <button id="toggleDarkMode" @click="${() => { this.toggleDarkMode(); }}" class="button" title="Toggle Darkmode">
                 Toggle Darkmode
             </button>
@@ -553,6 +590,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             </button>
             
             <table class="dbp-colors base-light">
+                <caption><h3>${this.dbpColors ? "dbp Colors" : "University Colors"}</h3></caption>
                 <tr>
                     <td>base-light</td>
                     <td class="base-light"></td>
@@ -690,6 +728,8 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                     <td class="additional-information">${borderRadius}</td>
                 </tr>
             </table>
+            
+            
         `;
     }
 }
