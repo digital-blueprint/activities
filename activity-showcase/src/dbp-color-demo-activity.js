@@ -67,20 +67,20 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
     calcContrastRatio(color1luminance, color2luminance) {
         const ratio = color1luminance > color2luminance
-            ? ((color2luminance + 0.05) / (color1luminance + 0.05))
-            : ((color1luminance + 0.05) / (color2luminance + 0.05));
+            ? ((color1luminance + 0.05) / (color2luminance + 0.05))
+            : ((color2luminance + 0.05) / (color1luminance + 0.05));
         return ratio;
     }
 
     checkWCAGLevel(ratio) {
-        if (ratio < 1/7)
+        if (ratio >= 7)
             return "✅ AAA-level small text";
-        if (ratio < 1/4.5)
-            return "✅ AA-level small text";
-        if (ratio < 1/3)
-            return "~ AA-level large text";
+        if (ratio >= 4.5)
+            return "☑ AA-level small text";
+        if (ratio >= 3)
+            return "~ AA-level large text " + ratio + " should >= " + 4.5;
         else
-            return "❌ ratio: " + ratio + ", it should < " + 1/4.5;
+            return "❌ ratio: " + ratio + ", it should >= " + 4.5;
     }
 
     getWCAGfromHex(hex1, hex2) {
@@ -115,6 +115,9 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const textMutedLight = docStyle.getPropertyValue('--text-muted-light');
         const textMutedDark = docStyle.getPropertyValue('--text-muted-dark');
 
+        const accentLight = docStyle.getPropertyValue('--accent-light');
+        const accentDark = docStyle.getPropertyValue('--accent-dark');
+
         const primaryLight = docStyle.getPropertyValue('--primary-light');
         const primaryDark = docStyle.getPropertyValue('--primary-dark');
 
@@ -136,12 +139,17 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const borderLight = docStyle.getPropertyValue('--border-light');
         const borderDark = docStyle.getPropertyValue('--border-dark');
 
+        const hoverBase = docStyle.getPropertyValue('--hover-base');
+        const hoverTop = docStyle.getPropertyValue('--hover-top');
+
         this.style.setProperty('--base-light', baseDark);
         this.style.setProperty('--base-dark', baseLight);
         this.style.setProperty('--text-light', textDark);
         this.style.setProperty('--text-dark', textLight);
         this.style.setProperty('--text-muted-light', textMutedDark);
         this.style.setProperty('--text-muted-dark', textMutedLight);
+        this.style.setProperty('--accent-light', accentDark);
+        this.style.setProperty('--accent-dark', accentLight);
         this.style.setProperty('--primary-light', primaryDark);
         this.style.setProperty('--primary-dark', primaryLight);
         this.style.setProperty('--secondary-light', secondaryDark);
@@ -156,6 +164,8 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.style.setProperty('--danger-dark', dangerLight);
         this.style.setProperty('--border-light', borderDark);
         this.style.setProperty('--border-dark', borderLight);
+        this.style.setProperty('--hover-base', hoverTop);
+        this.style.setProperty('--hover-top', hoverBase);
 
         this.requestUpdate();
     }
@@ -169,20 +179,24 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const textDark = "#000000";
         const textMutedLight = "#afaca7";
         const textMutedDark = "#5c5856";
-        const primaryLight = "#3690b1";
+        const accentLight = "#e4154b";
+        const accentDark = "#e4154b";
+        const primaryLight = "#73899e";
         const primaryDark = "#245b78";
         const secondaryLight = "#ffffff";
         const secondaryDark = "#000000";
-        const infoLight = "#3690b1";
+        const infoLight = "#73899e";
         const infoDark = "#245b78";
-        const successLight = "#31a142";
-        const successDark = "#1a6729";
-        const warningLight = "#ffc107";
-        const warningDark = "#bf5900";
-        const dangerLight = "#e4154b";
+        const successLight = "#75c438";
+        const successDark = "#148800";
+        const warningLight = "#ffad4d";
+        const warningDark = "#af6405";
+        const dangerLight = "#ff5d79";
         const dangerDark = "#e4154b";
         const borderLight = "1px solid #ffffff";
         const borderDark = "1px solid #000000";
+        const hoverBase = "#000000";
+        const hoverTop = "#ffffff";
 
         this.style.setProperty('--base-light', baseLight);
         this.style.setProperty('--base-dark', baseDark);
@@ -190,6 +204,8 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.style.setProperty('--text-dark', textDark);
         this.style.setProperty('--text-muted-light', textMutedLight);
         this.style.setProperty('--text-muted-dark', textMutedDark);
+        this.style.setProperty('--accent-light', accentLight);
+        this.style.setProperty('--accent-dark', accentDark);
         this.style.setProperty('--primary-light', primaryLight);
         this.style.setProperty('--primary-dark', primaryDark);
         this.style.setProperty('--secondary-light', secondaryLight);
@@ -204,31 +220,37 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.style.setProperty('--danger-dark', dangerDark);
         this.style.setProperty('--border-light', borderLight);
         this.style.setProperty('--border-dark', borderDark);
+        this.style.setProperty('--hover-base', hoverBase);
+        this.style.setProperty('--hover-top', hoverTop);
     }
 
     changeToDbpColors() {
         this.dbpColors = true;
 
         const baseLight = "#ffffff";
-        const baseDark = "#100d0f";
+        const baseDark = "#000000";
         const textLight = "#ffffff";
-        const textDark = "#100d0f";
-        const textMutedLight = "#afaca7";
-        const textMutedDark = "#5c5856";
-        const primaryLight = "#5b95c4";
+        const textDark = "#000000";
+        const textMutedLight = "#adadad";
+        const textMutedDark = "#666666";
+        const accentLight = "#c24f68";
+        const accentDark = "#c24f68";
+        const primaryLight = "#8ca4eb";
         const primaryDark = "#2a4491";
         const secondaryLight = "#ffffff";
-        const secondaryDark = "#100d0f";
-        const infoLight = "#5b95c4";
+        const secondaryDark = "#000000";
+        const infoLight = "#8ca4eb";
         const infoDark = "#2a4491";
-        const successLight = "#73c14a";
-        const successDark = "#436726";
-        const warningLight = "#f39e1d";
-        const warningDark = "#74410a";
-        const dangerLight = "#db425b";
-        const dangerDark = "#d21728";
+        const successLight = "#7acc79";
+        const successDark = "#188018";
+        const warningLight = "#f99a41";
+        const warningDark = "#c15500";
+        const dangerLight = "#ff887a";
+        const dangerDark = "#de3535";
         const borderLight = "1px solid #ffffff";
-        const borderDark = "1px solid #100d0f";
+        const borderDark = "1px solid #000000";
+        const hoverBase = "#000000";
+        const hoverTop = "#ffffff";
 
         this.style.setProperty('--base-light', baseLight);
         this.style.setProperty('--base-dark', baseDark);
@@ -236,6 +258,8 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.style.setProperty('--text-dark', textDark);
         this.style.setProperty('--text-muted-light', textMutedLight);
         this.style.setProperty('--text-muted-dark', textMutedDark);
+        this.style.setProperty('--accent-light', accentLight);
+        this.style.setProperty('--accent-dark', accentDark);
         this.style.setProperty('--primary-light', primaryLight);
         this.style.setProperty('--primary-dark', primaryDark);
         this.style.setProperty('--secondary-light', secondaryLight);
@@ -250,6 +274,8 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.style.setProperty('--danger-dark', dangerDark);
         this.style.setProperty('--border-light', borderLight);
         this.style.setProperty('--border-dark', borderDark);
+        this.style.setProperty('--hover-base', hoverBase);
+        this.style.setProperty('--hover-top', hoverTop);
 
         this.requestUpdate();
 
@@ -285,6 +311,13 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                 margin-bottom: 1.2em;
             }
             
+            .buttons{
+                position: sticky;
+                top: 0px;
+                padding: 5px 5px 5px 0;
+                background-color: white;
+            }
+            
             table{
                 border-spacing: 30px;
                 margin-top: 30px;
@@ -308,26 +341,30 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
             :host {
                 --base-light: #ffffff;
-                --base-dark: #100d0f;
+                --base-dark: #000000;
                 --text-light: #ffffff;
-                --text-dark: #100d0f;
-                --text-muted-light: #afaca7;
-                --text-muted-dark: #5c5856;
-                --primary-light: #5b95c4;
+                --text-dark: #000000;
+                --text-muted-light: #adadad;
+                --text-muted-dark: #666666;
+                --accent-light: #c24f68;
+                --accent-dark: #c24f68;
+                --primary-light: #8ca4eb;
                 --primary-dark: #2a4491;
                 --secondary-light: #ffffff;
-                --secondary-dark: #100d0f;
-                --info-light: #5b95c4;
+                --secondary-dark: #000000;
+                --info-light: #8ca4eb;
                 --info-dark: #2a4491;
-                --success-light: #73c14a;
-                --success-dark: #436726;
-                --warning-light: #f39e1d;
-                --warning-dark: #74410a;
-                --danger-light: #db425b;
-                --danger-dark: #d21728;
+                --success-light: #7acc79;
+                --success-dark: #188018;
+                --warning-light: #f99a41;
+                --warning-dark: #c15500;
+                --danger-light: #ff887a;
+                --danger-dark: #de3535;
                 --border-light: 1px solid #ffffff;
-                --border-dark: 1px solid #100d0f;
+                --border-dark: 1px solid #000000;
                 --border-radius: 0px;
+                --hover-base: #000000;
+                --hover-top: #ffffff;
             }
             
             .base-light{
@@ -374,6 +411,22 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
             .text-muted-dark:nth-child(2){
                 background-color: var(--text-muted-dark);
+            }
+
+            /* accent */
+            .accent-light{
+                color: var(--text-dark);
+                background-color: var(--accent-light);
+            }
+
+            .accent-dark{
+                color: var(--text-light);
+                background-color: var(--accent-dark);
+            }
+
+            .accent-dark:nth-child(4){
+                color: var(--accent-dark);
+                background-color: var(--base-light);
             }
 
             /* primary */
@@ -474,17 +527,41 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             
             /* border */
             
-            .border{
-                background-color: var(--base-light);
+            .border-light{
+                border: var(--border-light);
+            }
+
+            .border-dark{
                 border: var(--border-dark);
             }
 
             .border-radius {
-                background-color: var(--base-light);
                 border: var(--border-dark);
                 border-radius: var(--border-radius);
             }
-            
+
+            /* hover */
+
+            .hover{
+                color: var(--hover-top);
+                background-color: var(--hover-base);
+            }
+
+            .hover:nth-child(4), .hover:nth-child(3){
+                color: var(--text-dark);
+                background-color: var(--base-light);
+                cursor: pointer;
+            }
+
+            .hover:nth-child(4):hover, .hover:nth-child(3):hover{
+                color: var(--hover-top);
+                background-color: var(--hover-base);
+            }
+
+
+
+
+
 
             .contrastChecker {
                 display: flex;
@@ -516,11 +593,15 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const baseDarkTextmutedLightRatio = this.getWCAGfromHex(baseDark, textMutedLight);
         const baseLightTextMutedDarkRatio = this.getWCAGfromHex(baseLight, textMutedDark);
 
+        const accentLight = docStyle.getPropertyValue('--accent-light');
+        const accentDark = docStyle.getPropertyValue('--accent-dark');
+        const baseDarkAccentLightRatio = this.getWCAGfromHex(baseDark, accentLight);
+        const baseLightAccentDarkRatio = this.getWCAGfromHex(baseLight, accentDark);
+
         const primaryLight = docStyle.getPropertyValue('--primary-light');
         const primaryDark = docStyle.getPropertyValue('--primary-dark');
         const baseDarkPrimaryLightRatio = this.getWCAGfromHex(baseDark, primaryLight);
         const baseLightPrimaryDarkRatio = this.getWCAGfromHex(baseLight, primaryDark);
-
 
         const secondaryLight = docStyle.getPropertyValue('--secondary-light');
         const secondaryDark = docStyle.getPropertyValue('--secondary-dark');
@@ -547,8 +628,13 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const baseDarkDangerLightRatio = this.getWCAGfromHex(baseDark, dangerLight);
         const baseLightDangerDarkRatio = this.getWCAGfromHex(baseLight, dangerDark);
 
-        const border = docStyle.getPropertyValue('--border-dark');
+        const borderLight = docStyle.getPropertyValue('--border-light');
+        const borderDark = docStyle.getPropertyValue('--border-dark');
         const borderRadius = docStyle.getPropertyValue('--border-radius');
+
+        const hoverTop = docStyle.getPropertyValue('--hover-top');
+        const hoverBase = docStyle.getPropertyValue('--hover-base');
+        const hoverBaseHoverTopRatio = this.getWCAGfromHex(hoverBase, hoverTop);
 
         return html`
             <h2>Our colors</h2>
@@ -570,19 +656,21 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                 <div class="contrastCheckerOutput">${this.checkerLevel}</div>
             </div>
             
-            <button id="toggleDarkMode" @click="${() => { this.toggleDarkMode(); }}" class="button" title="Toggle Darkmode">
-                Toggle Darkmode
-            </button>
-
-            <button id="changeToUniversityColors" @click="${() => { this.changeToUniversityColors(); }}" 
-                    class="button ${classMap({hidden: !this.dbpColors})}" title="university colors">
-                University Colors
-            </button>
-
-            <button id="changeToDbpColors" @click="${() => { this.changeToDbpColors(); }}" 
-                    class="button ${classMap({hidden: this.dbpColors})}" title="dbp colors">
-                dbp colors
-            </button>
+            <div class="buttons">
+                <button id="toggleDarkMode" @click="${() => { this.toggleDarkMode(); }}" class="button" title="Toggle Darkmode">
+                    Toggle Darkmode
+                </button>
+    
+                <button id="changeToUniversityColors" @click="${() => { this.changeToUniversityColors(); }}" 
+                        class="button ${classMap({hidden: !this.dbpColors})}" title="university colors">
+                    University Colors
+                </button>
+    
+                <button id="changeToDbpColors" @click="${() => { this.changeToDbpColors(); }}" 
+                        class="button ${classMap({hidden: this.dbpColors})}" title="dbp colors">
+                    dbp colors
+                </button>
+            </div>
             
             <table class="dbp-colors base-light">
                 <caption><h3>${this.dbpColors ? "dbp Colors" : "University Colors"}</h3></caption>
@@ -627,6 +715,20 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                     <td class="text-muted-dark">text-muted-dark</td>
                     <td class="additional-information">${textMutedDark}</td>
                     <td class="additional-information">${baseLightTextMutedDarkRatio}</td>
+                </tr>
+                <tr>
+                    <td>accent</td>
+                    <td class="accent-light"></td>
+                    <td class="accent-light">accent-light</td>
+                    <td class="additional-information">${accentLight}</td>
+                    <td class="additional-information">${baseDarkAccentLightRatio}</td>
+                </tr>
+                <tr>
+                    <td>accent-dark</td>
+                    <td class="accent-dark"></td>
+                    <td class="accent-dark">accent-dark</td>
+                    <td class="additional-information accent-dark">${accentDark}</td>
+                    <td class="additional-information">${baseLightAccentDarkRatio}</td>
                 </tr>
                 <tr>
                     <td>primary-light</td>
@@ -713,14 +815,26 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                     <td class="additional-information">${baseLightDangerDarkRatio}</td>
                 </tr>
                 <tr>
-                    <td>border</td>
-                    <td class="border"></td>
-                    <td class="additional-information">${border}</td>
+                    <td>border-light</td>
+                    <td class="border-light"></td>
+                    <td class="additional-information">${borderLight}</td>
+                </tr>
+                <tr>
+                    <td>border-dark</td>
+                    <td class="border-dark"></td>
+                    <td class="additional-information">${borderDark}</td>
                 </tr>
                 <tr>
                     <td>border-radius</td>
                     <td class="border-radius"></td>
                     <td class="additional-information">${borderRadius}</td>
+                </tr>
+                <tr>
+                    <td>hover</td>
+                    <td class="hover">hover</td>
+                    <td class="additional-information hover">--hover-base ${hoverBase}</td>
+                    <td class="additional-information hover">--hover-top ${hoverTop}</td>
+                    <td class="additional-information">${hoverBaseHoverTopRatio}</td>
                 </tr>
             </table>
             
