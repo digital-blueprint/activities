@@ -13,6 +13,8 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.entryPointUrl = '';
         this.dbpColors = true;
         this.checkerLevel = '';
+        this.checker1 = '#ffffff';
+        this.checker2 = '#000000'
     }
 
     static get scopedElements() {
@@ -27,8 +29,27 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             entryPointUrl: { type: String, attribute: 'entry-point-url' },
             dbpColors: { type: Boolean, attribute: false },
             checkerLevel: { type: String, attribute: false },
+            checker1: { type: String, attribute: false },
+            checker2: { type: String, attribute: false },
         };
     }
+
+    update(changedProperties) {
+        changedProperties.forEach((oldValue, propName) => {
+            switch (propName) {
+                case "checker1":
+                    this.contrastChecker()
+                    break;
+                case "checker2":
+                    this.contrastChecker()
+                    break;
+            }
+        });
+
+        super.update(changedProperties);
+    }
+
+
 
     connectedCallback() {
         super.connectedCallback();
@@ -99,9 +120,15 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
     }
 
     contrastChecker() {
-        let color1 = this._("#color1").value;
-        let color2 = this._("#color2").value;
-        this.checkerLevel = this.getWCAGfromHex(color1, color2);
+        this.checkerLevel = this.getWCAGfromHex( this.checker1, this.checker2);
+    }
+
+    contrast1OnChange(e) {
+        this.checker1 = e.target.value;
+    }
+
+    contrast2OnChange(e) {
+        this.checker2 = e.target.value;
     }
 
     toggleDarkMode() {
@@ -644,14 +671,10 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
             <h3>Contrast Checker:</h3>
             <div class="contrastChecker">
-                <input type="color" id="color1" name="color1" value="#ffffff">
+                <input type="color" id="color1" name="color1" value="${this.checker1}" @change=${this.contrast1OnChange}>
                 <label for="color1">Color 1</label>
-                <input type="color" id="color2" name="color2" value="#000000">
+                <input type="color" id="color2" name="color2" value="${this.checker2}" @change=${this.contrast2OnChange}>
                 <label for="color2">Color 2</label>
-
-                <button id="checkContrast" @click="${() => { this.contrastChecker(this.checker1, this.checker2); }}" class="button"">
-                Contrast Checker
-                </button>
                 
                 <div class="contrastCheckerOutput">${this.checkerLevel}</div>
             </div>
