@@ -140,7 +140,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const borderDark = docStyle.getPropertyValue('--border-dark');
 
         const hoverBase = docStyle.getPropertyValue('--hover-base');
-        const hoverTop = docStyle.getPropertyValue('--hover-top');
+        const hoverText = docStyle.getPropertyValue('--hover-top');
 
         this.style.setProperty('--base-light', baseDark);
         this.style.setProperty('--base-dark', baseLight);
@@ -164,7 +164,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.style.setProperty('--danger-dark', dangerLight);
         this.style.setProperty('--border-light', borderDark);
         this.style.setProperty('--border-dark', borderLight);
-        this.style.setProperty('--hover-base', hoverTop);
+        this.style.setProperty('--hover-base', hoverText);
         this.style.setProperty('--hover-top', hoverBase);
 
         this.requestUpdate();
@@ -196,7 +196,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const borderLight = "1px solid #ffffff";
         const borderDark = "1px solid #000000";
         const hoverBase = "#000000";
-        const hoverTop = "#ffffff";
+        const hoverText = "#ffffff";
 
         this.style.setProperty('--base-light', baseLight);
         this.style.setProperty('--base-dark', baseDark);
@@ -221,7 +221,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.style.setProperty('--border-light', borderLight);
         this.style.setProperty('--border-dark', borderDark);
         this.style.setProperty('--hover-base', hoverBase);
-        this.style.setProperty('--hover-top', hoverTop);
+        this.style.setProperty('--hover-top', hoverText);
     }
 
     changeToDbpColors() {
@@ -250,7 +250,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const borderLight = "1px solid #ffffff";
         const borderDark = "1px solid #000000";
         const hoverBase = "#000000";
-        const hoverTop = "#ffffff";
+        const hoverText = "#ffffff";
 
         this.style.setProperty('--base-light', baseLight);
         this.style.setProperty('--base-dark', baseDark);
@@ -275,7 +275,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.style.setProperty('--border-light', borderLight);
         this.style.setProperty('--border-dark', borderDark);
         this.style.setProperty('--hover-base', hoverBase);
-        this.style.setProperty('--hover-top', hoverTop);
+        this.style.setProperty('--hover-top', hoverText);
 
         this.requestUpdate();
 
@@ -632,9 +632,9 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const borderDark = docStyle.getPropertyValue('--border-dark');
         const borderRadius = docStyle.getPropertyValue('--border-radius');
 
-        const hoverTop = docStyle.getPropertyValue('--hover-top');
+        const hoverText = docStyle.getPropertyValue('--hover-top');
         const hoverBase = docStyle.getPropertyValue('--hover-base');
-        const hoverBaseHoverTopRatio = this.getWCAGfromHex(hoverBase, hoverTop);
+        const hoverBasehoverTextRatio = this.getWCAGfromHex(hoverBase, hoverText);
 
         return html`
             <h2>Our colors</h2>
@@ -717,7 +717,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                     <td class="additional-information">${baseLightTextMutedDarkRatio}</td>
                 </tr>
                 <tr>
-                    <td>accent</td>
+                    <td>accent-light</td>
                     <td class="accent-light"></td>
                     <td class="accent-light">accent-light</td>
                     <td class="additional-information">${accentLight}</td>
@@ -833,8 +833,8 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                     <td>hover</td>
                     <td class="hover">hover</td>
                     <td class="additional-information hover">--hover-base ${hoverBase}</td>
-                    <td class="additional-information hover">--hover-top ${hoverTop}</td>
-                    <td class="additional-information">${hoverBaseHoverTopRatio}</td>
+                    <td class="additional-information hover">--hover-text ${hoverText}</td>
+                    <td class="additional-information">${hoverBasehoverTextRatio}</td>
                 </tr>
             </table>
             
