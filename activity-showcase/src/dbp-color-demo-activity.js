@@ -214,11 +214,11 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         const secondaryDark = "#000000";
         const infoLight = "#73899e";
         const infoDark = "#245b78";
-        const successLight = "#75c438";
+        const successLight = "#148800";
         const successDark = "#148800";
         const warningLight = "#ffad4d";
         const warningDark = "#af6405";
-        const dangerLight = "#ff5d79";
+        const dangerLight = "#e4154b";
         const dangerDark = "#e4154b";
         const borderLight = "1px solid #ffffff";
         const borderDark = "1px solid #000000";
@@ -315,6 +315,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             commonStyles.getGeneralCSS(),
             commonStyles.getButtonCSS(),
             demoStyles.getDemoCSS(),
+            commonStyles.getLinkCss(),
 
             css`
             h1.title {margin-bottom: 1em;}
@@ -668,7 +669,8 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             <p class="subheadline">
                 Example Page for dbp colors
             </p>
-
+            <a class="link">Example</a>
+            <a class="link-without-hover">Example</a>
             <h3>Contrast Checker:</h3>
             <div class="contrastChecker">
                 <input type="color" id="color1" name="color1" value="${this.checker1}" @change=${this.contrast1OnChange}>
