@@ -14,7 +14,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.dbpColors = true;
         this.checkerLevel = '';
         this.checker1 = '#ffffff';
-        this.checker2 = '#000000'
+        this.checker2 = '#000000';
     }
 
     static get scopedElements() {
@@ -38,10 +38,10 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
                 case "checker1":
-                    this.contrastChecker()
+                    this.contrastChecker();
                     break;
                 case "checker2":
-                    this.contrastChecker()
+                    this.contrastChecker();
                     break;
             }
         });
