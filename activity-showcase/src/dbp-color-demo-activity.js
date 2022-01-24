@@ -111,6 +111,9 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         let rgb1 = this.hexToRgb(hex1);
         let rgb2 = this.hexToRgb(hex2);
 
+        if (!rgb1 || !rgb2)
+            return "";
+
         let lum1 = this.luminance(rgb1.r, rgb1.g, rgb1.b);
         let lum2 = this.luminance(rgb2.r, rgb2.g, rgb2.b);
 
@@ -343,7 +346,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                 position: sticky;
                 top: 0px;
                 padding: 5px 5px 5px 0;
-                background-color: white;
+                background-color: var(--dbp-base-light);
             }
             
             table{
@@ -670,7 +673,15 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                 Example Page for dbp colors
             </p>
             <a class="link">Example</a>
+            <div style="background-color: darkolivegreen;"><a class="link">Example</a></div>
             <a class="link-without-hover">Example</a>
+            <button id="example" class="button is-primary" title="Example">
+                Example
+            </button>
+
+            <button id="example" class="button" title="Example">
+                Example
+            </button>
             <h3>Contrast Checker:</h3>
             <div class="contrastChecker">
                 <input type="color" id="color1" name="color1" value="${this.checker1}" @change=${this.contrast1OnChange}>
