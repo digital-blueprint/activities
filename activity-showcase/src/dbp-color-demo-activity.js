@@ -346,7 +346,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                 position: sticky;
                 top: 0px;
                 padding: 5px 5px 5px 0;
-                background-color: var(--dbp-base-light);
+                background-color: var(--dbp-base);
             }
             
             table{
@@ -357,7 +357,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             table tr td{
                 min-width: 140px;
                 padding: 10px 20px;
-                border: var(--border-dark);
+                border: var(--border);
             }
 
             table tr td:first-child{
@@ -673,15 +673,32 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                 Example Page for dbp colors
             </p>
             <a class="link">Example</a>
-            <div style="background-color: darkolivegreen;"><a class="link">Example</a></div>
-            <a class="link-without-hover">Example</a>
+            <a class="link-without-hover">Example</a> <br><br>
             <button id="example" class="button is-primary" title="Example">
-                Example
+                primary
             </button>
 
             <button id="example" class="button" title="Example">
-                Example
+                secondary
+            </button> 
+
+            <button id="example" class="button is-danger" title="Example">
+               danger
             </button>
+
+            <button id="example" class="button is-warning" title="Example">
+                warning
+            </button>
+
+            <button id="example" class="button is-success" title="Example">
+                success
+            </button>
+
+            <button id="example" class="button is-info" title="Example">
+               info 
+            </button>
+            
+            
             <h3>Contrast Checker:</h3>
             <div class="contrastChecker">
                 <input type="color" id="color1" name="color1" value="${this.checker1}" @change=${this.contrast1OnChange}>
