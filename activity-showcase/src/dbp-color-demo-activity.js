@@ -2,8 +2,8 @@ import {css, html} from 'lit';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import * as commonStyles from '@dbp-toolkit/common/styles';
-import * as demoStyles from "./styles";
-import {AdapterLitElement} from "@dbp-toolkit/provider/src/adapter-lit-element";
+import * as demoStyles from './styles';
+import {AdapterLitElement} from '@dbp-toolkit/provider/src/adapter-lit-element';
 import {classMap} from 'lit/directives/class-map.js';
 
 class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
@@ -18,29 +18,28 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
     }
 
     static get scopedElements() {
-        return {
-        };
+        return {};
     }
 
     static get properties() {
         return {
             ...super.properties,
-            lang: { type: String },
-            entryPointUrl: { type: String, attribute: 'entry-point-url' },
-            dbpColors: { type: Boolean, attribute: false },
-            checkerLevel: { type: String, attribute: false },
-            checker1: { type: String, attribute: false },
-            checker2: { type: String, attribute: false },
+            lang: {type: String},
+            entryPointUrl: {type: String, attribute: 'entry-point-url'},
+            dbpColors: {type: Boolean, attribute: false},
+            checkerLevel: {type: String, attribute: false},
+            checker1: {type: String, attribute: false},
+            checker2: {type: String, attribute: false},
         };
     }
 
     update(changedProperties) {
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
-                case "checker1":
+                case 'checker1':
                     this.contrastChecker();
                     break;
-                case "checker2":
+                case 'checker2':
                     this.contrastChecker();
                     break;
             }
@@ -49,70 +48,64 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         super.update(changedProperties);
     }
 
-
-
     connectedCallback() {
         super.connectedCallback();
 
-        this.updateComplete.then(()=>{
-        });
+        this.updateComplete.then(() => {});
     }
 
     _(selector) {
-        return this.shadowRoot === null ? this.querySelector(selector) : this.shadowRoot.querySelector(selector);
+        return this.shadowRoot === null
+            ? this.querySelector(selector)
+            : this.shadowRoot.querySelector(selector);
     }
 
     hexToRgb(hex) {
         var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-        hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        hex = hex.replace(shorthandRegex, function (m, r, g, b) {
             return r + r + g + g + b + b;
         });
 
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : null;
+        return result
+            ? {
+                  r: parseInt(result[1], 16),
+                  g: parseInt(result[2], 16),
+                  b: parseInt(result[3], 16),
+              }
+            : null;
     }
 
     luminance(r, g, b) {
         var a = [r, g, b].map(function (v) {
             v /= 255;
-            return v <= 0.03928
-                ? v / 12.92
-                : Math.pow( (v + 0.055) / 1.055, 2.4 );
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
         });
         return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
     }
 
     calcContrastRatio(color1luminance, color2luminance) {
-        const ratio = color1luminance > color2luminance
-            ? ((color1luminance + 0.05) / (color2luminance + 0.05))
-            : ((color2luminance + 0.05) / (color1luminance + 0.05));
+        const ratio =
+            color1luminance > color2luminance
+                ? (color1luminance + 0.05) / (color2luminance + 0.05)
+                : (color2luminance + 0.05) / (color1luminance + 0.05);
         return ratio;
     }
 
     checkWCAGLevel(ratio) {
-        if (ratio >= 7)
-            return "✅ AAA-level small text";
-        if (ratio >= 4.5)
-            return "☑ AA-level small text";
-        if (ratio >= 3)
-            return "~ AA-level large text " + ratio + " should >= " + 4.5;
-        else
-            return "❌ ratio: " + ratio + ", it should >= " + 4.5;
+        if (ratio >= 7) return '✅ AAA-level small text';
+        if (ratio >= 4.5) return '☑ AA-level small text';
+        if (ratio >= 3) return '~ AA-level large text ' + ratio + ' should >= ' + 4.5;
+        else return '❌ ratio: ' + ratio + ', it should >= ' + 4.5;
     }
 
     getWCAGfromHex(hex1, hex2) {
-        if (!hex1 || !hex2)
-            return "";
+        if (!hex1 || !hex2) return '';
 
         let rgb1 = this.hexToRgb(hex1);
         let rgb2 = this.hexToRgb(hex2);
 
-        if (!rgb1 || !rgb2)
-            return "";
+        if (!rgb1 || !rgb2) return '';
 
         let lum1 = this.luminance(rgb1.r, rgb1.g, rgb1.b);
         let lum2 = this.luminance(rgb2.r, rgb2.g, rgb2.b);
@@ -123,7 +116,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
     }
 
     contrastChecker() {
-        this.checkerLevel = this.getWCAGfromHex( this.checker1, this.checker2);
+        this.checkerLevel = this.getWCAGfromHex(this.checker1, this.checker2);
     }
 
     contrast1OnChange(e) {
@@ -203,30 +196,30 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
     changeToUniversityColors() {
         this.dbpColors = false;
 
-        const baseLight = "#ffffff";
-        const baseDark = "#000000";
-        const textLight = "#ffffff";
-        const textDark = "#000000";
-        const textMutedLight = "#afaca7";
-        const textMutedDark = "#5c5856";
-        const accentLight = "#e4154b";
-        const accentDark = "#e4154b";
-        const primaryLight = "#73899e";
-        const primaryDark = "#245b78";
-        const secondaryLight = "#ffffff";
-        const secondaryDark = "#000000";
-        const infoLight = "#73899e";
-        const infoDark = "#245b78";
-        const successLight = "#148800";
-        const successDark = "#148800";
-        const warningLight = "#ffad4d";
-        const warningDark = "#af6405";
-        const dangerLight = "#e4154b";
-        const dangerDark = "#e4154b";
-        const borderLight = "1px solid #ffffff";
-        const borderDark = "1px solid #000000";
-        const hoverBase = "#000000";
-        const hoverText = "#ffffff";
+        const baseLight = '#ffffff';
+        const baseDark = '#000000';
+        const textLight = '#ffffff';
+        const textDark = '#000000';
+        const textMutedLight = '#afaca7';
+        const textMutedDark = '#5c5856';
+        const accentLight = '#e4154b';
+        const accentDark = '#e4154b';
+        const primaryLight = '#73899e';
+        const primaryDark = '#245b78';
+        const secondaryLight = '#ffffff';
+        const secondaryDark = '#000000';
+        const infoLight = '#73899e';
+        const infoDark = '#245b78';
+        const successLight = '#148800';
+        const successDark = '#148800';
+        const warningLight = '#ffad4d';
+        const warningDark = '#af6405';
+        const dangerLight = '#e4154b';
+        const dangerDark = '#e4154b';
+        const borderLight = '1px solid #ffffff';
+        const borderDark = '1px solid #000000';
+        const hoverBase = '#000000';
+        const hoverText = '#ffffff';
 
         this.style.setProperty('--base-light', baseLight);
         this.style.setProperty('--base-dark', baseDark);
@@ -257,30 +250,30 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
     changeToDbpColors() {
         this.dbpColors = true;
 
-        const baseLight = "#ffffff";
-        const baseDark = "#000000";
-        const textLight = "#ffffff";
-        const textDark = "#000000";
-        const textMutedLight = "#adadad";
-        const textMutedDark = "#666666";
-        const accentLight = "#c24f68";
-        const accentDark = "#c24f68";
-        const primaryLight = "#8ca4eb";
-        const primaryDark = "#2a4491";
-        const secondaryLight = "#ffffff";
-        const secondaryDark = "#000000";
-        const infoLight = "#8ca4eb";
-        const infoDark = "#2a4491";
-        const successLight = "#7acc79";
-        const successDark = "#188018";
-        const warningLight = "#f99a41";
-        const warningDark = "#c15500";
-        const dangerLight = "#ff887a";
-        const dangerDark = "#de3535";
-        const borderLight = "1px solid #ffffff";
-        const borderDark = "1px solid #000000";
-        const hoverBase = "#000000";
-        const hoverText = "#ffffff";
+        const baseLight = '#ffffff';
+        const baseDark = '#000000';
+        const textLight = '#ffffff';
+        const textDark = '#000000';
+        const textMutedLight = '#adadad';
+        const textMutedDark = '#666666';
+        const accentLight = '#c24f68';
+        const accentDark = '#c24f68';
+        const primaryLight = '#8ca4eb';
+        const primaryDark = '#2a4491';
+        const secondaryLight = '#ffffff';
+        const secondaryDark = '#000000';
+        const infoLight = '#8ca4eb';
+        const infoDark = '#2a4491';
+        const successLight = '#7acc79';
+        const successDark = '#188018';
+        const warningLight = '#f99a41';
+        const warningDark = '#c15500';
+        const dangerLight = '#ff887a';
+        const dangerDark = '#de3535';
+        const borderLight = '1px solid #ffffff';
+        const borderDark = '1px solid #000000';
+        const hoverBase = '#000000';
+        const hoverText = '#ffffff';
 
         this.style.setProperty('--base-light', baseLight);
         this.style.setProperty('--base-dark', baseDark);
@@ -308,7 +301,6 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         this.style.setProperty('--hover-top', hoverText);
 
         this.requestUpdate();
-
     }
 
     static get styles() {
@@ -321,296 +313,293 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             commonStyles.getLinkCss(),
 
             css`
-            h1.title {margin-bottom: 1em;}
-            div.container {margin-bottom: 1.5em;}
+                h1.title {
+                    margin-bottom: 1em;
+                }
+                div.container {
+                    margin-bottom: 1.5em;
+                }
 
-            #demo{
-                display: block;
-                padding-top: 50px;
-            }
+                #demo {
+                    display: block;
+                    padding-top: 50px;
+                }
 
-            h2:first-child {
-                margin-top: 0;
-                margin-bottom: 0px;
-            }
+                h2:first-child {
+                    margin-top: 0;
+                    margin-bottom: 0px;
+                }
 
-            .subheadline{
-                font-style: italic;
-                padding-left: 2em;
-                margin-top: -1px;
-                /*line-height: 1.8;*/
-                margin-bottom: 1.2em;
-            }
-            
-            .buttons{
-                position: sticky;
-                top: 0px;
-                padding: 5px 5px 5px 0;
-                background-color: var(--dbp-base);
-            }
-            
-            table{
-                border-spacing: 30px;
-                margin-top: 30px;
-            }
-            
-            table tr td{
-                min-width: 140px;
-                padding: 10px 20px;
-                border: var(--border);
-            }
+                .subheadline {
+                    font-style: italic;
+                    padding-left: 2em;
+                    margin-top: -1px;
+                    /*line-height: 1.8;*/
+                    margin-bottom: 1.2em;
+                }
 
-            table tr td:first-child{
-                border: none;
-                padding-left: 0px;
-            }
+                .buttons {
+                    position: sticky;
+                    top: 0px;
+                    padding: 5px 5px 5px 0;
+                    background-color: var(--dbp-base);
+                }
 
-            .additional-information{
-                min-width: unset;
-                border: none;
-            }
+                table {
+                    border-spacing: 30px;
+                    margin-top: 30px;
+                }
 
-            :host {
-                --base-light: #ffffff;
-                --base-dark: #000000;
-                --text-light: #ffffff;
-                --text-dark: #000000;
-                --text-muted-light: #adadad;
-                --text-muted-dark: #666666;
-                --accent-light: #c24f68;
-                --accent-dark: #c24f68;
-                --primary-light: #8ca4eb;
-                --primary-dark: #2a4491;
-                --secondary-light: #ffffff;
-                --secondary-dark: #000000;
-                --info-light: #8ca4eb;
-                --info-dark: #2a4491;
-                --success-light: #7acc79;
-                --success-dark: #188018;
-                --warning-light: #f99a41;
-                --warning-dark: #c15500;
-                --danger-light: #ff887a;
-                --danger-dark: #de3535;
-                --border-light: 1px solid #ffffff;
-                --border-dark: 1px solid #000000;
-                --border-radius: 0px;
-                --hover-base: #000000;
-                --hover-top: #ffffff;
-            }
-            
-            .base-light{
-                background-color: var(--base-light);
-                color: var(--text-dark);
-            }
+                table tr td {
+                    min-width: 140px;
+                    padding: 10px 20px;
+                    border: var(--border);
+                }
 
-            .base-dark{
-                background-color: var(--base-dark);
-                color: var(--text-light);
-            }
+                table tr td:first-child {
+                    border: none;
+                    padding-left: 0px;
+                }
 
-            .text-light:nth-child(2){
-                background-color: var(--text-light);
-            }
-            
-            .text-light{
-                background-color: var(--base-dark);
-                color: var(--text-light);
-            }
+                .additional-information {
+                    min-width: unset;
+                    border: none;
+                }
 
-            .text-dark:nth-child(2){
-                background-color: var(--text-dark);
-            }
-            
-            .text-dark{
-                background-color: var(--base-light);
-                color: var(--text-dark);
-            }
+                :host {
+                    --base-light: #ffffff;
+                    --base-dark: #000000;
+                    --text-light: #ffffff;
+                    --text-dark: #000000;
+                    --text-muted-light: #adadad;
+                    --text-muted-dark: #666666;
+                    --accent-light: #c24f68;
+                    --accent-dark: #c24f68;
+                    --primary-light: #8ca4eb;
+                    --primary-dark: #2a4491;
+                    --secondary-light: #ffffff;
+                    --secondary-dark: #000000;
+                    --info-light: #8ca4eb;
+                    --info-dark: #2a4491;
+                    --success-light: #7acc79;
+                    --success-dark: #188018;
+                    --warning-light: #f99a41;
+                    --warning-dark: #c15500;
+                    --danger-light: #ff887a;
+                    --danger-dark: #de3535;
+                    --border-light: 1px solid #ffffff;
+                    --border-dark: 1px solid #000000;
+                    --border-radius: 0px;
+                    --hover-base: #000000;
+                    --hover-top: #ffffff;
+                }
 
-            .text-muted-light:nth-child(2){
-                background-color: var(--text-muted-light);
-            }
-            
-            .text-muted-light{
-                background-color: var(--base-dark);
-                color: var(--text-muted-light);
-            }
-            
-            .text-muted-dark{
-                background-color: var(--base-light);
-                color: var(--text-muted-dark);
-            }
+                .base-light {
+                    background-color: var(--base-light);
+                    color: var(--text-dark);
+                }
 
-            .text-muted-dark:nth-child(2){
-                background-color: var(--text-muted-dark);
-            }
+                .base-dark {
+                    background-color: var(--base-dark);
+                    color: var(--text-light);
+                }
 
-            /* accent */
-            .accent-light{
-                color: var(--text-dark);
-                background-color: var(--accent-light);
-            }
+                .text-light:nth-child(2) {
+                    background-color: var(--text-light);
+                }
 
-            .accent-dark{
-                color: var(--text-light);
-                background-color: var(--accent-dark);
-            }
+                .text-light {
+                    background-color: var(--base-dark);
+                    color: var(--text-light);
+                }
 
-            .accent-dark:nth-child(4){
-                color: var(--accent-dark);
-                background-color: var(--base-light);
-            }
+                .text-dark:nth-child(2) {
+                    background-color: var(--text-dark);
+                }
 
-            /* primary */
-            .primary-light{
-                color: var(--text-dark);
-                background-color: var(--primary-light);
-            }
-            
-            .primary-dark{
-                color: var(--text-light);
-                background-color: var(--primary-dark);
-            }
+                .text-dark {
+                    background-color: var(--base-light);
+                    color: var(--text-dark);
+                }
 
-            .primary-dark:nth-child(4){
-                color: var(--primary-dark);
-                background-color: var(--base-light);
-            }
-            
-            /* secondary */
-            .secondary-light{
-                color: var(--text-dark);
-                background-color: var(--secondary-light);
-            }
+                .text-muted-light:nth-child(2) {
+                    background-color: var(--text-muted-light);
+                }
 
-            .secondary-dark{
-                color: var(--text-light);
-                background-color: var(--secondary-dark);
-            }
+                .text-muted-light {
+                    background-color: var(--base-dark);
+                    color: var(--text-muted-light);
+                }
 
-            .secondary-dark:nth-child(4){
-                color: var(--secondary-dark);
-                background-color: var(--base-light);
-            }
+                .text-muted-dark {
+                    background-color: var(--base-light);
+                    color: var(--text-muted-dark);
+                }
 
-            /* info */
-            .info-light{
-                color: var(--text-dark);
-                background-color: var(--info-light);
-            }
+                .text-muted-dark:nth-child(2) {
+                    background-color: var(--text-muted-dark);
+                }
 
-            .info-dark{
-                color: var(--text-light);
-                background-color: var(--info-dark);
-            }
+                /* accent */
+                .accent-light {
+                    color: var(--text-dark);
+                    background-color: var(--accent-light);
+                }
 
-            .info-dark:nth-child(4){
-                color: var(--info-dark);
-                background-color: var(--base-light);
-            }
+                .accent-dark {
+                    color: var(--text-light);
+                    background-color: var(--accent-dark);
+                }
 
-            /* success */
-            .success-light{
-                color: var(--text-dark);
-                background-color: var(--success-light);
-            }
+                .accent-dark:nth-child(4) {
+                    color: var(--accent-dark);
+                    background-color: var(--base-light);
+                }
 
-            .success-dark{
-                color: var(--text-light);
-                background-color: var(--success-dark);
-            }
+                /* primary */
+                .primary-light {
+                    color: var(--text-dark);
+                    background-color: var(--primary-light);
+                }
 
-            .success-dark:nth-child(4){
-                color: var(--success-dark);
-                background-color: var(--base-light);
-            }
+                .primary-dark {
+                    color: var(--text-light);
+                    background-color: var(--primary-dark);
+                }
 
-            /* warning */
-            .warning-light{
-                color: var(--text-dark);
-                background-color: var(--warning-light);
-            }
+                .primary-dark:nth-child(4) {
+                    color: var(--primary-dark);
+                    background-color: var(--base-light);
+                }
 
-            .warning-dark{
-                color: var(--text-light);
-                background-color: var(--warning-dark);
-            }
+                /* secondary */
+                .secondary-light {
+                    color: var(--text-dark);
+                    background-color: var(--secondary-light);
+                }
 
-            .warning-dark:nth-child(4){
-                color: var(--warning-dark);
-                background-color: var(--base-light);
-            }
+                .secondary-dark {
+                    color: var(--text-light);
+                    background-color: var(--secondary-dark);
+                }
 
-            /* danger */
-            .danger-light{
-                color: var(--text-dark);
-                background-color: var(--danger-light);
-            }
+                .secondary-dark:nth-child(4) {
+                    color: var(--secondary-dark);
+                    background-color: var(--base-light);
+                }
 
-            .danger-dark{
-                color: var(--text-light);
-                background-color: var(--danger-dark);
-            }
+                /* info */
+                .info-light {
+                    color: var(--text-dark);
+                    background-color: var(--info-light);
+                }
 
-            .danger-dark:nth-child(4){
-                color: var(--danger-dark);
-                background-color: var(--base-light);
-            }
-            
-            /* border */
-            
-            .border-light{
-                border: var(--border-light);
-            }
+                .info-dark {
+                    color: var(--text-light);
+                    background-color: var(--info-dark);
+                }
 
-            .border-dark{
-                border: var(--border-dark);
-            }
+                .info-dark:nth-child(4) {
+                    color: var(--info-dark);
+                    background-color: var(--base-light);
+                }
 
-            .border-radius {
-                border: var(--border-dark);
-                border-radius: var(--border-radius);
-            }
+                /* success */
+                .success-light {
+                    color: var(--text-dark);
+                    background-color: var(--success-light);
+                }
 
-            /* hover */
+                .success-dark {
+                    color: var(--text-light);
+                    background-color: var(--success-dark);
+                }
 
-            .hover{
-                color: var(--hover-top);
-                background-color: var(--hover-base);
-            }
+                .success-dark:nth-child(4) {
+                    color: var(--success-dark);
+                    background-color: var(--base-light);
+                }
 
-            .hover:nth-child(4), .hover:nth-child(3){
-                color: var(--text-dark);
-                background-color: var(--base-light);
-                cursor: pointer;
-            }
+                /* warning */
+                .warning-light {
+                    color: var(--text-dark);
+                    background-color: var(--warning-light);
+                }
 
-            .hover:nth-child(4):hover, .hover:nth-child(3):hover{
-                color: var(--hover-top);
-                background-color: var(--hover-base);
-            }
+                .warning-dark {
+                    color: var(--text-light);
+                    background-color: var(--warning-dark);
+                }
 
+                .warning-dark:nth-child(4) {
+                    color: var(--warning-dark);
+                    background-color: var(--base-light);
+                }
 
+                /* danger */
+                .danger-light {
+                    color: var(--text-dark);
+                    background-color: var(--danger-light);
+                }
 
+                .danger-dark {
+                    color: var(--text-light);
+                    background-color: var(--danger-dark);
+                }
 
+                .danger-dark:nth-child(4) {
+                    color: var(--danger-dark);
+                    background-color: var(--base-light);
+                }
 
+                /* border */
 
-            .contrastChecker {
-                display: flex;
-                gap: 10px;
-                align-items: center;
-                padding-bottom: 50px;
-                margin-bottom: 50px;
-                border-bottom: 1px solid black;
-            }
-         
-            
-            
-            `
+                .border-light {
+                    border: var(--border-light);
+                }
+
+                .border-dark {
+                    border: var(--border-dark);
+                }
+
+                .border-radius {
+                    border: var(--border-dark);
+                    border-radius: var(--border-radius);
+                }
+
+                /* hover */
+
+                .hover {
+                    color: var(--hover-top);
+                    background-color: var(--hover-base);
+                }
+
+                .hover:nth-child(4),
+                .hover:nth-child(3) {
+                    color: var(--text-dark);
+                    background-color: var(--base-light);
+                    cursor: pointer;
+                }
+
+                .hover:nth-child(4):hover,
+                .hover:nth-child(3):hover {
+                    color: var(--hover-top);
+                    background-color: var(--hover-base);
+                }
+
+                .contrastChecker {
+                    display: flex;
+                    gap: 10px;
+                    align-items: center;
+                    padding-bottom: 50px;
+                    margin-bottom: 50px;
+                    border-bottom: 1px solid black;
+                }
+            `,
         ];
     }
 
     render() {
-
         const docStyle = getComputedStyle(this);
         const baseLight = docStyle.getPropertyValue('--base-light');
         const baseDark = docStyle.getPropertyValue('--base-dark');
@@ -669,64 +658,77 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
         return html`
             <h2>Our colors</h2>
-            <p class="subheadline">
-                Example Page for dbp colors
-            </p>
+            <p class="subheadline">Example Page for dbp colors</p>
             <a class="link">Example</a>
-            <a class="link-without-hover">Example</a> <br><br>
-            <button id="example" class="button is-primary" title="Example">
-                primary
-            </button>
+            <a class="link-without-hover">Example</a> <br /><br />
+            <button id="example" class="button is-primary" title="Example">primary</button>
 
-            <button id="example" class="button" title="Example">
-                secondary
-            </button> 
+            <button id="example" class="button" title="Example">secondary</button>
 
-            <button id="example" class="button is-danger" title="Example">
-               danger
-            </button>
+            <button id="example" class="button is-danger" title="Example">danger</button>
 
-            <button id="example" class="button is-warning" title="Example">
-                warning
-            </button>
+            <button id="example" class="button is-warning" title="Example">warning</button>
 
-            <button id="example" class="button is-success" title="Example">
-                success
-            </button>
+            <button id="example" class="button is-success" title="Example">success</button>
 
-            <button id="example" class="button is-info" title="Example">
-               info 
-            </button>
-            
-            
+            <button id="example" class="button is-info" title="Example">info</button>
+
             <h3>Contrast Checker:</h3>
             <div class="contrastChecker">
-                <input type="color" id="color1" name="color1" value="${this.checker1}" @change=${this.contrast1OnChange}>
+                <input
+                    type="color"
+                    id="color1"
+                    name="color1"
+                    value="${this.checker1}"
+                    @change=${this.contrast1OnChange} />
                 <label for="color1">Color 1</label>
-                <input type="color" id="color2" name="color2" value="${this.checker2}" @change=${this.contrast2OnChange}>
+                <input
+                    type="color"
+                    id="color2"
+                    name="color2"
+                    value="${this.checker2}"
+                    @change=${this.contrast2OnChange} />
                 <label for="color2">Color 2</label>
-                
+
                 <div class="contrastCheckerOutput">${this.checkerLevel}</div>
             </div>
-            
+
             <div class="buttons">
-                <button id="toggleDarkMode" @click="${() => { this.toggleDarkMode(); }}" class="button" title="Toggle Darkmode">
+                <button
+                    id="toggleDarkMode"
+                    @click="${() => {
+                        this.toggleDarkMode();
+                    }}"
+                    class="button"
+                    title="Toggle Darkmode">
                     Toggle Darkmode
                 </button>
-    
-                <button id="changeToUniversityColors" @click="${() => { this.changeToUniversityColors(); }}" 
-                        class="button ${classMap({hidden: !this.dbpColors})}" title="university colors">
+
+                <button
+                    id="changeToUniversityColors"
+                    @click="${() => {
+                        this.changeToUniversityColors();
+                    }}"
+                    class="button ${classMap({hidden: !this.dbpColors})}"
+                    title="university colors">
                     University Colors
                 </button>
-    
-                <button id="changeToDbpColors" @click="${() => { this.changeToDbpColors(); }}" 
-                        class="button ${classMap({hidden: this.dbpColors})}" title="dbp colors">
+
+                <button
+                    id="changeToDbpColors"
+                    @click="${() => {
+                        this.changeToDbpColors();
+                    }}"
+                    class="button ${classMap({hidden: this.dbpColors})}"
+                    title="dbp colors">
                     dbp colors
                 </button>
             </div>
-            
+
             <table class="dbp-colors base-light">
-                <caption><h3>${this.dbpColors ? "dbp Colors" : "University Colors"}</h3></caption>
+                <caption>
+                    <h3>${this.dbpColors ? 'dbp Colors' : 'University Colors'}</h3>
+                </caption>
                 <tr>
                     <td>base-light</td>
                     <td class="base-light"></td>
@@ -890,8 +892,6 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                     <td class="additional-information">${hoverBasehoverTextRatio}</td>
                 </tr>
             </table>
-            
-            
         `;
     }
 }

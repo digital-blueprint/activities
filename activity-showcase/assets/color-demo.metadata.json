@@ -1,18 +1,18 @@
 {
-  "element": "dbp-color-demo-activity",
-  "module_src": "dbp-color-demo-activity.js",
-  "routing_name": "color-demo",
-  "name": {
-    "de": "Unsere Farben",
-    "en": "Our colors"
-  },
-  "short_name": {
-    "de": "Farben",
-    "en": "Colors"
-  },
-  "description": {
-    "de": "Beispiel Seite für dbp Farben",
-    "en": "Example Page for dbp colors"
-  },
-  "subscribe": "lang,entryPointUrl"
+    "element": "dbp-color-demo-activity",
+    "module_src": "dbp-color-demo-activity.js",
+    "routing_name": "color-demo",
+    "name": {
+        "de": "Unsere Farben",
+        "en": "Our colors"
+    },
+    "short_name": {
+        "de": "Farben",
+        "en": "Colors"
+    },
+    "description": {
+        "de": "Beispiel Seite für dbp Farben",
+        "en": "Example Page for dbp colors"
+    },
+    "subscribe": "lang,entryPointUrl"
 }

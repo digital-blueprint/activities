@@ -1,18 +1,18 @@
 {
-  "element": "dbp-clipboard-demo-activity",
-  "module_src": "dbp-clipboard-demo-activity.js",
-  "routing_name": "clipboard",
-  "name": {
-    "de": "Zwischenablage",
-    "en": "Clipboard"
-  },
-  "short_name": {
-    "de": "Zwischenablage",
-    "en": "Clipboard"
-  },
-  "description": {
-    "de": "Zwischenablage für Dateien",
-    "en": "Clipboard for files"
-  },
-  "subscribe": "lang,entryPointUrl"
+    "element": "dbp-clipboard-demo-activity",
+    "module_src": "dbp-clipboard-demo-activity.js",
+    "routing_name": "clipboard",
+    "name": {
+        "de": "Zwischenablage",
+        "en": "Clipboard"
+    },
+    "short_name": {
+        "de": "Zwischenablage",
+        "en": "Clipboard"
+    },
+    "description": {
+        "de": "Zwischenablage für Dateien",
+        "en": "Clipboard for files"
+    },
+    "subscribe": "lang,entryPointUrl"
 }
