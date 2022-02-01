@@ -1,5 +1,5 @@
 {
-  "clipboard-manual": "Here you can temporarily save one or more files to the clipboard, delete them or download them from the clipboard.",
-  "save-to-clipboard-warning": "Attention! When you close the browser or reload the page, the clipboard will be emptied!",
-  "clipboard-files": "Files currently available in the clipboard"
+    "clipboard-manual": "Here you can temporarily save one or more files to the clipboard, delete them or download them from the clipboard.",
+    "save-to-clipboard-warning": "Attention! When you close the browser or reload the page, the clipboard will be emptied!",
+    "clipboard-files": "Files currently available in the clipboard"
 }

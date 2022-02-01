@@ -8,21 +8,30 @@ import {css, CSSResult} from 'lit';
 export function getDemoCSS() {
     // language=css
     return css`
-        h1.title {margin-bottom: 1em;}
-        div.container {margin-bottom: 1.5em;}
-        h1, h2, h3, h4 {
+        h1.title {
+            margin-bottom: 1em;
+        }
+        div.container {
+            margin-bottom: 1.5em;
+        }
+        h1,
+        h2,
+        h3,
+        h4 {
             margin-bottom: 20px;
         }
-        h2, h3, h4 {
+        h2,
+        h3,
+        h4 {
             margin: 40px 0 10px 0px;
         }
-        p{
-            margin:10px 0;
+        p {
+            margin: 10px 0;
         }
-        ul{
+        ul {
             margin-left: 14px;
         }
-        ul ul{
+        ul ul {
             margin-left: 14px;
         }
     `;

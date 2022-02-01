@@ -10,7 +10,7 @@ export default {
         nextcloudBaseURL: 'https://cloud-dev.tugraz.at',
         nextcloudName: 'TU Graz cloud',
         siteName: 'TU Graz',
-        siteSubName: 'Graz University of Technology'
+        siteSubName: 'Graz University of Technology',
     },
     development: {
         basePath: '/apps/common/',
@@ -23,7 +23,7 @@ export default {
         nextcloudBaseURL: 'https://cloud-dev.tugraz.at',
         nextcloudName: 'TU Graz cloud',
         siteName: 'TU Graz',
-        siteSubName: 'Graz University of Technology'
+        siteSubName: 'Graz University of Technology',
     },
     demo: {
         basePath: '/apps/common/',
@@ -36,6 +36,6 @@ export default {
         nextcloudBaseURL: 'https://cloud-demo.tugraz.at',
         nextcloudName: 'TU Graz cloud',
         siteName: 'TU Graz',
-        siteSubName: 'Graz University of Technology'
+        siteSubName: 'Graz University of Technology',
     },
 };
