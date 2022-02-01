@@ -1,18 +1,18 @@
 {
-  "element": "dbp-clipboard-managing",
-  "module_src": "dbp-clipboard-managing.js",
-  "routing_name": "clipboard-managing",
-  "name": {
-    "de": "Zwischenablage verwalten",
-    "en": "Manage clipboard"
-  },
-  "short_name": {
-    "de": "Zwischenablage verwalten",
-    "en": "Manage clipboard"
-  },
-  "description": {
-    "de": "Erlaubt das Verwalten der temporären Zwischenablage",
-    "en": "Allows managing of the temporarily clipboard"
-  },
-  "subscribe": "lang,nextcloud-web-app-password-url,nextcloud-webdav-url,nextcloud-name,nextcloud-file-url,nextcloud-store-session"
+    "element": "dbp-clipboard-managing",
+    "module_src": "dbp-clipboard-managing.js",
+    "routing_name": "clipboard-managing",
+    "name": {
+        "de": "Zwischenablage verwalten",
+        "en": "Manage clipboard"
+    },
+    "short_name": {
+        "de": "Zwischenablage verwalten",
+        "en": "Manage clipboard"
+    },
+    "description": {
+        "de": "Erlaubt das Verwalten der temporären Zwischenablage",
+        "en": "Allows managing of the temporarily clipboard"
+    },
+    "subscribe": "lang,nextcloud-web-app-password-url,nextcloud-webdav-url,nextcloud-name,nextcloud-file-url,nextcloud-store-session"
 }
