@@ -112,10 +112,10 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
             <h2>${activity.getName(this.lang)}</h2>
             <p class="subheadline">${activity.getDescription(this.lang)}</p>
             <p>
-                ${i18n.t('clipboard-manual')} <br />
-                <dbp-icon name="warning-high" class="warning-icon"></dbp-icon> ${i18n.t(
-                    'save-to-clipboard-warning'
-                )}
+                ${i18n.t('clipboard-manual')}
+                <br />
+                <dbp-icon name="warning-high" class="warning-icon"></dbp-icon>
+                ${i18n.t('save-to-clipboard-warning')}
             </p>
 
             <div class="container">
@@ -133,8 +133,7 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
                     ?nextcloud-store-session="${this.nextcloudStoreSession}"
                     enabled-targets="${this.fileHandlingEnabledTargets}"
                     allow-nesting="${this.allowNesting}"
-                    decompress-zip>
-                </dbp-clipboard>
+                    decompress-zip></dbp-clipboard>
             </div>
         `;
     }

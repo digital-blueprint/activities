@@ -660,7 +660,9 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             <h2>Our colors</h2>
             <p class="subheadline">Example Page for dbp colors</p>
             <a class="link">Example</a>
-            <a class="link-without-hover">Example</a> <br /><br />
+            <a class="link-without-hover">Example</a>
+            <br />
+            <br />
             <button id="example" class="button is-primary" title="Example">primary</button>
 
             <button id="example" class="button" title="Example">secondary</button>
