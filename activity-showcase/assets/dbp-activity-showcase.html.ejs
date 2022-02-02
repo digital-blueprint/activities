@@ -59,6 +59,7 @@
             --dbp-override-info: #245b78;
             --dbp-override-success: #138800;
             --dbp-override-warning-as-text: #af6405;
+            --dbp-override-warning-text: black;
             --dbp-override-warning: #ffad4d;
             --dbp-override-danger: #e4154b;
             --dbp-override-border: 1px solid black;
@@ -80,6 +81,7 @@
             --dbp-override-info: #73899e;
             --dbp-override-success: #138800;
             --dbp-override-warning-as-text: #ffad4d;
+            --dbp-override-warning-text: black;
             --dbp-override-warning: #ffad4d;
             --dbp-override-danger: #e4154b;
             --dbp-override-border: 1px solid white;
@@ -129,10 +131,10 @@
             --dbp-override-border: 1px solid #dee2e6;
         }
 
-        .phst-theme{
+        .phst-light-theme{
             --dbp-override-base: white;
-            --dbp-override-base-inverted: rgb(76, 76, 76);
-            --dbp-override-text: rgb(76, 76, 76);
+            --dbp-override-base-inverted: rgb(51, 51, 51);
+            --dbp-override-text: rgb(51, 51, 51);
             --dbp-override-text-inverted: white;
             --dbp-override-text-muted: #9a9a9a;
             --dbp-override-accent: #f9b000;
@@ -145,11 +147,39 @@
             --dbp-override-info: #7fa5ca;
             --dbp-override-success: rgb(49, 162, 76);
             --dbp-override-warning-as-text: #f9b000;
+            --dbp-warning-text: rgb(51, 51, 51);
+            --dbp-override-warning: #f9b000;
+            --dbp-override-danger: #F35369;
+            --dbp-override-border: 1px solid #9a9a9a;
+            --dbp-override-hover-base: #f9b000;
+            --dbp-override-hover-text: rgb(51, 51, 51);
+        }
+
+
+        .phst-dark-theme{
+            --dbp-override-base: rgb(51, 51, 51);
+            --dbp-override-base-inverted: white;
+            --dbp-override-text: white;
+            --dbp-override-text-inverted: rgb(51, 51, 51);
+            --dbp-override-text-muted: #9a9a9a;
+            --dbp-override-accent: #f9b000;
+            --dbp-override-primary-base: #f9b000;
+            --dbp-override-primary-text: white;
+            --dbp-override-primary-border: 1px solid rgb(236, 236, 237);
+            --dbp-override-secondary-base: rgb(236, 236, 237);
+            --dbp-override-secondary-text: rgb(51, 51, 51);
+            --dbp-override-secondary-border: 1px solid rgb(236, 236, 237);
+            --dbp-override-info: #7fa5ca;
+            --dbp-override-success: rgb(49, 162, 76);
+            --dbp-override-warning-as-text: #f9b000;
+            --dbp-warning-text: rgb(51, 51, 51);
             --dbp-override-warning: #f9b000;
             --dbp-override-danger: #F35369;
             --dbp-override-border: 1px solid rgb(236, 236, 237);
-            --dbp-override-hover-text: #f9b000;
+            --dbp-override-hover-base: #f9b000;
+            --dbp-override-hover-text: rgb(51, 51, 51);
         }
+
 
     </style>
 
@@ -181,7 +211,8 @@
             {"class": "dark-theme", "icon": "night", "name": "Dark Mode"},
             {"class": "sweets-theme", "icon": "candy", "name": "Candy Mode"},
             {"class": "bootstrap-theme", "icon": "bootstrap", "name": "Bootstrap Mode"},
-            {"class": "phst-theme", "icon": "star-filled", "name": "PHST Mode"}]'
+            {"class": "phst-light-theme", "icon": "star-filled", "name": "PHST Light Mode"}]'
+            {"class": "phst-dark-theme", "icon": "star", "name": "PHST Dark Mode"}]'
 ><dbp-loading-spinner></dbp-loading-spinner></<%= name %>>
 
 <!-- Error handling for too old browsers -->
