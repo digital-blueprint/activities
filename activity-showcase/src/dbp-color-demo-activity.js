@@ -342,7 +342,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                     position: sticky;
                     top: 0px;
                     padding: 5px 5px 5px 0;
-                    background-color: var(--dbp-base);
+                    background-color: var(--dbp-background);
                 }
 
                 table {
