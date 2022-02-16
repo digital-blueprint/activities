@@ -198,6 +198,63 @@
             --dbp-override-hover-color: rgb(51, 51, 51);
         }
 
+        .med-light-theme{
+            --dbp-override-background: white;
+            --dbp-override-content: black;
+            --dbp-override-muted: rgb(191, 191, 191);
+            --dbp-override-accent: rgb(81, 174, 50);
+            --dbp-override-primary: rgb(0, 123, 60);
+            --dbp-override-secondary: #BFBFBF;
+            --dbp-override-secondary-surface: white;
+            --dbp-override-on-secondary-surface: black;
+            --dbp-override-secondary-surface-border-color: black;
+            --dbp-override-info: #17a2b8;
+            --dbp-override-success: #28a745;
+            --dbp-override-warning: #EF783D;
+            --dbp-override-warning-surface: #ffc107;
+            --dbp-override-on-warning-surface: black;
+            --dbp-override-danger: #dc3545;
+            --dbp-override-border: 1px solid black;
+
+            --dbp-override-hover-background-color: rgb(81, 174, 50);
+            --dbp-override-hover-color: white;
+        }
+
+
+        .med-dark-theme{
+            --dbp-override-background: #007934;
+            --dbp-override-content: white;
+            --dbp-override-muted: #d3d7cf;
+            --dbp-override-accent: #83D369;
+            --dbp-override-primary: black;
+            --dbp-override-on-primary-surface: white;
+            --dbp-override-primary-surface-border-color: white;
+            --dbp-override-secondary: rgb(0, 0, 0, 0);
+            --dbp-override-on-secondary-surface: white;
+            --dbp-override-secondary-surface-border-color: white;
+
+            --dbp-override-info: #000070;
+            --dbp-override-info-surface: #17a2b8;
+            --dbp-override-on-info-surface: black;
+
+            --dbp-override-success: #95ffbf;
+            --dbp-override-success-surface: rgb(49, 162, 76);
+            --dbp-override-on-success-surface: black;
+
+            -dbp-override-warning: #ffc107;
+            --dbp-override-warning-surface: #ffc107;
+            --dbp-override-on-warning-surface: black;
+
+            --dbp-override-danger: #FFB3B3;
+            --dbp-override-danger-surface: #dc3545;
+            --dbp-override-on-danger-surface: black;
+
+            --dbp-override-border: 1px solid white;
+
+            --dbp-override-hover-background-color: white;
+            --dbp-override-hover-color: black;
+        }
+
 
     </style>
 
@@ -230,7 +287,9 @@
             {"class": "sweets-theme", "icon": "candy", "name": "Candy Mode"},
             {"class": "bootstrap-theme", "icon": "bootstrap", "name": "Bootstrap Mode"},
             {"class": "phst-light-theme", "icon": "star-filled", "name": "PHST Light Mode"},
-            {"class": "phst-dark-theme", "icon": "star", "name": "PHST Dark Mode"}]'
+            {"class": "phst-dark-theme", "icon": "star", "name": "PHST Dark Mode"},
+            {"class": "med-light-theme", "icon": "plus", "name": "MED Light Mode"},
+            {"class": "med-dark-theme", "icon": "plus", "name": "MED Dark Mode"}]'
 ><dbp-loading-spinner></dbp-loading-spinner></<%= name %>>
 
 <!-- Error handling for too old browsers -->
