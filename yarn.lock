@@ -22,9 +22,7 @@
   integrity sha512-392byTlpGWXMv4FbyWw3sAZ/FrW/DrwqLGXpy0mbyNe9Taqv1mg9yON5/o0cnr8XYCkFTZbC1eV+c+LAROgrng==
 
 "@babel/core@^7.10.3":
-  version "7.17.5"
-  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.17.5.tgz#6cd2e836058c28f06a4ca8ee7ed955bbf37c8225"
-  integrity sha512-/BBMw4EvjmyquN5O+t5eh0+YqB3XXJkYD2cjKpYtWOfFy4lQ4UozNSmxAcWT8r2XtZs0ewG+zrfsqeR15i1ajA==
+  version: "7.17.8"
   dependencies:
     "@ampproject/remapping" "^2.1.0"
     "@babel/code-frame" "^7.16.7"
@@ -875,9 +873,7 @@
     esutils "^2.0.2"
 
 "@babel/runtime-corejs3@^7.10.3":
-  version "7.17.2"
-  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.17.2.tgz#fdca2cd05fba63388babe85d349b6801b008fd13"
-  integrity sha512-NcKtr2epxfIrNM4VOmPKO46TvDMCBhgi2CrSHaEarrz+Plk2K5r9QemmOFTGpZaoKnWoGH5MO+CzeRsih/Fcgg==
+  version: "7.17.8"
   dependencies:
     core-js-pure "^3.20.2"
     regenerator-runtime "^0.13.4"
@@ -3752,9 +3748,7 @@ eslint-plugin-jsdoc@^37.0.0:
     spdx-expression-parse "^3.0.1"
 
 eslint-plugin-jsdoc@^38.0.0:
-  version "38.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-38.0.0.tgz#e58ffd0d9188bd74ba9d3d3f07206ff2e2662bda"
-  integrity sha512-4ZWTq9Jjpr+aezCn/gjRq45C3wFpY16S+umce8q/s2kMmD6oJ/8u8jhPFGoOHUnkZzFNDzYiIUxF9+OmoayLbA==
+  version: "38.0.6"
   dependencies:
     "@es-joy/jsdoccomment" "~0.20.1"
     comment-parser "1.3.0"
@@ -5573,9 +5567,7 @@ lit-html@^2.2.0:
     "@types/trusted-types" "^2.0.2"
 
 lit@^2.0.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/lit/-/lit-2.2.0.tgz#1b83a2c1e4c5ecf3be785292b1a13e193597f610"
-  integrity sha512-FDyxUuczo6cJJY/2Bkgfh1872U4ikUvmK1Cb6+lYC1CW+QOo8CaWXCpvPKFzYsz0ojUxoruBLVrECc7VI2f1dQ==
+  version: "2.2.1"
   dependencies:
     "@lit/reactive-element" "^1.3.0"
     lit-element "^3.2.0"
@@ -7446,11 +7438,7 @@ rollup-pluginutils@^2.6.0, rollup-pluginutils@^2.8.2:
     estree-walker "^0.6.1"
 
 rollup@^2.18.1, rollup@^2.19.0, rollup@^2.33.3, rollup@^2.35.1:
-  version "2.70.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.70.0.tgz#17a92e5938e92a251b962352e904c9f558230ec7"
-  integrity sha512-iEzYw+syFxQ0X9RefVwhr8BA2TNJsTaX8L8dhyeyMECDbmiba+8UQzcu+xZdji0+JQ+s7kouQnw+9Oz5M19XKA==
-  optionalDependencies:
-    fsevents "~2.3.2"
+  version: "2.70.1"
 
 run-async@^2.4.0:
   version "2.4.1"
