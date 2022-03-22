@@ -37,8 +37,7 @@
         "@dbp-toolkit/file-handling": "^0.2.0",
         "@dbp-toolkit/provider": "^0.2.0",
         "@open-wc/scoped-elements": "^2.0.0",
-        "lit": "^2.0.0",
-        "tabulator-tables": "^4.8.4"
+        "lit": "^2.0.0"
     },
     "scripts": {
         "clean": "rm dist/*",
