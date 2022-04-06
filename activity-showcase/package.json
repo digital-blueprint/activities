@@ -1,6 +1,6 @@
 {
     "name": "dbp-activity-showcase",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "main": "src/activity-showcase.js",
     "license": "LGPL-2.1-or-later",
     "private": true,
@@ -40,13 +40,13 @@
         "selfsigned": "^2.0.0"
     },
     "dependencies": {
-        "@dbp-toolkit/app-shell": "^0.2.0",
-        "@dbp-toolkit/auth": "^0.2.0",
-        "@dbp-toolkit/common": "^0.2.0",
+        "@dbp-toolkit/app-shell": "^0.3.0",
+        "@dbp-toolkit/auth": "^0.3.0",
+        "@dbp-toolkit/common": "^0.3.0",
         "@dbp-toolkit/font-source-sans-pro": "^0.2.0",
-        "@dbp-toolkit/language-select": "^0.2.0",
+        "@dbp-toolkit/language-select": "^0.3.0",
         "@dbp-toolkit/provider": "^0.2.0",
-        "@dbp-topics/clipboard": "^0.1.0",
+        "@dbp-topics/clipboard": "^0.2.0",
         "@open-wc/scoped-elements": "^2.0.0",
         "highlight.js": "^11.0.0",
         "i18next": "^21.4.2",
