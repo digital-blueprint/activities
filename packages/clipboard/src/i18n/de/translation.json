@@ -1,5 +1,5 @@
 {
+    "clipboard-files": "Aktuell vorhandene Dateien in der Zwischenablage:",
     "clipboard-manual": "Hier können Sie eine oder mehrere Dateien temporär in die Zwischenablage ablegen, diese löschen oder aus der Zwischenablage sichern.",
-    "save-to-clipboard-warning": "Vorsicht! Wenn Sie den Browser schließen oder die Seite neu laden, wird die bestehende Zwischenablage verworfen!",
-    "clipboard-files": "Aktuell vorhandene Dateien in der Zwischenablage:"
+    "save-to-clipboard-warning": "Vorsicht! Wenn Sie den Browser schließen oder die Seite neu laden, wird die bestehende Zwischenablage verworfen!"
 }
