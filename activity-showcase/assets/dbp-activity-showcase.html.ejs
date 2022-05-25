@@ -17,6 +17,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="<%= getPrivateUrl('icon-32x32.png') %>">
     <link rel="icon" type="image/png" sizes="16x16" href="<%= getPrivateUrl('icon-16x16.png') %>">
     <link rel="mask-icon" href="<%= getPrivateUrl('safari-pinned-tab.svg') %>" color="#e4154b">
+
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
 
     <!-- Loading spinner -->
@@ -31,57 +32,67 @@
     <!-- Prevent Chrome/Edge from suggesting to translate the page -->
     <meta name="google" content="notranslate">
 
-    <!-- Font related CSS -->
+
     <style>
-        @import "<%= getPrivateUrl('fonts/source-sans-pro/300.css') %>";
-        @import "<%= getPrivateUrl('fonts/source-sans-pro/400.css') %>";
-        @import "<%= getPrivateUrl('fonts/source-sans-pro/600.css') %>";
+
+        @import "<%= getPrivateUrl('fonts/lato/300.css') %>";
+        @import "<%= getPrivateUrl('fonts/lato/300-italic.css') %>";
+        @import "<%= getPrivateUrl('fonts/lato/400.css') %>";
+        @import "<%= getPrivateUrl('fonts/lato/400-italic.css') %>";
+        @import "<%= getPrivateUrl('fonts/lato/700.css') %>";
+        @import "<%= getPrivateUrl('fonts/lato/700-italic.css') %>";
+
 
         body {
-            font-family: 'Source Sans Pro', 'Calibri', 'Arial', 'sans-serif';
+            font-family: 'Lato', 'Calibri', 'Arial', 'sans-serif';
+            line-height: 1.4em;
             font-weight: 300;
             margin: 0;
         }
 
-        /* TU-Graz style override */
+
         .light-theme{
             --dbp-override-background: white;
-            --dbp-override-content: black;
+            --dbp-override-content: #222120;
 
-            --dbp-override-primary: #245b78;
-            --dbp-override-secondary: black;
+            --dbp-override-primary: #3775c1;
+            --dbp-override-secondary: #222120;
             --dbp-override-secondary-surface: white;
-            --dbp-override-on-secondary-surface: black;
-            --dbp-override-secondary-surface-border-color: black;
+            --dbp-override-on-secondary-surface: #222120;
+            --dbp-override-secondary-surface-border-color: #222120;
 
-            --dbp-override-muted: #5c5856;
-            --dbp-override-accent: #e4154b;
-            --dbp-override-info: #245b78;
-            --dbp-override-success: #138800;
-            --dbp-override-warning: #af6405;
-            --dbp-override-warning-surface: #ffad4d;
-            --dbp-override-on-warning-surface: black;
-            --dbp-override-danger: #e4154b;
+            --dbp-override-muted: #767676;
+            --dbp-override-accent: #9e1e4d;
+            --dbp-override-info: #38808a;
+            --dbp-override-success: #338555;
+            --dbp-override-success-surface: #5ec189;
+            --dbp-override-on-success-surface: #222120;
+            --dbp-override-warning: #bf8808;
+            --dbp-override-warning-surface: #f9cc66;
+            --dbp-override-on-warning-surface: #222120;
+            --dbp-override-danger: #cc3232;
 
-            --dbp-override-border: 1px solid black;
+            --dbp-override-border: 1px solid #222120;
         }
 
         .dark-theme{
-            --dbp-override-background: #131313;
+            --dbp-override-background: #222120;
             --dbp-override-content: white;
 
-            --dbp-override-primary: #73899e;
+            --dbp-override-primary: #3775c1;
             --dbp-override-secondary: white;
-            --dbp-override-secondary-surface: #131313;
+            --dbp-override-secondary-surface: #222120;
             --dbp-override-on-secondary-surface: white;
             --dbp-override-secondary-surface-border-color: white;
 
-            --dbp-override-muted: #afaca7;
-            --dbp-override-accent: #e6597d;
-            --dbp-override-info: #73899e;
-            --dbp-override-success: #7CB872;
-            --dbp-override-warning: #ffad4d;
-            --dbp-override-danger: #e6597d;
+            --dbp-override-muted: #767676;
+            --dbp-override-accent: #C13F6F;
+            --dbp-override-info: #38808a;
+            --dbp-override-success: #222120;
+            --dbp-override-success-surface: #5ec189;
+            --dbp-override-on-success-surface: #222120;
+            --dbp-override-warning: #f9cc66;
+            --dbp-override-danger: #cc3232;
 
             --dbp-override-border: 1px solid white;
         }
@@ -312,7 +323,46 @@
             {"class": "phst-dark-theme", "icon": "star", "name": "PHST Dark Mode"},
             {"class": "med-light-theme", "icon": "plus", "name": "MED Light Mode"},
             {"class": "med-dark-theme", "icon": "plus", "name": "MED Dark Mode"}]'
+    html-overrides="global-override"
 ><dbp-loading-spinner></dbp-loading-spinner></<%= name %>>
+
+
+<template id="global-override">
+    <template id="<%= name %>">
+        <div slot="name">
+            <style>
+
+                .logo-dark, .light-theme .logo-dark, .dark-theme .logo-light{
+                    display: none;
+                }
+
+                .logo-light, .light-theme .logo-light, .dark-theme .logo-dark{
+                    display: block;
+                }
+            </style>
+            <img class="logo-light" style="height: 100px" src="<%= getPrivateUrl('dbp_logo_on_white.svg') %>" alt="Digital Blueprint - A University toolbox logo">
+            <img class="logo-dark" style="height: 100px" src="<%= getPrivateUrl('dbp_logo_on_black.svg') %>" alt="Digital Blueprint - A University toolbox logo">
+        </div>
+        <div slot="title" style="margin-top:40px;line-height: 23px;">
+            <span style="text-transform: uppercase;letter-spacing: 3px"><span style="font-weight: bold">Digital Blueprint</span> <br><span style="margin-left: 296px;font-size: 0.8em;">Playground</span></span>
+        </div>
+        <div slot="logo">
+            <style>
+                #main-logo {
+                    padding: 0 50px 0 0;
+                }
+            </style>
+            <div>
+                <a style="color: var(--dbp-content);" href="mailto:hello@digital-bluprint.com">
+                    <svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 9L12 12.5L17 9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17V7C2 5.89543 2.89543 5 4 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H4C2.89543 19 2 18.1046 2 17Z" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </template>
+</template>
 
 <!-- Error handling for too old browsers -->
 <script src="<%= getPrivateUrl('browser-check.js') %>" defer></script>

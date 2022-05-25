@@ -194,6 +194,10 @@ Dependencies:
                         dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
                     },
                     {
+                        src: await getPackagePath('@fontsource/lato', '*'),
+                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/lato')),
+                    },
+                    {
                         src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
                         dest: 'dist/' + (await getDistPath(pkg.name)),
                     },
