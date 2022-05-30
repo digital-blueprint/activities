@@ -25,7 +25,7 @@
   "license": "LGPL-2.1-or-later",
   "devDependencies": {
     "find-cache-dir": "^3.3.1",
-    "lerna": "^4.0.0",
+    "lerna": "^5.0.0",
     "selfsigned": "^2.0.0"
   }
 }
