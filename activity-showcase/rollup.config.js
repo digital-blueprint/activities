@@ -194,6 +194,10 @@ Dependencies:
                         dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
                     },
                     {
+                        src: await getPackagePath('@fontsource/nunito-sans', '*'),
+                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/nunito-sans')),
+                    },
+                    {
                         src: await getPackagePath('@fontsource/lato', '*'),
                         dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/lato')),
                     },
