@@ -66,13 +66,27 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             return r + r + g + g + b + b;
         });
 
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
         return result
             ? {
                   r: parseInt(result[1], 16),
                   g: parseInt(result[2], 16),
                   b: parseInt(result[3], 16),
               }
+            : null;
+    }
+
+    rgbStringToRgb(rgbString) {
+        rgbString = rgbString.replace("rgb(", "");
+        rgbString = rgbString.replace(")", "");
+        let result = rgbString.split(",");
+
+        return result
+            ? {
+                r: parseInt(result[0].trim(), 16),
+                g: parseInt(result[1].trim(), 16),
+                b: parseInt(result[2].trim(), 16),
+            }
             : null;
     }
 
@@ -95,12 +109,12 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
     checkWCAGLevel(ratio) {
         if (ratio >= 7) return '✅ AAA-level small text';
         if (ratio >= 4.5) return '☑ AA-level small text';
-        if (ratio >= 3) return '~ AA-level large text ' + ratio + ' should >= ' + 4.5;
+        if (ratio >= 3) return '~ AA-level large text ';
         else return '❌ ratio: ' + ratio + ', it should >= ' + 4.5;
     }
 
     getWCAGfromHex(hex1, hex2) {
-        if (!hex1 || !hex2) return '';
+        if (!hex1 || !hex2) return 'not calculable';
 
         hex1 = hex1 == 'black' ? '#000000' : hex1;
         hex1 = hex1 == 'white' ? '#ffffff' : hex1;
@@ -110,9 +124,15 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
         let rgb1 = this.hexToRgb(hex1);
         let rgb2 = this.hexToRgb(hex2);
 
+        if(hex1.includes("rgb(")) {
+            rgb1 = this.rgbStringToRgb(hex1);
+        }
 
+        if(hex2.includes("rgb(")) {
+            rgb2 = this.rgbStringToRgb(hex2);
+        }
 
-        if (!rgb1 || !rgb2) return '';
+        if (!rgb1 || !rgb2) return 'not calculable';
 
         let lum1 = this.luminance(rgb1.r, rgb1.g, rgb1.b);
         let lum2 = this.luminance(rgb2.r, rgb2.g, rgb2.b);
@@ -177,15 +197,31 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                 }
 
                 table {
-                    border-spacing: 30px;
                     margin-top: 30px;
+                    height: 1px;
+                    width: 100%;
+                    border-spacing: 0px;
+                } 
+                tr { height: 100%; }
+                td { height: 100%; }
+                td > div { 
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    padding: 0 10px;
                 }
+                thead tr th {
+                    border-bottom: var(--dbp-border);
+                    padding-bottom: 30px;
+                }
+
 
                 table tr td {
                     min-width: 140px;
-                    padding: 10px 20px;
-                    border: var(--border);
+                    padding: 20px 0px 20px 20px;
                 }
+                
+    
 
                 table tr td:first-child {
                     border: none;
@@ -194,7 +230,6 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
                 .additional-information {
                     min-width: unset;
-                    border: none;
                 }
 
                 .contrastChecker {
@@ -203,7 +238,17 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                     align-items: center;
                     padding-bottom: 50px;
                     margin-bottom: 50px;
-                    border-bottom: var(--dbp-border);
+                }
+                
+                .hover-me{
+                    background-color: var(--dbp-background); 
+                    color: var(--dbp-content); 
+                    border: var(--dbp-border);
+                }
+                
+                .hover-me:hover{
+                    color: var(--dbp-hover-color, var(--dbp-content));
+                    background-color: var(--dbp-hover-background-color);
                 }
             `,
         ];
@@ -211,18 +256,92 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
     render() {
         const docStyle = getComputedStyle(this);
+        let colorNames = ['content', 'primary', 'secondary', 'muted', 'accent', 'info', 'success', 'warning', 'danger'];
+        let colorsAndContrasts = {};
         const background = docStyle.getPropertyValue('--dbp-background');
-        const content = docStyle.getPropertyValue('--dbp-content');
-        const contentSurface = docStyle.getPropertyValue('--dbp-content-surface');
-        const onContentSurface = docStyle.getPropertyValue('--dpp-override-on-content-surface');
-        const backgroundContentContrast = this.getWCAGfromHex(background, content);
-        const contentSurfaceContrast = this.getWCAGfromHex(contentSurface, onContentSurface);
+
+        for(let name of colorNames) {
+            let colorObject = {};
+            let tmp;
+
+            colorObject.color = docStyle.getPropertyValue('--dbp-' + name);
+            colorObject.surface = (tmp = docStyle.getPropertyValue('--dbp-' + name + '-surface')) === "" ? colorObject.color : tmp;
+            colorObject.onSurface = (tmp = docStyle.getPropertyValue('--dbp-override-on-' + name + '-surface')) === "" && name !== 'content' ? colorsAndContrasts['content'].onSurface : name === 'content' ? background : tmp;
+            colorObject.surfaceBorderColor = (tmp = docStyle.getPropertyValue('--dbp-override-' + name + '-surface-border-color')) === "" ? colorObject.color : tmp;
+            colorObject.backgroundColorContrast = this.getWCAGfromHex(background, colorObject.color);
+            colorObject.backgroundSurfaceBorderContrast = this.getWCAGfromHex(background, colorObject.surfaceBorderColor);
+            colorObject.OnsurfaceSurfaceContrast =  this.getWCAGfromHex(colorObject.surface, colorObject.onSurface);
+
+            colorsAndContrasts[name] = colorObject;
+        }
+
+
+        const hoverBackgroundColor = docStyle.getPropertyValue('--dbp-override-hover-background-color');
+        const hoverColor = docStyle.getPropertyValue('--dbp-override-hover-color');
+        const hoverContrast=  this.getWCAGfromHex(hoverBackgroundColor, hoverColor);
+
+
 
         return html`
             <h2>Active Theme</h2>
             <p class="subheadline">Example Page for theme colors</p>
-            <a class="link">Example</a>
-            <a class="link-without-hover">Example</a>
+            <p>You can find here all theme colors listed with their contrast ratio to the given background, example buttons in the given theme color and a contrast checker.</p>
+            
+            <h3>Colors from active theme</h3>
+            <p>Reload page if you change the theme to get the new constrastratio & colornames. The contrast checks works only with hex colors and rgb colors(without alpha canal).</p>
+            <table>
+                <thead align="left">
+                    <tr>
+                        <th>CSS variable</th>
+                        <th>Color examples</th>
+                        <th>Color codes</th>
+                        <th>Contrast ratio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>--dbp-override-background</td>
+                        <td> <div style="background-color: var(--dbp-background); border: var(--dbp-border);"></div></td>
+                        <td class="additional-information">${background}</td>
+                        <td class="additional-information"> <br><br></td>
+                    </tr>
+                    
+                    ${colorNames.map((name) =>
+                        html`
+                            <tr>
+                                <td>--dbp-override-${name}</td>
+                                <td> <div style="background-color: var(--dbp-background); color: var(--dbp-${name});">--dbp-override-${name}</div></td>
+                                <td class="additional-information">${colorsAndContrasts[name].color}</td>
+                                <td class="additional-information">Contrast to background: <br>${colorsAndContrasts[name].backgroundColorContrast}</td>
+                            </tr>
+                            <tr>
+                                <td>--dbp-override-${name}-surface</td>
+                                <td> <div style="background-color: var(--dbp-${name}-surface); border: var(--dbp-border); border-color: ${colorsAndContrasts[name].surfaceBorderColor};"></div></td>
+                                <td class="additional-information">${colorsAndContrasts[name].surface}</td>
+                                <td class="additional-information">Contrast Border to background: <br>${colorsAndContrasts[name].backgroundSurfaceBorderContrast}</td>
+                            </tr>
+                            <tr>
+                                <td>--dbp-override-on-${name}-surface</td>
+                                <td> <div style="background-color: var(--dbp-${name}-surface); color: var(--dbp-on-${name}-surface); border: var(--dbp-border); border-color: ${colorsAndContrasts[name].surfaceBorderColor};">--dbp-on-override-content-${name}</div></td>
+                                <td class="additional-information">${colorsAndContrasts[name].onSurface}</td>
+                                <td class="additional-information">Contrast to surface: <br>${colorsAndContrasts[name].OnsurfaceSurfaceContrast}</td>
+                            </tr>
+                        `
+                    )}
+
+                    <tr>
+                        <td>--dbp-override-hover-background-color</td>
+                        <td> <div class="hover-me">hover me</div></td>
+                        <td class="additional-information">hover background color: ${hoverBackgroundColor ? hoverColor : "unset"}<br> hover color: ${hoverColor ? hoverColor : "unset"}</td>
+                        <td class="additional-information">Contrast of hover colors: <br> ${hoverContrast}</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            
+            <h3>Example buttons</h3>
+            <a class="link">A example link</a><br>
+            <a class="link-without-hover">A link without a hover effect</a>
             <br />
             <br />
             <button id="example" class="button is-primary" title="Example">primary</button>
@@ -236,8 +355,9 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             <button id="example" class="button is-success" title="Example">success</button>
 
             <button id="example" class="button is-info" title="Example">info</button>
-
-            <h3>Contrast Checker:</h3>
+            
+            
+               <h3>Contrast Checker</h3>
             <div class="contrastChecker">
                 <input
                     type="color"
@@ -256,66 +376,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
                 <div class="contrastCheckerOutput">${this.checkerLevel}</div>
             </div>
-
-            <div class="buttons">
-                <button
-                    id="toggleDarkMode"
-                    @click="${() => {
-                        this.toggleDarkMode();
-                    }}"
-                    class="button"
-                    title="Toggle Darkmode">
-                    Toggle Darkmode
-                </button>
-
-                <button
-                    id="changeToUniversityColors"
-                    @click="${() => {
-                        this.changeToUniversityColors();
-                    }}"
-                    class="button ${classMap({hidden: !this.dbpColors})}"
-                    title="university colors">
-                    University Colors
-                </button>
-
-                <button
-                    id="changeToDbpColors"
-                    @click="${() => {
-                        this.changeToDbpColors();
-                    }}"
-                    class="button ${classMap({hidden: this.dbpColors})}"
-                    title="dbp colors">
-                    dbp colors
-                </button>
-            </div>
-
-            <table>
-                <tr>
-                    <td>--dbp-override-background</td>
-                    <td style="background-color: var(--dbp-background); border: var(--dbp-border);"></td>
-                    <td class="additional-information">${background}</td>
-                    <td class="additional-information"></td>
-                </tr>
-                <tr>
-                    <td>--dbp-override-content</td>
-                    <td style="background-color: var(--dbp-background); color: var(--dbp-content); border: var(--dbp-border);">--dbp-override-content</td>
-                    <td class="additional-information">${content}</td>
-                    <td class="additional-information">${backgroundContentContrast}</td>
-                </tr>
-                <tr>
-                    <td>--dbp-override-content-surface</td>
-                    <td style="background-color: var(--dbp-content-surface); var(--dbp-border);"></td>
-                    <td class="additional-information">${contentSurface}</td>
-                    <td class="additional-information"></td>
-                </tr>
-                <tr>
-                    <td>--dbp-on-override-content-surface</td>
-                    <td style="background-color: var(--dbp-content-surface); color: var(--dbp-on-content-surface); var(--dbp-border);">--dbp-on-override-content-surface</td>
-                    <td class="additional-information">${onContentSurface}</td>
-                    <td class="additional-information">${contentSurfaceContrast}</td>
-                </tr>
-                
-            </table>
+       
         `;
     }
 }
