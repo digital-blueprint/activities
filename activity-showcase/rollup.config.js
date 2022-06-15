@@ -184,8 +184,8 @@ Dependencies:
                     {src: 'assets/favicons/*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
                     {src: 'assets/favicons/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
                     {src: 'assets/favicons/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
-                    {src: 'assets/favicons/site.webmanifest', dest: 'dist/'},
-                    {src: 'assets/favicons/browserconfig.xml', dest: 'dist/'},
+                    {src: 'assets/favicons/site.webmanifest', dest: 'dist'},
+                    {src: 'assets/favicons/browserconfig.xml', dest: 'dist'},
                     {src: 'assets/silent-check-sso.html', dest: 'dist'},
                     {
                         src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files/*'),
