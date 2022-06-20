@@ -314,8 +314,14 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                                 <td class="additional-information">Contrast to background: <br>${colorsAndContrasts[name].backgroundColorContrast}</td>
                             </tr>
                             <tr>
+                                <td>--dbp-override-${name}-surface-border-color</td>
+                                <td> <div style="border: var(--dbp-border); border-color: var(--dbp-${name}-surface-border-color);"></div></td>
+                                <td class="additional-information">${colorsAndContrasts[name].surfaceBorderColor}</td>
+                                <td class="additional-information">Contrast Border to background: <br>${colorsAndContrasts[name].backgroundSurfaceBorderContrast}</td>
+                            </tr>
+                            <tr>
                                 <td>--dbp-override-${name}-surface</td>
-                                <td> <div style="background-color: var(--dbp-${name}-surface); border: var(--dbp-border); border-color: ${colorsAndContrasts[name].surfaceBorderColor};"></div></td>
+                                <td> <div style="background-color: var(--dbp-${name}-surface); border: var(--dbp-border); border-color: var(--dbp-${name}-surface-border-color);"></div></td>
                                 <td class="additional-information">${colorsAndContrasts[name].surface}</td>
                                 <td class="additional-information">Contrast Border to background: <br>${colorsAndContrasts[name].backgroundSurfaceBorderContrast}</td>
                             </tr>
