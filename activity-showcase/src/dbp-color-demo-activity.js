@@ -287,7 +287,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             <p>You can find here all theme colors listed with their contrast ratio to the given background, example buttons in the given theme color and a contrast checker.</p>
             
             <h3>Colors from active theme</h3>
-            <p>Reload page if you change the theme to get the new constrastratio & colornames. The contrast checks works only with hex colors and rgb colors(without alpha canal).</p>
+            <p>Reload page if you change the theme to get the new constrastratio & colornames. The contrast checks works only with hex colors and rgb colors(without alpha channel).</p>
             <table>
                 <thead align="left">
                     <tr>
