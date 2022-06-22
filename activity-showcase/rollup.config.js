@@ -180,7 +180,6 @@ Dependencies:
                     {src: 'assets/*.metadata.json', dest: 'dist'},
                     {src: 'assets/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
                     {src: 'assets/htaccess-shared', dest: 'dist/shared/', rename: '.htaccess'},
-
                     {src: 'assets/favicons/*.png', dest: 'dist/' + (await getDistPath(pkg.name))},
                     {src: 'assets/favicons/*.svg', dest: 'dist/' + (await getDistPath(pkg.name))},
                     {src: 'assets/favicons/*.ico', dest: 'dist/' + (await getDistPath(pkg.name))},
@@ -194,10 +193,6 @@ Dependencies:
                     {
                         src: await getPackagePath('@fontsource/nunito-sans', '*'),
                         dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/nunito-sans')),
-                    },
-                    {
-                        src: await getPackagePath('@fontsource/lato', '*'),
-                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/lato')),
                     },
                     {
                         src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
