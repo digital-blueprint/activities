@@ -6,7 +6,7 @@ import {Icon} from '@dbp-toolkit/common';
 import metadata from './dbp-clipboard-management.metadata.json';
 import {Activity} from './activity.js';
 import {Clipboard} from '@dbp-toolkit/file-handling/src/clipboard';
-import {AdapterLitElement} from '@dbp-toolkit/provider/src/adapter-lit-element';
+import {AdapterLitElement} from '@dbp-toolkit/common';
 
 export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElement) {
     constructor() {
