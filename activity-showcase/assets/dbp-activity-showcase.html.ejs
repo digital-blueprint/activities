@@ -42,8 +42,14 @@
             line-height: 1.4em;
             font-weight: 400;
             margin: 0;
+            margin-top: 40px;
         }
 
+        @media (max-width: 768px) {
+            body{
+                margin-top: 0px;
+            }
+        }
 
         .dbp-light-theme{
             --dbp-override-background: white;
@@ -401,26 +407,24 @@
                     display: block;
                 }
             </style>
+            <div class="wrapper">
             <img class="logo-light" style="height: 100px" src="<%= getPrivateUrl('dbp_logo_on_white.svg') %>" alt="Digital Blueprint - A University toolbox logo">
             <img class="logo-dark" style="height: 100px" src="<%= getPrivateUrl('dbp_logo_on_black.svg') %>" alt="Digital Blueprint - A University toolbox logo">
-        </div>
-        <div slot="title" style="margin-top:40px;line-height: 23px;">
-            <span style="text-transform: uppercase;letter-spacing: 3px"><span style="font-weight: bold">Digital Blueprint</span> <br><span style="margin-left: 296px;font-size: 0.8em;">Playground</span></span>
-        </div>
-        <div slot="logo">
-            <style>
-                #main-logo {
-                    padding: 0 50px 0 0;
-                }
-            </style>
-            <div>
-                <a style="color: var(--dbp-content);" href="mailto:hello@digital-bluprint.com">
-                    <svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 9L12 12.5L17 9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 17V7C2 5.89543 2.89543 5 4 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H4C2.89543 19 2 18.1046 2 17Z" stroke="currentColor" stroke-width="1.5"/>
-                    </svg>
-                </a>
             </div>
+        </div>
+        <div slot="title" style="margin-top:40px;">
+            <span>digital blueprint<br>plaground</span>
+
+        </div>
+        <div slot="logo"  style="width: 100%;
+                    position: absolute;
+                    color: var(--dbp-override-background);
+                    background: var(--dbp-override-primary);
+                    left: 0px;
+                    top: 0px;
+                    text-align: center;
+                    padding: 10px 0;">
+           <a style="color: var(--dbp-override-background);" href="https://dbp-demo.tugraz.at/site/" target="_blank">Get demo account now!</a> &nbsp;&nbsp;&nbsp; <a href="mailto:hello@digital-blueprint.org" style="color: var(--dbp-override-background);">Install me</a>
         </div>
     </template>
 </template>
