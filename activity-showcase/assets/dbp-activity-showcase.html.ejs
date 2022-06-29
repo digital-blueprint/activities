@@ -45,7 +45,7 @@
         }
 
 
-        .light-theme{
+        .dbp-light-theme{
             --dbp-override-background: white;
             --dbp-override-content: #222120;
 
@@ -69,7 +69,7 @@
             --dbp-override-border: 1px solid #222120;
         }
 
-        .dark-theme{
+        .dbp-dark-theme{
             --dbp-override-background: #222120;
             --dbp-override-content: white;
 
@@ -91,6 +91,29 @@
             --dbp-override-border: 1px solid white;
 
         }
+
+         .dbp-dark-theme-2{
+             --dbp-override-background: #222120;
+             --dbp-override-content: white;
+
+             --dbp-override-primary: #3775c1;
+             --dbp-override-secondary: white;
+             --dbp-override-secondary-surface: #222120;
+             --dbp-override-on-secondary-surface: white;
+             --dbp-override-secondary-surface-border-color: white;
+
+             --dbp-override-muted: #767676;
+             --dbp-override-accent: #AE5576;
+             --dbp-override-info: #38808a;
+             --dbp-override-success: #5ec189;
+             --dbp-override-success-surface: #5ec189;
+             --dbp-override-on-success-surface: #222120;
+             --dbp-override-warning: #f9cc66;
+             --dbp-override-danger: #cc3232;
+
+             --dbp-override-border: 1px solid white;
+
+         }
 
         .tugraz-light {
             --dbp-override-background: white;
@@ -350,8 +373,9 @@
     build-url='<%= buildInfo.url %>'
     build-time='<%= buildInfo.time %>'
     env='<%= buildInfo.env %>'
-    themes='[{"class": "light-theme", "icon": "sun", "name": "Light Mode"},
-            {"class": "dark-theme", "icon": "night", "name": "Dark Mode"},
+    themes='[{"class": "dbp-light-theme", "icon": "sun", "name": "dbp light mode"},
+            {"class": "dbp-dark-theme", "icon": "night", "name": "dbp dark mode"},
+            {"class": "dbp-dark-theme-2", "icon": "night", "name": "dbp dark mode 2"},
             {"class": "tugraz-light", "icon": "bulb", "name": "TU Graz light Mode"},
             {"class": "tugraz-dark", "icon": "night", "name": "TU Graz dark Mode"},
             {"class": "sweets-theme", "icon": "candy", "name": "Candy Mode"},
