@@ -286,6 +286,24 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             <p class="subheadline">Example Page for theme colors</p>
             <p>You can find here all theme colors listed with their contrast ratio to the given background, example buttons in the given theme color and a contrast checker.</p>
             
+            <h3> Accent colors</h3>
+            original:
+            <div style="height: 50px; width: 545px; background-color: #9e1e4d; margin-bottom: 5px"></div>
+
+            minimal contrast erfüllend:
+            <div style="width: 100%; display:flex; gap: 5px;">
+            <div style="height: 50px; width: 50px; background-color: #C13F6F;"></div>
+            <div style="height: 50px; width: 50px; background-color: #AE5576;"></div>
+            <div style="height: 50px; width: 50px; background-color: #b35074;"></div>
+            <div style="height: 50px; width: 50px; background-color: #D93974;"></div>
+            <div style="height: 50px; width: 50px; background-color: #BC3A62;"></div>
+            <div style="height: 50px; width: 50px; background-color: #CC1D62;"></div>
+            <div style="height: 50px; width: 50px; background-color: #B73F67;"></div>
+            <div style="height: 50px; width: 50px; background-color: #9E4E9B;"></div>
+            <div style="height: 50px; width: 50px; background-color: #9E5E75;"></div>
+            <div style="height: 50px; width: 50px; background-color: #B84871;"></div>
+            </div>
+            
             <h3>Colors from active theme</h3>
             <p>Reload page if you change the theme to get the new constrastratio & colornames. The contrast checks works only with hex colors and rgb colors(without alpha channel).</p>
             <table>
