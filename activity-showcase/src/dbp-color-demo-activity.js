@@ -345,7 +345,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
                             </tr>
                             <tr>
                                 <td>--dbp-override-on-${name}-surface</td>
-                                <td> <div style="background-color: var(--dbp-${name}-surface); color: var(--dbp-on-${name}-surface); border: var(--dbp-border); border-color: ${colorsAndContrasts[name].surfaceBorderColor};">--dbp-on-override-content-${name}</div></td>
+                                <td> <div style="background-color: var(--dbp-${name}-surface); color: var(--dbp-on-${name}-surface); border: var(--dbp-border); border-color: var(--dbp-${name}-surface-border-color);">--dbp-on-override-content-${name}</div></td>
                                 <td class="additional-information">${colorsAndContrasts[name].onSurface}</td>
                                 <td class="additional-information">Contrast to surface: <br>${colorsAndContrasts[name].OnsurfaceSurfaceContrast}</td>
                             </tr>
