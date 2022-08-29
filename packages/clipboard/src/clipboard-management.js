@@ -23,7 +23,6 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
         this.authInfo = '';
     }
 
-    
     static get scopedElements() {
         return {
             'dbp-icon': Icon,
