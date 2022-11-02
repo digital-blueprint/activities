@@ -28,7 +28,7 @@
         "karma-mocha": "^2.0.1",
         "mocha": "^10.0.0",
         "prettier": "^2.5.1",
-        "rollup": "^2.18.1",
+        "rollup": "^3.2.1",
         "rollup-plugin-copy": "^3.3.0",
         "rollup-plugin-delete": "^2.0.0",
         "rollup-plugin-emit-ejs": "^3.1.0",
@@ -56,15 +56,15 @@
         "universal-router": "^9.0.1"
     },
     "scripts": {
-        "build": "rollup -c",
+        "build": "rollup --bundleConfigAsCjs -c",
         "i18next": "i18next-scanner",
         "format": "yarn run format:eslint && yarn run format:prettier",
         "format:eslint": "eslint \"**/*.{js,ts}\" --fix",
         "format:prettier": "prettier \"**/*.{js,json,ts}\" --write",
-        "watch": "rollup -c --watch",
+        "watch": "rollup --bundleConfigAsCjs -c --watch",
         "watch-local": "yarn run watch",
-        "watch-full": "rollup -c --watch --environment FORCE_FULL",
-        "watch-bs": "rollup -c --watch --environment APP_ENV:bs",
+        "watch-full": "rollup --bundleConfigAsCjs -c --watch --environment FORCE_FULL",
+        "watch-bs": "rollup --bundleConfigAsCjs -c --watch --environment APP_ENV:bs",
         "lint": "eslint ."
     }
 }
