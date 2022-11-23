@@ -1,0 +1,18 @@
+{
+  "element": "dbp-playground-activity",
+  "module_src": "dbp-playground-activity.js",
+  "routing_name": "playground",
+  "name": {
+    "de": "Spielwiese",
+    "en": "Playground"
+  },
+  "short_name": {
+    "de": "Spielwiese",
+    "en": "Playground"
+  },
+  "description": {
+    "de": "Spielwiese",
+    "en": "Playground to play around"
+  },
+  "subscribe": "lang,entryPointUrl"
+}
