@@ -141,6 +141,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendUploadFileRequest() {
+        console.log()
         let formData = new FormData();
         formData.append('file', this.fileToUpload);
         formData.append('prefix', exampleConfig.prefix);
@@ -361,8 +362,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         </dbp-button>
                         <dbp-modal
                                 id="ask-upload"
-                                title="huiii"
-                                modal-id="yeahhh">
+                                title=""
+                                modal-id="upload-confirmation">
                             <div slot="content">
                                 <div>
                                     Are you sure you want to upload this file?
