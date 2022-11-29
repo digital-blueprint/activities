@@ -530,11 +530,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 <div id="add-file-section">
                     
                     <div class="row">
-                        Datei:
                         <dbp-button @click="${() => {
                             this._('#file-source').setAttribute('dialog-open', '');}}"
                         >
-                            Browse
+                            Select a file ...
                         </dbp-button> 
                         <span class="ml-1">
                             ${this.fileToUpload.name}
