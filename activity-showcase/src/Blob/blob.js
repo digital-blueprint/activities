@@ -2,17 +2,14 @@ import {createInstance} from './i18n';
 import {css, html} from 'lit';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonStyles from '@dbp-toolkit/common/styles';
-import {LoadingButton, Icon, IconButton, Modal} from '@dbp-toolkit/common';
+import {LoadingButton, Icon, IconButton, Modal, MiniSpinner} from '@dbp-toolkit/common';
 import DBPLitElement from "@dbp-toolkit/common/dbp-lit-element";
 import {FileSource} from "@dbp-toolkit/file-handling";
 import {classMap} from 'lit/directives/class-map.js';
 import {send} from '@dbp-toolkit/common/notification';
 
 
-let exampleConfig = {
-    'bucket_id': '1234',
-    'prefix': 'playground'
-};
+
 
 export class Blob extends ScopedElementsMixin(DBPLitElement) {
     constructor() {
@@ -24,12 +21,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         this.fileToUpload = {};
         this.auth = {};
         this._initialFetchDone = false;
+        this.loading = false;
 
         this.uploadedFilesNumber = 0;
         this.uploadedFiles = [];
 
-        this.bucket_id = exampleConfig.bucket_id;
-        this.prefix = exampleConfig.prefix;
+        this.bucket_id = '';
+        this.prefix = '';
     }
 
     static get scopedElements() {
@@ -39,6 +37,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             'dbp-icon-button': IconButton,
             'dbp-file-source': FileSource,
             'dbp-modal': Modal,
+            'dbp-mini-spinner': MiniSpinner
         };
     }
 
@@ -83,6 +82,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             switch (propName) {
                 case "auth":
                     this._updateAuth();
+                    break;
+                case "prefix":
+                    console.log("prefix");
+                    if (this.isLoggedIn() && !this.isLoading()
+                        && this._initialFetchDone
+                        && this.bucket_id !== '') {
+                            this.getFiles();
+                    }
                     break;
             }
         });
@@ -164,6 +171,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async getFiles() {
         this.initialRequestsLoading = !this._initialFetchDone;
+        this.loading = true;
         try {
             let response = await this.sendGetFilesRequest();
             let responseBody = await response.json();
@@ -177,6 +185,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             this.isFileSelected = false;
             this.initialRequestsLoading = false;
             this._initialFetchDone = true;
+            this.loading = false;
         }
     }
 
@@ -262,12 +271,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         return list;
     }
 
-    changePrefix() {
-        if (this._("#prefix-input")) {
-            this.prefix = this._("#prefix-input").value;
-            this.getFiles();
-        }
-    }
 
     static get styles() {
         // language=css
@@ -307,36 +310,26 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     render() {
 
-        if (this.isLoggedIn() && !this.isLoading() && !this._initialFetchDone && !this.initialRequestsLoading) {
-            this.getFiles();
+        if (this.isLoggedIn() && !this.isLoading()
+            && !this._initialFetchDone
+            && !this.initialRequestsLoading
+            && this.bucket_id !== '') {
+                console.log("tjo");
+                this.getFiles();
         }
 
         return html`
             <div>
                 <div class="section-titles">
-                    Prefix
-                </div>
-                <div class="section-prefix">
-                    <div class="row">
-                        <input
-                            type="text"
-                            class="input"
-                            name="prefix-input"
-                            id="prefix-input"
-                            value="${this.prefix}"
-                        />
-                        <dbp-icon-button
-                            icon-name="checkmark-circle"
-                            title="Enter input"
-                            @click="${this.changePrefix}"
-                        ></dbp-icon-button>
-                    </div>
-                </div>
-                
-                <div class="section-titles">
                     Dateien (${this.uploadedFilesNumber}) in ${this.prefix}
                 </div>
-                <div id="file-list">
+                <dbp-mini-spinner
+                        class="spinner ${classMap({
+                            hidden: this.loading === false,
+                        })}"></dbp-mini-spinner>
+                <div id="file-list" class="${classMap({
+                    hidden: this.loading === true,
+                })}">
                     ${this.uploadedFilesNumber <= 0 ?
                         html`Es wurden noch keine Dateien hinzugefügt.` :
                         this.getFileList() }
