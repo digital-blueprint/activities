@@ -28,6 +28,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         this.bucket_id = '';
         this.prefix = '';
+
+        this.activeFileId = '';
+        this.activeFileName = '';
     }
 
     static get scopedElements() {
@@ -50,9 +53,12 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             isFileSelected: {type: Boolean, attribute: false},
             uploadedFilesNumber: {type: Number, attribute: false},
             initialRequestsLoading: { type: Boolean, attribute: false },
+            loading: { type: Boolean, attribute: false },
 
             bucket_id: {type: String, attribute: 'bucket-id'},
             prefix: {type: String, attribute: 'prefix'},
+            activeFileId: {type: String, attribute: false},
+            activeFileName: {type: String, attribute: false},
         };
     }
 
@@ -84,7 +90,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     this._updateAuth();
                     break;
                 case "prefix":
-                    console.log("prefix");
                     if (this.isLoggedIn() && !this.isLoading()
                         && this._initialFetchDone
                         && this.bucket_id !== '') {
@@ -123,7 +128,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         this.fileToUpload = file;
     }
 
-    deleteFileToUpload() {
+    removeFileToUpload() {
         this.fileToUpload = {};
         this.isFileSelected = false;
     }
@@ -141,8 +146,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 });
             }
         } finally {
-            this.fileToUpload = {};
-            this.isFileSelected = false;
+            if (this._("#ask-upload-dialogue")) {
+                this._("#ask-upload-dialogue").close();
+            }
+            this.removeFileToUpload();
             this.getFiles();
         }
     }
@@ -172,6 +179,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     async getFiles() {
         this.initialRequestsLoading = !this._initialFetchDone;
         this.loading = true;
+
         try {
             let response = await this.sendGetFilesRequest();
             let responseBody = await response.json();
@@ -186,6 +194,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             this.initialRequestsLoading = false;
             this._initialFetchDone = true;
             this.loading = false;
+
         }
     }
 
@@ -204,10 +213,87 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + params, options);
     }
 
+    async sendPutFile() {
+        this.loading = true;
+
+        try {
+            let response = await this.sendPutFileRequest();
+            let responseBody = await response.json();
+            if (responseBody !== undefined && response.status === 201) {
+                send({
+                    "summary": "Rename was successful",
+                    "body": "You have successfully renamed a file :)",
+                    "type": "success",
+                    "timeout": 5,
+                });
+            }
+        } finally {
+            this.closeEditFileDialogue();
+            this.getFiles();
+        }
+    }
+
+    async sendPutFileRequest() {
+        let name = this.activeFileName;
+        if (this._('#to-rename-file-name-input')) {
+            name = this._('#to-rename-file-name-input').value;
+        }
+
+        let data = {'fileName': name};
+
+        const options = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/ld+json',
+                Authorization: "Bearer " + this.auth.token
+            },
+            body: JSON.stringify(data),
+        };
+        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + this.activeFileId, options);
+
+    }
+
+    openDeleteFileDialogue(id, fileName) {
+        this.activeFileId = id;
+        this.activeFileName = fileName;
+        if (this._('#ask-delete-dialogue')) {
+            this._('#ask-delete-dialogue').open();
+        }
+    }
+
+    closeDeleteFileDialogue() {
+        this.activeFileId = '';
+        this.activeFileName = '';
+        if (this._('#ask-delete-dialogue')) {
+            this._('#ask-delete-dialogue').close();
+        }
+    }
+
+    openEditFileDialogue(id, fileName) {
+        this.activeFileId = id;
+        this.activeFileName = fileName;
+        if (this._('#edit-dialogue')) {
+            this._('#edit-dialogue').open();
+        }
+        if (this._('#to-rename-file-name-input')) {
+            this._('#to-rename-file-name-input').value = fileName;
+        }
+    }
+
+    closeEditFileDialogue() {
+        this.activeFileId = '';
+        this.activeFileName = '';
+        if (this._('#edit-dialogue')) {
+            this._('#edit-dialogue').close();
+        }
+    }
+
     async deleteFile(id) {
+        this.loading = true;
+
+        this.closeDeleteFileDialogue();
         try {
             let response = await this.sendDeleteFileRequest(id);
-            console.log(response);
             if (response.status === 204) {
                 send({
                     "summary": "File deleted",
@@ -216,6 +302,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     "timeout": 5,
                 });
             }
+            //TODO add error responses
         } finally {
             this.getFiles();
         }
@@ -252,23 +339,47 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     getFileList(){
         let list = [];
-        console.log(this.uploadedFiles);
         for (let i = 0; i < this.uploadedFilesNumber; i ++) {
             list[i] = html`
-                <div class="row"> 
-                    <a class="file_link" href="${this.uploadedFiles[i].contentUrl}">
-                        ${this.uploadedFiles[i].fileName}
+                <div class="row file-row"> 
+                    <a class="file-link" href="${this.uploadedFiles[i].contentUrl}">
+                        <span><strong>${this.uploadedFiles[i].fileName}</strong></span>
+                        <span class="small-text">${this.dateTimeFormatter(this.uploadedFiles[i].dateCreated)}</span>
                     </a>
                     <div class="button-group">
                         <dbp-icon-button
+                                icon-name="pencil"
+                                title="edit"
+                                @click="${() => {
+                                    this.openEditFileDialogue(
+                                            this.uploadedFiles[i].identifier,
+                                            this.uploadedFiles[i].fileName)
+                                    ;}}"
+                        ></dbp-icon-button>
+                        <dbp-icon-button
                                 icon-name="trash"
                                 title="delete"
-                                @click="${() => {this.deleteFile(this.uploadedFiles[i].identifier);}}"
+                                @click="${() => {
+                                    this.openDeleteFileDialogue(
+                                        this.uploadedFiles[i].identifier, 
+                                        this.uploadedFiles[i].fileName)
+                                    ;}}"
                         ></dbp-icon-button>
                     </div>
                 </div>`;
         }
         return list;
+    }
+
+    dateTimeFormatter(dateTime) {
+        const d = Date.parse(dateTime);
+        const timestamp = new Date(d);
+        const year = timestamp.getFullYear();
+        const month = ('0' + (timestamp.getMonth() + 1)).slice(-2);
+        const date = ('0' + timestamp.getDate()).slice(-2);
+        const hours = ('0' + timestamp.getHours()).slice(-2);
+        const minutes = ('0' + timestamp.getMinutes()).slice(-2);
+        return date + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
     }
 
 
@@ -305,6 +416,38 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 display: flex;
                 justify-content: space-between;
             }
+            
+            .file-link{
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                line-height: 1em;
+            }
+            
+            .file-row{
+                display: flex;
+                gap: 1em;
+                align-items: center;
+                min-height: 40px;
+                justify-content: space-between;
+                max-width: 500px;
+                padding-bottom: 1rem;
+            }
+            
+            .file-link span {
+                white-space: nowrap;
+                max-width: 280px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            @media only screen and (orientation: portrait) and (max-width: 768px) {
+
+                .file-link span {
+                    max-width: 180px;
+                }
+
+            }
         `;
     }
 
@@ -314,7 +457,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             && !this._initialFetchDone
             && !this.initialRequestsLoading
             && this.bucket_id !== '') {
-                console.log("tjo");
                 this.getFiles();
         }
 
@@ -325,15 +467,63 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 </div>
                 <dbp-mini-spinner
                         class="spinner ${classMap({
-                            hidden: this.loading === false,
+                            hidden: !this.loading,
                         })}"></dbp-mini-spinner>
                 <div id="file-list" class="${classMap({
-                    hidden: this.loading === true,
+                    hidden: this.loading,
                 })}">
                     ${this.uploadedFilesNumber <= 0 ?
                         html`Es wurden noch keine Dateien hinzugefügt.` :
                         this.getFileList() }
                 </div>
+                <dbp-modal
+                        id="ask-delete-dialogue"
+                        title=""
+                        modal-id="delete-confirmation">
+                    <div slot="content">
+                        <div>
+                            Are you sure you want to delete the file <strong>${this.activeFileName}</strong>?
+                        </div>
+
+                    </div>
+                    <div slot="footer">
+                        <div class="footer-btn-row">
+                            <dbp-button @click="${() => {this._("#ask-delete-dialogue").close();}}">
+                                Cancel
+                            </dbp-button>
+                            <dbp-button type="is-primary" @click="${() => this.deleteFile(this.activeFileId)}">
+                                Delete
+                            </dbp-button>
+                        </div>
+                    </div>
+                </dbp-modal>
+                <dbp-modal
+                        id="edit-dialogue"
+                        title=""
+                        modal-id="edit-dialogue">
+                    <div slot="content">
+                        <div>
+                            Save as:
+                            <input
+                                    type="text"
+                                    class="input"
+                                    name="toRenameFileName"
+                                    id="to-rename-file-name-input"
+                                    value="${this.activeFileName}"
+                            />                        </div>
+
+                    </div>
+                    <div slot="footer">
+                        <div class="footer-btn-row">
+                            <dbp-button @click="${() => {this._("#edit-dialogue").close();}}">
+                                Cancel
+                            </dbp-button>
+                            <dbp-button type="is-primary" @click="${() => this.sendPutFile()}">
+                                Save
+                            </dbp-button>
+                        </div>
+                    </div>
+                </dbp-modal>
                 <div class="section-titles">
                     Neue Datei hinzufügen
                 </div>
@@ -353,7 +543,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                             <dbp-icon-button
                                     icon-name="trash"
                                     title="delete"
-                                    @click="${this.deleteFileToUpload}"
+                                    @click="${this.removeFileToUpload}"
                             ></dbp-icon-button>
                         </div>
                      
@@ -381,11 +571,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
                     </div>
                     <div class="row ${classMap({hidden: !this.isFileSelected})}">
-                        <dbp-button @click="${()=>{this._("#ask-upload").open();}}">
+                        <dbp-button @click="${()=>{this._("#ask-upload-dialogue").open();}}">
                             Upload
                         </dbp-button>
                         <dbp-modal
-                                id="ask-upload"
+                                id="ask-upload-dialogue"
                                 title=""
                                 modal-id="upload-confirmation">
                             <div slot="content">
@@ -396,7 +586,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                             </div>
                             <div slot="footer">
                                 <div class="footer-btn-row">
-                                    <dbp-button @click="${() => {this._("#ask-upload").close();}}">
+                                    <dbp-button @click="${() => {this._("#ask-upload-dialogue").close();}}">
                                         Cancel
                                     </dbp-button>
                                     <dbp-button type="is-primary" @click="${this.uploadFile}">
