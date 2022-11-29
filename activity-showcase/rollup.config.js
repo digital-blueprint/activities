@@ -214,6 +214,14 @@ Dependencies:
                             'dist/' +
                             (await getDistPath('@dbp-toolkit/file-handling', 'tabulator-tables')),
                     },
+                    {
+                        src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
+                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
+                    },
+                    {
+                        src: await getPackagePath('@tugraz/web-components', 'src/spinner.js'),
+                        dest: 'dist/' + (await getDistPath(pkg.name)), rename: 'tug_spinner.js'
+                    },
                 ],
             }),
             useBabel &&

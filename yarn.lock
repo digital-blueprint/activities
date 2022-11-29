@@ -2176,6 +2176,21 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
+"@tugraz/font-source-sans-pro@^0.2.4":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@tugraz/font-source-sans-pro/-/font-source-sans-pro-0.2.4.tgz#896ab2b381d389ff7597b9528dd9fd95f97ef13e"
+  integrity sha512-PqYTTtb3/Wu3zVFLYvuu1nEjfeAjvLSnknSfA5gv153WXmXtSVLOTmvPiiy3ZRERBoUv33jL7VwK5QcDRI3V8g==
+
+"@tugraz/web-components@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@tugraz/web-components/-/web-components-0.3.6.tgz#884299230332ed0b584fe05ed57c98d79af2260f"
+  integrity sha512-yCmVI21trViZaJnvyIydXv8cxf6OaYiopWKwEwpCaBGHjvoVQGXV9f2YILDAmsG3QFelup9qyjYluQ48TLWeFw==
+  dependencies:
+    "@dbp-toolkit/common" "^0.3.4"
+    "@open-wc/scoped-elements" "^2.1.0"
+    i18next "^21.4.2"
+    lit "^2.0.0"
+
 "@types/chai@^4.2.12":
   version "4.3.4"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.3.4.tgz#e913e8175db8307d78b4e8fa690408ba6b65dee4"
@@ -5123,6 +5138,13 @@ i18next-parser@^7.0.0:
     vinyl "~3.0.0"
     vinyl-fs "^3.0.2"
     vue-template-compiler "^2.6.11"
+
+i18next@^21.4.2:
+  version "21.10.0"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-21.10.0.tgz#85429af55fdca4858345d0e16b584ec29520197d"
+  integrity sha512-YeuIBmFsGjUfO3qBmMOc0rQaun4mIpGKET5WDwvu8lU7gvwpcariZLNtL0Fzj+zazcHUrlXHiptcFhBMFaxzfg==
+  dependencies:
+    "@babel/runtime" "^7.17.2"
 
 i18next@^22.0.0, i18next@^22.0.4:
   version "22.0.6"
