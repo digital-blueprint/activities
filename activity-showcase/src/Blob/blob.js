@@ -27,6 +27,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         this.uploadedFilesNumber = 0;
         this.uploadedFiles = [];
+
+        this.bucket_id = exampleConfig.bucket_id;
+        this.prefix = exampleConfig.prefix;
     }
 
     static get scopedElements() {
@@ -49,6 +52,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             uploadedFilesNumber: {type: Number, attribute: false},
             initialRequestsLoading: { type: Boolean, attribute: false },
 
+            bucket_id: {type: String, attribute: 'bucket-id'},
+            prefix: {type: String, attribute: 'prefix'},
         };
     }
 
@@ -106,14 +111,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     fileSelected(event) {
-        console.log(event.detail.file);
         let file = event.detail.file;
-        console.log(file);
         this.isFileSelected = true;
         this.fileToUpload = file;
-
-        console.log(this.fileToUpload);
-
     }
 
     deleteFileToUpload() {
@@ -141,12 +141,16 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendUploadFileRequest() {
-        console.log()
+        let name = this.fileToUpload.name;
+        if (this._('#to-upload-file-name-input')) {
+            name = this._('#to-upload-file-name-input').value;
+        }
+
         let formData = new FormData();
         formData.append('file', this.fileToUpload);
-        formData.append('prefix', exampleConfig.prefix);
-        formData.append('fileName', this.fileToUpload.name);
-        formData.append('bucketID', exampleConfig.bucket_id);
+        formData.append('prefix', this.prefix);
+        formData.append('fileName', name);
+        formData.append('bucketID', this.bucket_id);
 
         const options = {
             method: 'POST',
@@ -178,8 +182,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async sendGetFilesRequest() {
         let params = new URLSearchParams({
-            bucketID: exampleConfig.bucket_id,
-            prefix: exampleConfig.prefix,
+            bucketID: this.bucket_id,
+            prefix: this.prefix,
         });
         const options = {
             method: 'GET',
@@ -258,6 +262,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         return list;
     }
 
+    changePrefix() {
+        if (this._("#prefix-input")) {
+            this.prefix = this._("#prefix-input").value;
+            this.getFiles();
+        }
+    }
+
     static get styles() {
         // language=css
         return css`
@@ -303,7 +314,27 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         return html`
             <div>
                 <div class="section-titles">
-                    Dateien (${this.uploadedFilesNumber})
+                    Prefix
+                </div>
+                <div class="section-prefix">
+                    <div class="row">
+                        <input
+                            type="text"
+                            class="input"
+                            name="prefix-input"
+                            id="prefix-input"
+                            value="${this.prefix}"
+                        />
+                        <dbp-icon-button
+                            icon-name="checkmark-circle"
+                            title="Enter input"
+                            @click="${this.changePrefix}"
+                        ></dbp-icon-button>
+                    </div>
+                </div>
+                
+                <div class="section-titles">
+                    Dateien (${this.uploadedFilesNumber}) in ${this.prefix}
                 </div>
                 <div id="file-list">
                     ${this.uploadedFilesNumber <= 0 ?
