@@ -144,6 +144,34 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     "type": "success",
                     "timeout": 5,
                 });
+            } else if (response.status === 400) {
+                send({
+                    "summary": "Invalid Input",
+                    "body": "Invalid Input",
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            }  else if (response.status === 403) {
+                send({
+                    "summary": "Signature failed",
+                    "body": "Signature missing",
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            }else if (response.status === 422) {
+                send({
+                    "summary": "Invalid Input",
+                    "body": "Additional metadata is wron",
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else {
+                send({
+                    "summary": "Something went wrong!",
+                    "body": "Something went wrong.",
+                    "type": "danger",
+                    "timeout": 5,
+                });
             }
         } finally {
             if (this._("#ask-upload-dialogue")) {
@@ -187,7 +215,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         try {
             let response = await this.sendGetFilesRequest();
-            console.log("response", response);
             let responseBody = await response.json();
 
             if (responseBody !== undefined && response.status === 200) {
@@ -227,11 +254,39 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         try {
             let response = await this.sendPutFileRequest();
             let responseBody = await response.json();
-            if (responseBody !== undefined && response.status === 201) {
+            if (responseBody !== undefined && response.status === 200) {
                 send({
                     "summary": "Rename was successful",
                     "body": "You have successfully renamed a file :)",
                     "type": "success",
+                    "timeout": 5,
+                });
+            } else if (response.status === 404) {
+                send({
+                    "summary": "File not found",
+                    "body": "Requested file doesn't exists (anymore)",
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else if (response.status === 400) {
+                send({
+                    "summary": "Invalid input",
+                    "body": "Additional Data is wrong.",
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else if (response.status === 422) {
+                send({
+                    "summary": "Invalid input",
+                    "body": "Additional Data is wrong.",
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else {
+                send({
+                    "summary": "Something went wrong!",
+                    "body": "Something went wrong.",
+                    "type": "danger",
                     "timeout": 5,
                 });
             }
@@ -314,10 +369,24 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     "type": "success",
                     "timeout": 5,
                 });
+            } else if (response.status === 404) {
+                send({
+                    "summary": "File already deleted",
+                    "body": "This file is already deleted!",
+                    "type": "warning",
+                    "timeout": 5,
+                });
+            } else {
+                send({
+                    "summary": "Something went wrong!",
+                    "body": "Something went wrong.",
+                    "type": "danger",
+                    "timeout": 5,
+                });
             }
-            //TODO add error responses
+
         } finally {
-            this.getFiles();
+        this.getFiles();
         }
     }
 
