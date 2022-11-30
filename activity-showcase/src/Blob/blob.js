@@ -155,6 +155,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendUploadFileRequest() {
+        let params = new URLSearchParams({
+            bucketID: this.bucket_id,
+            creationTime: new Date().toISOString(),
+        });
         let name = this.fileToUpload.name;
         if (this._('#to-upload-file-name-input')) {
             name = this._('#to-upload-file-name-input').value;
@@ -169,11 +173,12 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         const options = {
             method: 'POST',
             headers: {
-                Authorization: "Bearer " + this.auth.token
+                Authorization: "Bearer " + this.auth.token,
+                'X-Dbp-Signature': 'test',
             },
             body: formData,
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files', options);
+        return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + params, options);
     }
 
     async getFiles() {
@@ -182,6 +187,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         try {
             let response = await this.sendGetFilesRequest();
+            console.log("response", response);
             let responseBody = await response.json();
 
             if (responseBody !== undefined && response.status === 200) {
@@ -201,13 +207,15 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     async sendGetFilesRequest() {
         let params = new URLSearchParams({
             bucketID: this.bucket_id,
+            creationTime: new Date().toISOString(),
             prefix: this.prefix,
         });
         const options = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + this.auth.token
+                Authorization: "Bearer " + this.auth.token,
+                'X-Dbp-Signature': 'test',
             },
         };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + params, options);
@@ -234,6 +242,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendPutFileRequest() {
+        let params = new URLSearchParams({
+            bucketID: this.bucket_id,
+            creationTime: new Date().toISOString(),
+        });
         let name = this.activeFileName;
         if (this._('#to-rename-file-name-input')) {
             name = this._('#to-rename-file-name-input').value;
@@ -245,11 +257,12 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + this.auth.token
+                Authorization: "Bearer " + this.auth.token,
+                'X-Dbp-Signature': 'test',
             },
             body: JSON.stringify(data),
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + this.activeFileId, options);
+        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + this.activeFileId + '?' + params, options);
 
     }
 
@@ -309,14 +322,19 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendDeleteFileRequest(id) {
+        let params = new URLSearchParams({
+            bucketID: this.bucket_id,
+            creationTime: new Date().toISOString(),
+        });
 
         const options = {
             method: 'DELETE',
             headers: {
-                Authorization: "Bearer " + this.auth.token
+                Authorization: "Bearer " + this.auth.token,
+                'X-Dbp-Signature': 'test',
             },
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id, options);
+        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + params, options);
     }
 
     /**
