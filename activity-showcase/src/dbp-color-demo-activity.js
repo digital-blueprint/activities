@@ -274,7 +274,6 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             colorsAndContrasts[name] = colorObject;
         }
 
-
         const hoverBackgroundColor = docStyle.getPropertyValue('--dbp-override-hover-background-color');
         const hoverColor = docStyle.getPropertyValue('--dbp-override-hover-color');
         const hoverContrast=  this.getWCAGfromHex(hoverBackgroundColor, hoverColor);
