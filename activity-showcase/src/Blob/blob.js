@@ -566,7 +566,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 <dbp-modal
                         id="ask-delete-dialogue"
                         title=""
-                        modal-id="delete-confirmation">
+                        modal-id="delete-confirmation"
+                >
                     <div slot="content">
                         <div>
                             Are you sure you want to delete the file <strong>${this.activeFileName}</strong>?
