@@ -215,6 +215,12 @@ Dependencies:
                             (await getDistPath('@dbp-toolkit/file-handling', 'tabulator-tables')),
                     },
                     {
+                        src: await getPackagePath('tabulator-tables', 'dist/css'),
+                        dest:
+                            'dist/' +
+                            (await getDistPath('@dbp-toolkit/tabulator-table', 'tabulator-tables')),
+                    },
+                    {
                         src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
                         dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
                     },

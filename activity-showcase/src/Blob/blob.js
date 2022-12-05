@@ -7,6 +7,8 @@ import DBPLitElement from "@dbp-toolkit/common/dbp-lit-element";
 import {FileSource} from "@dbp-toolkit/file-handling";
 import {classMap} from 'lit/directives/class-map.js';
 import {send} from '@dbp-toolkit/common/notification';
+import {TabulatorTable} from "@dbp-toolkit/tabulator-table";
+import {humanFileSize} from "@dbp-toolkit/common/i18next";
 
 
 
@@ -40,7 +42,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             'dbp-icon-button': IconButton,
             'dbp-file-source': FileSource,
             'dbp-modal': Modal,
-            'dbp-mini-spinner': MiniSpinner
+            'dbp-mini-spinner': MiniSpinner,
+            'dbp-tabulator-table': TabulatorTable
         };
     }
 
@@ -226,8 +229,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             this.isFileSelected = false;
             this.initialRequestsLoading = false;
             this._initialFetchDone = true;
+            this.setData();
             this.loading = false;
-
         }
     }
 
@@ -338,6 +341,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     openEditFileDialogue(id, fileName) {
+        console.log(id);
         this.activeFileId = id;
         this.activeFileName = fileName;
         if (this._('#edit-dialogue')) {
@@ -386,7 +390,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             }
 
         } finally {
-        this.getFiles();
+            this.getFiles();
         }
     }
 
@@ -424,39 +428,161 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         return response;
     }
 
-    getFileList(){
-        let list = [];
-        for (let i = 0; i < this.uploadedFilesNumber; i ++) {
-            list[i] = html`
-                <div class="row file-row"> 
-                    <a class="file-link" href="${this.uploadedFiles[i].contentUrl}">
-                        <span><strong>${this.uploadedFiles[i].fileName}</strong></span>
-                        <span class="small-text">${this.dateTimeFormatter(this.uploadedFiles[i].dateCreated)}</span>
-                    </a>
-                    <div class="button-group">
-                        <dbp-icon-button
-                                icon-name="pencil"
-                                title="edit"
-                                @click="${() => {
-                                    this.openEditFileDialogue(
-                                            this.uploadedFiles[i].identifier,
-                                            this.uploadedFiles[i].fileName)
-                                    ;}}"
-                        ></dbp-icon-button>
-                        <dbp-icon-button
-                                icon-name="trash"
-                                title="delete"
-                                @click="${() => {
-                                    this.openDeleteFileDialogue(
-                                        this.uploadedFiles[i].identifier, 
-                                        this.uploadedFiles[i].fileName)
-                                    ;}}"
-                        ></dbp-icon-button>
-                    </div>
-                </div>`;
-        }
-        return list;
+    getOptions() {
+        const actionsButtons = (cell, formatterParams) => {
+
+            let id = cell.getData()['identifier'];
+            let fileName = cell.getData()['fileName'];
+            let contentUrl = cell.getData()['contentUrl'];
+
+            let link = this.createScopedElement('a');
+            link.setAttribute('href', contentUrl);
+            link.setAttribute('title', 'open File');
+            link.setAttribute('target', '_blank');
+
+            let btnLink = this.createScopedElement('dbp-icon-button');
+            btnLink.setAttribute('icon-name', 'link');
+            btnLink.setAttribute('title', 'open');
+
+            link.appendChild(btnLink);
+
+            let btnEdit = this.createScopedElement('dbp-icon-button');
+            btnEdit.setAttribute('icon-name', 'pencil');
+            btnEdit.setAttribute('title', 'edit');
+            btnEdit.addEventListener('click', event => {
+                this.openEditFileDialogue(id, fileName);
+                event.stopPropagation();
+            });
+
+            let btnDelete = this.createScopedElement('dbp-icon-button');
+            btnDelete.setAttribute('icon-name', 'trash');
+            btnDelete.setAttribute('title', 'delete');
+            btnDelete.addEventListener('click', event => {
+                this.openDeleteFileDialogue(id, fileName);
+                event.stopPropagation();
+            });
+
+
+            let div = this.createScopedElement('div');
+            div.appendChild(link);
+            div.appendChild(btnEdit);
+            div.appendChild(btnDelete);
+            div.classList.add('actions-buttons');
+
+            return div;
+        };
+
+        let options = {
+            layout: 'fitColumns',
+            selectable: false,
+            placeholder: "Es wurden noch keine Dateien hinzugefügt.",
+            responsiveLayout: 'collapse',
+            responsiveLayoutCollapseStartOpen: false,
+            columnHeaderVertAlign: 'middle',
+            columnDefaults: {
+                vertAlign: 'middle',
+                hozAlign: 'left',
+                resizable: false,
+            },
+            columns: [
+                {
+                    minWidth: 40,
+                    headerSort: false,
+                    formatter: 'responsiveCollapse',
+                },
+                {
+                    title: "File Name",
+                    responsive: 0,
+                    widthGrow: 5,
+                    minWidth: 150,
+                    field: 'fileName',
+                    sorter: 'alphanum',
+                    formatter: (cell) => {
+                        let div = this.createScopedElement('div');
+                        div.classList.add('filename');
+                        div.innerHTML = cell.getValue();
+                        return div;
+                    },
+                },
+                {
+                    title: "Größe",
+                    responsive: 4,
+                    widthGrow: 1,
+                    minWidth: 84,
+                    field: 'fileSize',
+                    formatter: (cell, formatterParams, onRendered) => {
+                        return humanFileSize(cell.getValue());
+                    },
+                },
+                {
+                    title: "Art",
+                    responsive: 2,
+                    widthGrow: 1,
+                    minWidth: 58,
+                    field: 'mime',
+                    formatter: (cell, formatterParams, onRendered) => {
+                        if (typeof cell.getValue() === 'undefined') {
+                            return '';
+                        }
+                        const [, fileSubType] = cell.getValue().split('/');
+                        return fileSubType;
+                    },
+                },
+                {
+                    title: "Hinzugefügt am",
+                    responsive: 3,
+                    widthGrow: 1,
+                    minWidth: 150,
+                    field: 'dateCreated',
+                    sorter: (a, b, aRow, bRow, column, dir, sorterParams) => {
+                        const a_timestamp = Date.parse(a);
+                        const b_timestamp = Date.parse(b);
+                        return a_timestamp - b_timestamp;
+                    },
+                    formatter: function (cell, formatterParams, onRendered) {
+                        const d = Date.parse(cell.getValue());
+                        const timestamp = new Date(d);
+                        const year = timestamp.getFullYear();
+                        const month = ('0' + (timestamp.getMonth() + 1)).slice(-2);
+                        const date = ('0' + timestamp.getDate()).slice(-2);
+                        const hours = ('0' + timestamp.getHours()).slice(-2);
+                        const minutes = ('0' + timestamp.getMinutes()).slice(-2);
+                        return date + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
+                    },
+                },
+                {title: 'existsUntil', field: 'existsUntil', visible: false},
+                {title: 'lastAccess', field: 'lastAccess', visible: false},
+                {title: 'additionalMetadata', field: 'additionalMetadata', visible: false},
+                {title: 'identifier', field: 'identifier', visible: false},
+                {
+                    title: '',
+                    hozAlign: 'center',
+                    field: 'no_display_1',
+                    download: false,
+                    headerSort: false,
+                    visible: true,
+                    minWidth: 150,
+                    formatter: actionsButtons,
+                },
+            ],
+        };
+
+        return options;
     }
+
+
+    setData() {
+        if (this._("#tabulator-table-blob")) {
+            this._("#tabulator-table-blob").setData(this.uploadedFiles);
+        }
+    }
+
+    setOptions() {
+        if (this._("#tabulator-table-blob")) {
+            this._("#tabulator-table-blob").options = this.getOptions();
+        }
+    }
+
 
     dateTimeFormatter(dateTime) {
         const d = Date.parse(dateTime);
@@ -544,6 +670,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             && !this._initialFetchDone
             && !this.initialRequestsLoading
             && this.bucket_id !== '') {
+                this.setOptions();
                 this.getFiles();
         }
 
@@ -559,9 +686,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 <div id="file-list" class="${classMap({
                     hidden: this.loading,
                 })}">
-                    ${this.uploadedFilesNumber <= 0 ?
-                        html`Es wurden noch keine Dateien hinzugefügt.` :
-                        this.getFileList() }
+                    <dbp-tabulator-table id="tabulator-table-blob" identifier="blob-file-list" data="${JSON.stringify(this.uploadedFiles)}"></dbp-tabulator-table>
                 </div>
                 <dbp-modal
                         id="ask-delete-dialogue"
