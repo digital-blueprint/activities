@@ -144,41 +144,43 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async uploadFile() {
+        const i18n = this._i18n;
+
         try {
             let response = await this.sendUploadFileRequest();
             let responseBody = await response.json();
             if (responseBody !== undefined && response.status === 201) {
                 send({
-                    "summary": "Upload successfull",
-                    "body": "You have successfully uploaded a file to a bucket :)",
+                    "summary": i18n.t('upload-success-title'),
+                    "body": i18n.t('upload-success-body'),
                     "type": "success",
                     "timeout": 5,
                 });
             } else if (response.status === 400) {
                 send({
-                    "summary": "Invalid Input",
-                    "body": "Invalid Input",
+                    "summary": i18n.t('invalid-input-title'),
+                    "body": i18n.t('invalid-input-body'),
                     "type": "danger",
                     "timeout": 5,
                 });
             }  else if (response.status === 403) {
                 send({
-                    "summary": "Signature failed",
-                    "body": "Signature missing",
+                    "summary": i18n.t('signature-failed-title'),
+                    "body": i18n.t('signature-failed-body'),
                     "type": "danger",
                     "timeout": 5,
                 });
             }else if (response.status === 422) {
                 send({
-                    "summary": "Invalid Input",
-                    "body": "Additional metadata is wron",
+                    "summary": i18n.t('invalid-input-title'),
+                    "body": i18n.t('invalid-input-metadata-body'),
                     "type": "danger",
                     "timeout": 5,
                 });
             } else {
                 send({
-                    "summary": "Something went wrong!",
-                    "body": "Something went wrong.",
+                    "summary": i18n.t('something-went-wrong-title'),
+                    "body":  i18n.t('something-went-wrong-body'),
                     "type": "danger",
                     "timeout": 5,
                 });
@@ -260,49 +262,50 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async sendPutFile() {
         this.loading = true;
+        const i18n = this._i18n;
 
         try {
             let response = await this.sendPutFileRequest();
             let responseBody = await response.json();
             if (responseBody !== undefined && response.status === 200) {
                 send({
-                    "summary": "Rename was successful",
-                    "body": "You have successfully renamed a file :)",
+                    "summary": i18n.t('rename-success-title'),
+                    "body": i18n.t('rename-success-body'),
                     "type": "success",
                     "timeout": 5,
                 });
             } else if (response.status === 404) {
                 send({
-                    "summary": "File not found",
-                    "body": "Requested file doesn't exists (anymore)",
+                    "summary":  i18n.t('file-not-found-title'),
+                    "body": i18n.t('file-not-found-body'),
                     "type": "danger",
                     "timeout": 5,
                 });
             } else if (response.status === 400) {
                 send({
-                    "summary": "Invalid input",
-                    "body": "Additional Data is wrong.",
+                    "summary": i18n.t('invalid-input-title'),
+                    "body": i18n.t('invalid-input-metadata-body'),
                     "type": "danger",
                     "timeout": 5,
                 });
             } else if (response.status === 422) {
                 send({
-                    "summary": "Invalid input",
-                    "body": "Additional Data is wrong.",
+                    "summary": i18n.t('invalid-input-title'),
+                    "body": i18n.t('invalid-input-body'),
                     "type": "danger",
                     "timeout": 5,
                 });
             } else {
                 send({
-                    "summary": "Something went wrong!",
-                    "body": "Something went wrong.",
+                    "summary": i18n.t('something-went-wrong-title'),
+                    "body": i18n.t('something-went-wrong-body'),
                     "type": "danger",
                     "timeout": 5,
                 });
             }
         } finally {
             this.closeEditFileDialogue();
-            this.getFiles();
+            await this.getFiles();
         }
     }
 
@@ -348,7 +351,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     openEditFileDialogue(id, fileName) {
-        console.log(id);
         this.activeFileId = id;
         this.activeFileName = fileName;
         if (this._('#edit-dialogue')) {
@@ -369,28 +371,29 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async deleteFile(id) {
         this.loading = true;
+        const i18n = this._i18n;
 
         this.closeDeleteFileDialogue();
         try {
             let response = await this.sendDeleteFileRequest(id);
             if (response.status === 204) {
                 send({
-                    "summary": "File deleted",
-                    "body": "You have successfully deleted a file in the bucket.",
+                    "summary": i18n.t('delete-success-title'),
+                    "body": i18n.t('delete-success-body'),
                     "type": "success",
                     "timeout": 5,
                 });
             } else if (response.status === 404) {
                 send({
-                    "summary": "File already deleted",
-                    "body": "This file is already deleted!",
+                    "summary": i18n.t('delete-missing-title'),
+                    "body": i18n.t('delete-missing-body'),
                     "type": "warning",
                     "timeout": 5,
                 });
             } else {
                 send({
-                    "summary": "Something went wrong!",
-                    "body": "Something went wrong.",
+                    "summary": i18n.t('something-went-wrong-title'),
+                    "body": i18n.t('something-went-wrong-body'),
                     "type": "danger",
                     "timeout": 5,
                 });
@@ -436,6 +439,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async getOptions() {
+        const i18n = this._i18n;
+
         const actionsButtons = (cell, formatterParams) => {
 
             let id = cell.getData()['identifier'];
@@ -444,18 +449,18 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
             let link = this.createScopedElement('a');
             link.setAttribute('href', contentUrl);
-            link.setAttribute('title', 'open File');
+            link.setAttribute('title', i18n.t('open-file'));
             link.setAttribute('target', '_blank');
 
             let btnLink = this.createScopedElement('dbp-icon-button');
             btnLink.setAttribute('icon-name', 'link');
-            btnLink.setAttribute('title', 'open');
+            btnLink.setAttribute('title', i18n.t('open'));
 
             link.appendChild(btnLink);
 
             let btnEdit = this.createScopedElement('dbp-icon-button');
             btnEdit.setAttribute('icon-name', 'pencil');
-            btnEdit.setAttribute('title', 'edit');
+            btnEdit.setAttribute('title', i18n.t('edit'));
             btnEdit.addEventListener('click', event => {
                 this.openEditFileDialogue(id, fileName);
                 event.stopPropagation();
@@ -463,7 +468,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
             let btnDelete = this.createScopedElement('dbp-icon-button');
             btnDelete.setAttribute('icon-name', 'trash');
-            btnDelete.setAttribute('title', 'delete');
+            btnDelete.setAttribute('title', i18n.t('delete'));
             btnDelete.addEventListener('click', event => {
                 this.openDeleteFileDialogue(id, fileName);
                 event.stopPropagation();
@@ -498,7 +503,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     formatter: 'responsiveCollapse',
                 },
                 {
-                    title: "File Name",
+                    title:  i18n.t('filename'),
                     responsive: 0,
                     widthGrow: 5,
                     minWidth: 150,
@@ -512,7 +517,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     },
                 },
                 {
-                    title: "Größe",
+                    title: i18n.t('size'),
                     responsive: 4,
                     widthGrow: 1,
                     minWidth: 84,
@@ -522,21 +527,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     },
                 },
                 {
-                    title: "Art",
+                    title: i18n.t('type'),
                     responsive: 2,
                     widthGrow: 1,
                     minWidth: 58,
-                    field: 'mime',
-                    formatter: (cell, formatterParams, onRendered) => {
-                        if (typeof cell.getValue() === 'undefined') {
-                            return '';
-                        }
-                        const [, fileSubType] = cell.getValue().split('/');
-                        return fileSubType;
-                    },
+                    field: 'extension',
                 },
                 {
-                    title: "Hinzugefügt am",
+                    title: i18n.t('creation-time'),
                     responsive: 3,
                     widthGrow: 1,
                     minWidth: 150,
@@ -557,9 +555,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         return date + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
                     },
                 },
-                {title: 'existsUntil', field: 'existsUntil', visible: false},
-                {title: 'lastAccess', field: 'lastAccess', visible: false},
-                {title: 'additionalMetadata', field: 'additionalMetadata', visible: false},
+                {title: i18n.t('exists-until'), field: 'existsUntil', visible: false},
+                {title: i18n.t('last-access'), field: 'lastAccess', visible: false},
+                {title: i18n.t('additional-data'), field: 'additionalMetadata', visible: false},
                 {title: 'identifier', field: 'identifier', visible: false},
                 {
                     title: '',
@@ -660,6 +658,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     render() {
+        const i18n = this._i18n;
+
+
         if (this.tableInit && this.isLoggedIn() && !this.isLoading()
             && !this._initialFetchDone
             && !this.initialRequestsLoading
@@ -670,7 +671,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         return html`
             <div>
                 <div class="section-titles">
-                    Dateien (${this.uploadedFilesNumber}) in ${this.prefix}
+                    ${i18n.t('files')} (${this.uploadedFilesNumber}) in ${this.prefix}
                 </div>
                 <dbp-mini-spinner
                         class="spinner ${classMap({
@@ -679,7 +680,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 <div id="file-list" class="${classMap({
                     hidden: this.loading,
                 })}">
-                    <dbp-tabulator-table id="tabulator-table-blob" identifier="blob-file-list" data="${JSON.stringify(this.uploadedFiles)}"></dbp-tabulator-table>
+                    <dbp-tabulator-table 
+                            id="tabulator-table-blob" 
+                            identifier="blob-file-list" 
+                            data="${JSON.stringify(this.uploadedFiles)}"
+                    ></dbp-tabulator-table>
                 </div>
                 <dbp-modal
                         id="ask-delete-dialogue"
@@ -688,17 +693,22 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 >
                     <div slot="content">
                         <div>
-                            Are you sure you want to delete the file <strong>${this.activeFileName}</strong>?
+                            ${i18n.t('delete-text', {name: this.activeFileName})}
                         </div>
 
                     </div>
                     <div slot="footer">
                         <div class="footer-btn-row">
-                            <dbp-button @click="${() => {this._("#ask-delete-dialogue").close();}}">
-                                Cancel
+                            <dbp-button 
+                                    title="${i18n.t('cancel')}"
+                                    @click="${() => {this._("#ask-delete-dialogue").close();}}">
+                                ${i18n.t('cancel')}
                             </dbp-button>
-                            <dbp-button type="is-primary" @click="${() => this.deleteFile(this.activeFileId)}">
-                                Delete
+                            <dbp-button
+                                    title="${i18n.t('delete')}"
+                                    type="is-primary" 
+                                    @click="${() => this.deleteFile(this.activeFileId)}">
+                                ${i18n.t('delete')}
                             </dbp-button>
                         </div>
                     </div>
@@ -709,7 +719,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         modal-id="edit-dialogue">
                     <div slot="content">
                         <div>
-                            Save as:
+                            ${i18n.t('save-as')}:
                             <input
                                     type="text"
                                     class="input"
@@ -721,25 +731,31 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     </div>
                     <div slot="footer">
                         <div class="footer-btn-row">
-                            <dbp-button @click="${() => {this._("#edit-dialogue").close();}}">
-                                Cancel
+                            <dbp-button
+                                    title="${i18n.t('cancel')}"
+                                    @click="${() => {this._("#edit-dialogue").close();}}">
+                                ${i18n.t('cancel')}
                             </dbp-button>
-                            <dbp-button type="is-primary" @click="${() => this.sendPutFile()}">
-                                Save
+                            <dbp-button 
+                                    title="${i18n.t('save')}"
+                                    type="is-primary" 
+                                    @click="${() => this.sendPutFile()}">
+                                ${i18n.t('save')}
                             </dbp-button>
                         </div>
                     </div>
                 </dbp-modal>
                 <div class="section-titles">
-                    Neue Datei hinzufügen
+                    ${i18n.t('add-new-file')}
                 </div>
                 <div id="add-file-section">
                     
                     <div class="row">
-                        <dbp-button @click="${() => {
-                            this._('#file-source').setAttribute('dialog-open', '');}}"
+                        <dbp-button 
+                                title="${i18n.t('select-file')}"
+                                @click="${() => {this._('#file-source').setAttribute('dialog-open', '');}}"
                         >
-                            Select a file ...
+                            ${i18n.t('select-file')} ...
                         </dbp-button> 
                         <span class="ml-1">
                             ${this.fileToUpload.name}
@@ -747,7 +763,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         <div class="button-group ${classMap({hidden: !this.isFileSelected})}">
                             <dbp-icon-button
                                     icon-name="trash"
-                                    title="delete"
+                                    title="${i18n.t('delete')}"
                                     @click="${this.removeFileToUpload}"
                             ></dbp-icon-button>
                         </div>
@@ -765,7 +781,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     </dbp-file-source>
                     
                     <div class="row ${classMap({hidden: !this.isFileSelected})}">
-                        Save as:
+                        ${i18n.t('save-as')}:
                         <input
                                 type="text"
                                 class="input"
@@ -776,8 +792,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
                     </div>
                     <div class="row ${classMap({hidden: !this.isFileSelected})}">
-                        <dbp-button @click="${()=>{this._("#ask-upload-dialogue").open();}}">
-                            Upload
+                        <dbp-button 
+                                title="${i18n.t('upload')}"
+                                @click="${()=>{this._("#ask-upload-dialogue").open();}}"
+                        >
+                            ${i18n.t('upload')}
                         </dbp-button>
                         <dbp-modal
                                 id="ask-upload-dialogue"
@@ -785,17 +804,22 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                                 modal-id="upload-confirmation">
                             <div slot="content">
                                 <div>
-                                    Are you sure you want to upload this file?
+                                    ${i18n.t('ask-upload')}
                                 </div>
                                 
                             </div>
                             <div slot="footer">
                                 <div class="footer-btn-row">
-                                    <dbp-button @click="${() => {this._("#ask-upload-dialogue").close();}}">
-                                        Cancel
+                                    <dbp-button 
+                                            title="${i18n.t('cancel')}"
+                                            @click="${() => {this._("#ask-upload-dialogue").close();}}">
+                                        ${i18n.t('cancel')}
                                     </dbp-button>
-                                    <dbp-button type="is-primary" @click="${this.uploadFile}">
-                                        Upload
+                                    <dbp-button 
+                                            title="${i18n.t('upload')}"
+                                            type="is-primary" 
+                                            @click="${this.uploadFile}">
+                                        ${i18n.t('upload')}
                                     </dbp-button>
                                 </div>
                             </div>
