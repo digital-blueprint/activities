@@ -33,6 +33,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         this.activeFileId = '';
         this.activeFileName = '';
+
+        this.tableInit = false;
     }
 
     static get scopedElements() {
@@ -56,6 +58,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             isFileSelected: {type: Boolean, attribute: false},
             uploadedFilesNumber: {type: Number, attribute: false},
             initialRequestsLoading: { type: Boolean, attribute: false },
+            tableInit: { type: Boolean, attribute: false },
             loading: { type: Boolean, attribute: false },
 
             bucket_id: {type: String, attribute: 'bucket-id'},
@@ -67,6 +70,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     connectedCallback() {
         super.connectedCallback();
+
+        this.updateComplete.then(() => {
+            this.setOptions();
+        });
 
         this._loginStatus = '';
         this._loginState = [];
@@ -229,7 +236,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             this.isFileSelected = false;
             this.initialRequestsLoading = false;
             this._initialFetchDone = true;
-            this.setData();
+            await this.setData();
             this.loading = false;
         }
     }
@@ -390,7 +397,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             }
 
         } finally {
-            this.getFiles();
+            await this.getFiles();
         }
     }
 
@@ -428,7 +435,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         return response;
     }
 
-    getOptions() {
+    async getOptions() {
         const actionsButtons = (cell, formatterParams) => {
 
             let id = cell.getData()['identifier'];
@@ -571,30 +578,18 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
 
-    setData() {
+    async setData() {
         if (this._("#tabulator-table-blob")) {
-            this._("#tabulator-table-blob").setData(this.uploadedFiles);
+            await this._("#tabulator-table-blob").setData(this.uploadedFiles);
         }
     }
 
-    setOptions() {
-        if (this._("#tabulator-table-blob")) {
-            this._("#tabulator-table-blob").options = this.getOptions();
+    async setOptions() {
+        if (this._("#tabulator-table-blob") && !this.tableInit) {
+            this._("#tabulator-table-blob").options = await this.getOptions();
+            this.tableInit = true;
         }
     }
-
-
-    dateTimeFormatter(dateTime) {
-        const d = Date.parse(dateTime);
-        const timestamp = new Date(d);
-        const year = timestamp.getFullYear();
-        const month = ('0' + (timestamp.getMonth() + 1)).slice(-2);
-        const date = ('0' + timestamp.getDate()).slice(-2);
-        const hours = ('0' + timestamp.getHours()).slice(-2);
-        const minutes = ('0' + timestamp.getMinutes()).slice(-2);
-        return date + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
-    }
-
 
     static get styles() {
         // language=css
@@ -665,12 +660,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     render() {
-
-        if (this.isLoggedIn() && !this.isLoading()
+        if (this.tableInit && this.isLoggedIn() && !this.isLoading()
             && !this._initialFetchDone
             && !this.initialRequestsLoading
             && this.bucket_id !== '') {
-                this.setOptions();
                 this.getFiles();
         }
 
