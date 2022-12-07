@@ -3,7 +3,7 @@ import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import * as demoStyles from './styles';
-import {Icon} from '@dbp-toolkit/common';
+import {Icon, IconButton} from '@dbp-toolkit/common';
 import {Blob} from "./Blob";
 import DBPLitElement from "@dbp-toolkit/common/dbp-lit-element";
 
@@ -25,6 +25,7 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
         return {
             'dbp-icon': Icon,
             'dbp-blob': Blob,
+            'dbp-icon-button': IconButton,
         };
     }
 
