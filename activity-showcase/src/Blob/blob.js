@@ -60,6 +60,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             initialRequestsLoading: { type: Boolean, attribute: false },
             tableInit: { type: Boolean, attribute: false },
             loading: { type: Boolean, attribute: false },
+            fileToUpload: { type: Object, attribute: false },
 
             bucket_id: {type: String, attribute: 'bucket-id'},
             prefix: {type: String, attribute: 'prefix'},
@@ -141,6 +142,15 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     removeFileToUpload() {
         this.fileToUpload = {};
         this.isFileSelected = false;
+    }
+
+    getFileToUploadName() {
+        console.log(this.fileToUpload);
+        if (typeof this.fileToUpload.type === 'undefined') {
+            return this.fileToUpload.name;
+        }
+        const [, fileSubType] = this.fileToUpload.type.split('/');
+        return this.fileToUpload.name.replace("." + fileSubType, '');
     }
 
     async uploadFile() {
@@ -726,6 +736,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                                     name="toRenameFileName"
                                     id="to-rename-file-name-input"
                                     value="${this.activeFileName}"
+                                    required
                             />                        </div>
 
                     </div>
@@ -753,7 +764,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     <div class="row">
                         <dbp-button 
                                 title="${i18n.t('select-file')}"
-                                @click="${() => {this._('#file-source').setAttribute('dialog-open', '');}}"
+                                @click="${() => {
+                                    this._('#file-source').setAttribute('dialog-open', '');
+                                }}"
                         >
                             ${i18n.t('select-file')} ...
                         </dbp-button> 
@@ -787,7 +800,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                                 class="input"
                                 name="toUploadFileName"
                                 id="to-upload-file-name-input"
-                                value="${this.fileToUpload.name}"
+                                value="${this.getFileToUploadName()}"
                         />
 
                     </div>
