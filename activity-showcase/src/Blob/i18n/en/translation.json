@@ -35,5 +35,7 @@
   "ask-upload": "Are you sure you want to upload this file?",
   "open-file": "Open file",
   "open": "Open",
-  "edit": "Edit"
+  "edit": "Edit",
+  "bucket-quota-title": "Insufficient storage space",
+  "bucket-quota-body": "The application's storage space is insufficient. Please contact the service staff for this application."
 }

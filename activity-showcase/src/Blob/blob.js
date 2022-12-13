@@ -173,17 +173,24 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     "type": "danger",
                     "timeout": 5,
                 });
-            }  else if (response.status === 403) {
+            } else if (response.status === 403) {
                 send({
                     "summary": i18n.t('signature-failed-title'),
                     "body": i18n.t('signature-failed-body'),
                     "type": "danger",
                     "timeout": 5,
                 });
-            }else if (response.status === 422) {
+            } else if (response.status === 422) {
                 send({
                     "summary": i18n.t('invalid-input-title'),
                     "body": i18n.t('invalid-input-metadata-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else if (response.status === 507) {
+                send({
+                    "summary": i18n.t('bucket-quota-title'),
+                    "body": i18n.t('bucket-quota-body'),
                     "type": "danger",
                     "timeout": 5,
                 });

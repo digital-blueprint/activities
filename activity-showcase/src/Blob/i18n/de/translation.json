@@ -35,5 +35,7 @@
   "ask-upload": "Sind Sie sicher, dass Sie diese Datei hochladen möchten?",
   "open-file": "Datei öffnen",
   "open": "Öffnen",
-  "edit": "Bearbeiten"
+  "edit": "Bearbeiten",
+  "bucket-quota-title": "Speicherplatz nicht ausreichend",
+  "bucket-quota-body": "Der Speicherplatz der Applikation ist nicht ausreichend. Bitte kontaktieren Sie den Service Mitarbeiter für diese Applikation."
 }
