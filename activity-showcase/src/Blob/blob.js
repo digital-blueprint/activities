@@ -2,16 +2,14 @@ import {createInstance} from './i18n';
 import {css, html} from 'lit';
 import {ScopedElementsMixin} from '@open-wc/scoped-elements';
 import * as commonStyles from '@dbp-toolkit/common/styles';
-import {LoadingButton, Icon, IconButton, Modal, MiniSpinner} from '@dbp-toolkit/common';
+import {Icon, IconButton, LoadingButton, MiniSpinner, Modal} from '@dbp-toolkit/common';
 import DBPLitElement from "@dbp-toolkit/common/dbp-lit-element";
 import {FileSource} from "@dbp-toolkit/file-handling";
 import {classMap} from 'lit/directives/class-map.js';
 import {send} from '@dbp-toolkit/common/notification';
 import {TabulatorTable} from "@dbp-toolkit/tabulator-table";
 import {humanFileSize} from "@dbp-toolkit/common/i18next";
-
-
-
+import {jws} from 'jsrsasign';
 
 export class Blob extends ScopedElementsMixin(DBPLitElement) {
     constructor() {
@@ -80,7 +78,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         this._loginState = [];
     }
 
-
     /**
      *  Request a re-rendering every time isLoggedIn()/isLoading() changes
      */
@@ -114,18 +111,18 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     /**
-     * Returns if a person is set in or not
+     * Check if a person is set in or not
      *
-     * @returns {boolean} true or false
+     * @returns {boolean}
      */
     isLoggedIn() {
         return (this.auth.person !== undefined && this.auth.person !== null);
     }
 
     /**
-     * Returns true if a person has successfully logged in
+     * Check if a person has successfully logged in
      *
-     * @returns {boolean} true or false
+     * @returns {boolean}
      */
     isLoading() {
         if (this._loginStatus === "logged-out")
@@ -145,7 +142,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     getFileToUploadName() {
-        console.log(this.fileToUpload);
+        // console.log(this.fileToUpload);
         if (typeof this.fileToUpload.type === 'undefined') {
             return this.fileToUpload.name;
         }
@@ -207,19 +204,26 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 this._("#ask-upload-dialogue").close();
             }
             this.removeFileToUpload();
-            this.getFiles();
+            await this.getFiles();
         }
     }
 
     async sendUploadFileRequest() {
-        let params = new URLSearchParams({
+        let params = {
             bucketID: this.bucket_id,
-            creationTime: new Date().toISOString(),
-        });
-        let name = this.fileToUpload.name;
+            creationTime: Math.floor(new Date().valueOf()/1000),
+            prefix: this.prefix,
+        };
+        const urlParams = new URLSearchParams(params);
+
+        let name = this.activeFileName;
         if (this._('#to-upload-file-name-input')) {
             name = this._('#to-upload-file-name-input').value;
         }
+
+        params.fileName = name;
+        params.fileHash = this.sha256(await this.fileToUpload.arrayBuffer());
+        const sig = this.createSignature(params);
 
         let formData = new FormData();
         formData.append('file', this.fileToUpload);
@@ -230,12 +234,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         const options = {
             method: 'POST',
             headers: {
-                Authorization: "Bearer " + this.auth.token,
-                'X-Dbp-Signature': 'test',
+                'X-Dbp-Signature': sig,
             },
             body: formData,
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + params, options);
+        return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + urlParams, options);
     }
 
     async getFiles() {
@@ -261,20 +264,21 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendGetFilesRequest() {
-        let params = new URLSearchParams({
+        const params = {
             bucketID: this.bucket_id,
-            creationTime: new Date().toISOString(),
+            creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
-        });
+        };
+        const urlParams = new URLSearchParams(params);
+        const sig = this.createSignature(params);
         const options = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + this.auth.token,
-                'X-Dbp-Signature': 'test',
+                'X-Dbp-Signature': sig,
             },
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + params, options);
+        return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + urlParams, options);
     }
 
     async sendPutFile() {
@@ -327,10 +331,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendPutFileRequest() {
-        let params = new URLSearchParams({
+        let params = {
             bucketID: this.bucket_id,
-            creationTime: new Date().toISOString(),
-        });
+            creationTime: Math.floor(new Date().valueOf()/1000),
+            prefix: this.prefix,
+        };
+        const urlParams = new URLSearchParams(params);
+
         let name = this.activeFileName;
         if (this._('#to-rename-file-name-input')) {
             name = this._('#to-rename-file-name-input').value;
@@ -338,16 +345,18 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         let data = {'fileName': name};
 
+        params.fileName = name;
+        const sig = this.createSignature(params);
+
         const options = {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: "Bearer " + this.auth.token,
-                'X-Dbp-Signature': 'test',
+                'X-Dbp-Signature': sig,
             },
             body: JSON.stringify(data),
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + this.activeFileId + '?' + params, options);
+        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + this.activeFileId + '?' + urlParams, options);
 
     }
 
@@ -422,37 +431,40 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendDeleteFileRequest(id) {
-        let params = new URLSearchParams({
+        let params = {
             bucketID: this.bucket_id,
-            creationTime: new Date().toISOString(),
-        });
+            creationTime: Math.floor(new Date().valueOf()/1000),
+            // prefix: this.prefix,
+        };
+        const urlParams = new URLSearchParams(params);
+
+        params.fileId = id;
+        const sig = this.createSignature(params);
 
         const options = {
             method: 'DELETE',
             headers: {
-                Authorization: "Bearer " + this.auth.token,
-                'X-Dbp-Signature': 'test',
+                'X-Dbp-Signature': sig,
             },
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + params, options);
+        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + urlParams, options);
     }
 
     /**
      * Send a fetch to given url with given options
      *
-     * @param url
-     * @param options
+     * @param {string} url
+     * @param {object} options
      * @returns {object} response (error or result)
      */
     async httpGetAsync(url, options) {
-        let response = await fetch(url, options).then(result => {
-            if (!result.ok) throw result;
-            return result;
-        }).catch(error => {
-            return error;
-        });
-
-        return response;
+        return await fetch(url, options)
+            .then(result => {
+                if (!result.ok) throw result;
+                return result;
+            }).catch(error => {
+                return error;
+            });
     }
 
     async getOptions() {
@@ -501,7 +513,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             return div;
         };
 
-        let options = {
+        const options = {
             layout: 'fitColumns',
             selectable: false,
             placeholder: "Es wurden noch keine Dateien hinzugefügt.",
@@ -591,7 +603,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         return options;
     }
-
 
     async setData() {
         if (this._("#tabulator-table-blob")) {
@@ -849,5 +860,55 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 </div>
             </div>
         `;
+    }
+
+    /**
+     * Create a SHA256 hash from a blob
+     *
+     * @param {ArrayBuffer} blob
+     * @returns {string}
+     */
+    async sha256(blob) {
+        // console.dir(blob);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', blob);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // not for production use!
+
+    /**
+     * Create a valid dbp-signature locally (not for production!)
+     *
+     * @param payload object to build the JSW with
+     * @returns {string}
+     */
+    createSignature(payload) {
+        // not for production use!
+        const apiKey = '08d848fd868d83646778b87dd0695b10f59c78e23b286e9884504d1bb43cce93';
+
+        const pHeader = { alg: 'HS256' };
+        const sHeader = JSON.stringify(pHeader);
+
+        return jws.JWS.sign(
+            pHeader.alg,
+            sHeader,
+            JSON.stringify(payload),
+            this.hexEncode(apiKey),
+        );
+    }
+
+    /**
+     * Encode a string into hex (helper function)
+     *
+     * @param {string} str
+     * @returns {string}
+     */
+    hexEncode(str) {
+        let result = "";
+        for (let i=0; i<str.length; i++) {
+            result += ("00"+str.charCodeAt(i).toString(16)).slice(-2);
+        }
+        return result;
     }
 }
