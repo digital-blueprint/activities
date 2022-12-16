@@ -222,7 +222,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
 
         params.fileName = name;
-        params.fileHash = this.sha256(await this.fileToUpload.arrayBuffer());
+        params.fileHash = await this.sha256(await this.fileToUpload.arrayBuffer());
+        // console.dir(params);
         const sig = this.createSignature(params);
 
         let formData = new FormData();
@@ -865,22 +866,24 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     /**
      * Create a SHA256 hash from a blob
      *
-     * @param {ArrayBuffer} blob
-     * @returns {string}
+     * @param {ArrayBuffer} blob the file
+     * @returns {Promise<string>} the sha256 hash
      */
     async sha256(blob) {
         // console.dir(blob);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', blob);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return crypto.subtle.digest('SHA-256', blob)
+                .then(hashBuffer => Array.from(new Uint8Array(hashBuffer)))
+                .then(hashArray => hashArray.map(b => b.toString(16).padStart(2, '0')).join(''));
     }
-
-    // not for production use!
 
     /**
      * Create a valid dbp-signature locally (not for production!)
      *
-     * @param payload object to build the JSW with
+     * This implementation of the function createSignature(payload) IS NOT FOR PRODUCTION USE!
+     * A proper implementation will create the token after checking permissions
+     * server side, keeping the value of the signing key secret!
+     *
+     * @param {object} payload to build the JSW with
      * @returns {string}
      */
     createSignature(payload) {
