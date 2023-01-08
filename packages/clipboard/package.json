@@ -38,7 +38,7 @@
         "@dbp-toolkit/file-handling": "^0.3.0",
         "@dbp-toolkit/provider": "^0.2.0",
         "@open-wc/scoped-elements": "^2.1.0",
-        "@webcomponents/scoped-custom-element-registry": "^0.0.6",
+        "@webcomponents/scoped-custom-element-registry": "^0.0.7",
         "lit": "^2.0.0"
     },
     "scripts": {
