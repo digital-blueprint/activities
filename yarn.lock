@@ -5556,9 +5556,9 @@ jsrsasign-util@^1.0.5:
     jsrsasign ">= 4.8.2"
 
 "jsrsasign@>= 4.8.2", jsrsasign@^10.6.1:
-  version "10.8.1"
-  resolved "https://registry.yarnpkg.com/jsrsasign/-/jsrsasign-10.8.1.tgz#b29985f4d1b2c457baba28094987ab42dee557a5"
-  integrity sha512-vlrtvCuhmFvKznjkJkQKHTQjg+Ol3t9S8cLiaOWFx87pk/OjNW/AfNG/3jQCB+e45otEz0JvNxOILwFg57JW5w==
+  version "10.8.2"
+  resolved "https://registry.yarnpkg.com/jsrsasign/-/jsrsasign-10.8.2.tgz#900380c8df2e08f4c1789d79f70af410282feced"
+  integrity sha512-iKTMkVZxyXzvd+MYLxzPk5WFZ4jPX22TrO7fQ7vS1dfso30/jntH2EexW7+K1rn11F1GkiR9Q3ulF0FQxvNNRw==
 
 jszip@^3.2.2, jszip@^3.5.0:
   version "3.10.1"
