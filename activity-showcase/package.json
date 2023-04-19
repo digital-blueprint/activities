@@ -15,6 +15,7 @@
         "@rollup/plugin-commonjs": "^24.0.0",
         "@rollup/plugin-json": "^6.0.0",
         "@rollup/plugin-node-resolve": "^15.0.0",
+        "@rollup/plugin-terser": "^0.4.0",
         "@rollup/plugin-url": "^8.0.0",
         "chai": "^4.2.0",
         "chokidar": "^3.4.0",
@@ -35,7 +36,6 @@
         "rollup-plugin-license": "^3.0.0",
         "rollup-plugin-md": "^1.0.0",
         "rollup-plugin-serve": "^2.0.0",
-        "@rollup/plugin-terser": "^0.4.0",
         "selfsigned": "^2.0.0"
     },
     "dependencies": {
@@ -45,6 +45,7 @@
         "@dbp-toolkit/font-source-sans-pro": "^0.2.0",
         "@dbp-toolkit/language-select": "^0.3.0",
         "@dbp-toolkit/provider": "^0.2.0",
+        "@dbp-toolkit/tabulator-table": "^0.0.1",
         "@dbp-topics/clipboard": "^0.2.0",
         "@fontsource/lato": "^4.5.8",
         "@fontsource/nunito-sans": "^4.5.8",
@@ -63,11 +64,11 @@
     "scripts": {
         "build": "rollup --bundleConfigAsCjs -c",
         "i18next": "i18next-scanner",
-        "format": "yarn run format:eslint && yarn run format:prettier",
+        "format": "npm run format:eslint && npm run format:prettier",
         "format:eslint": "eslint \"**/*.{js,ts}\" --fix",
         "format:prettier": "prettier \"**/*.{js,json,ts}\" --write",
         "watch": "rollup --bundleConfigAsCjs -c --watch",
-        "watch-local": "yarn run watch",
+        "watch-local": "npm run watch",
         "watch-full": "rollup --bundleConfigAsCjs -c --watch --environment FORCE_FULL",
         "watch-bs": "rollup --bundleConfigAsCjs -c --watch --environment APP_ENV:bs",
         "lint": "eslint ."
