@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "test": "lerna run --scope '@dbp-topics/*' --scope 'dbp-activity-showcase' test",
-    "build": "lerna run --scope '@dbp-topics/* --scope 'dbp-activity-showcase' build",
+    "build": "lerna run --scope '@dbp-topics/*' --scope 'dbp-activity-showcase' build",
     "format": "lerna run format",
     "version-patch": "lerna version patch",
     "version-minor": "lerna version minor",
