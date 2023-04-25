@@ -10,14 +10,14 @@
     "activity-showcase"
   ],
   "scripts": {
-    "test": "lerna run --scope '@dbp-topics/*' --scope 'dbp-activity-showcase' test",
-    "build": "lerna run --scope '@dbp-topics/*' --scope 'dbp-activity-showcase' build",
-    "format": "lerna run format",
+    "test": "lerna run --no-sort --scope '@dbp-topics/*' --scope 'dbp-activity-showcase' test",
+    "build": "lerna run --no-sort --scope '@dbp-topics/*' --scope 'dbp-activity-showcase' build",
+    "format": "lerna run --no-sort format",
     "version-patch": "lerna version patch",
     "version-minor": "lerna version minor",
     "version": "lerna version",
     "rm-dist": "for d in ./packages/*/ ; do (cd \"$d\" && rm dist -Rf); done;",
-    "lint": "lerna run --scope '@dbp-topics/*' --scope 'dbp-activity-showcase' lint",
+    "lint": "lerna run --no-sort --scope '@dbp-topics/*' --scope 'dbp-activity-showcase' lint",
     "publish": "lerna publish from-package --yes"
   },
   "author": "",
