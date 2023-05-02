@@ -16,5 +16,11 @@
   "poetry": {
     "enabled": false
   },
+  "packageRules": [
+    {
+      "matchPackageNames": ["find-cache-dir"],
+      "allowedVersions": "<4"
+    }
+  ],
   "cloneSubmodules": true
 }
