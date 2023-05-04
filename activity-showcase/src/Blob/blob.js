@@ -213,8 +213,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucket_id,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
+            action: 'CREATEONE'
         };
-        const urlParams = new URLSearchParams(params);
+
 
         let name = this.activeFileName;
         if (this._('#to-upload-file-name-input')) {
@@ -226,6 +227,16 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         // console.dir(params);
         const sig = this.createSignature(params);
 
+        params = {
+            bucketID: this.bucket_id,
+            creationTime: Math.floor(new Date().valueOf()/1000),
+            prefix: this.prefix,
+            action: 'CREATEONE',
+            sig: sig,
+        };
+
+        const urlParams = new URLSearchParams(params);
+
         let formData = new FormData();
         formData.append('file', this.fileToUpload);
         formData.append('prefix', this.prefix);
@@ -234,9 +245,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         const options = {
             method: 'POST',
-            headers: {
-                'X-Dbp-Signature': sig,
-            },
             body: formData,
         };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + urlParams, options);
@@ -265,18 +273,29 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendGetFilesRequest() {
-        const params = {
+        let params = {
             bucketID: this.bucket_id,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
+            action: 'GETALL',
         };
-        const urlParams = new URLSearchParams(params);
+
         const sig = this.createSignature(params);
+
+        params = {
+            bucketID: this.bucket_id,
+            creationTime: Math.floor(new Date().valueOf()/1000),
+            prefix: this.prefix,
+            action: 'GETALL',
+            sig: sig,
+        };
+
+        const urlParams = new URLSearchParams(params);
+
         const options = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/ld+json',
-                'X-Dbp-Signature': sig,
             },
         };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + urlParams, options);
@@ -337,7 +356,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
         };
-        const urlParams = new URLSearchParams(params);
+
 
         let name = this.activeFileName;
         if (this._('#to-rename-file-name-input')) {
@@ -349,12 +368,17 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         params.fileName = name;
         const sig = this.createSignature(params);
 
+        params = {
+            bucketID: this.bucket_id,
+            creationTime: Math.floor(new Date().valueOf()/1000),
+            prefix: this.prefix,
+            sig: sig,
+        };
+
+        const urlParams = new URLSearchParams(params);
+
         const options = {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/ld+json',
-                'X-Dbp-Signature': sig,
-            },
             body: JSON.stringify(data),
         };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + this.activeFileId + '?' + urlParams, options);
@@ -435,18 +459,24 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         let params = {
             bucketID: this.bucket_id,
             creationTime: Math.floor(new Date().valueOf()/1000),
-            // prefix: this.prefix,
+            prefix: this.prefix,
+            action: 'DELETEONE',
         };
         const urlParams = new URLSearchParams(params);
 
         params.fileId = id;
         const sig = this.createSignature(params);
 
+        params = {
+            bucketID: this.bucket_id,
+            creationTime: Math.floor(new Date().valueOf()/1000),
+            prefix: this.prefix,
+            action: 'DELETEONE',
+            sig: sig,
+        };
+
         const options = {
             method: 'DELETE',
-            headers: {
-                'X-Dbp-Signature': sig,
-            },
         };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + urlParams, options);
     }
