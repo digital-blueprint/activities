@@ -232,7 +232,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
             action: 'CREATEONE',
-            //sig: sig,
+            sig: sig,
         };
 
         const urlParams = new URLSearchParams(params);
@@ -245,9 +245,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         const options = {
             method: 'POST',
-            headers: {
-                'X-Dbp-Signature': sig,
-            },
             body: formData,
         };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + urlParams, options);
@@ -290,7 +287,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
             action: 'GETALL',
-            //sig: sig,
+            sig: sig,
         };
 
         const urlParams = new URLSearchParams(params);
@@ -299,7 +296,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/ld+json',
-                'X-Dbp-Signature': sig,
             },
         };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + urlParams, options);
@@ -376,7 +372,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucket_id,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
-            //sig: sig,
+            sig: sig,
         };
 
         const urlParams = new URLSearchParams(params);
@@ -385,7 +381,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/ld+json',
-                'X-Dbp-Signature': sig,
             },
             body: JSON.stringify(data),
         };
@@ -480,14 +475,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
             action: 'DELETEONE',
-            //sig: sig,
+            sig: sig,
         };
 
         const options = {
             method: 'DELETE',
-            headers: {
-                'X-Dbp-Signature': sig,
-            },
     };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + urlParams, options);
     }
