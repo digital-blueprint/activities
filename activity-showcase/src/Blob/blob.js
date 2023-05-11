@@ -213,7 +213,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucket_id,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
-            action: 'CREATEONE'
+            action: 'CREATEONE',
+            //validUntil: Math.floor(new Date().valueOf()/1000) + 5*60*1000,
+            //secret: this.getApiKey(),
         };
 
 
@@ -278,6 +280,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
             action: 'GETALL',
+            //secret: this.getApiKey(),
         };
 
         const sig = this.createSignature(params);
@@ -465,7 +468,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             prefix: this.prefix,
             action: 'DELETEONE',
         };
-        const urlParams = new URLSearchParams(params);
 
         params.fileId = id;
         const sig = this.createSignature(params);
@@ -478,9 +480,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             sig: sig,
         };
 
+        const urlParams = new URLSearchParams(params);
+
         const options = {
             method: 'DELETE',
-    };
+        };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + urlParams, options);
     }
 
@@ -910,6 +914,21 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     /**
+     * Returns the API key (not for production!)
+     *
+     * This returns the API key. This implementation is intended for usage in development only!
+     * In production, the API key should be created securly on the server side and not leak into the frontend.
+     *
+     * @returns {string}
+     */
+    getApiKey() {
+        // not for production use!
+        const apiKey = '08d848fd868d83646778b87dd0695b10f59c78e23b286e9884504d1bb43cce93';
+
+        return apiKey;
+    }
+
+    /**
      * Create a valid dbp-signature locally (not for production!)
      *
      * This implementation of the function createSignature(payload) IS NOT FOR PRODUCTION USE!
@@ -921,7 +940,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      */
     createSignature(payload) {
         // not for production use!
-        const apiKey = '08d848fd868d83646778b87dd0695b10f59c78e23b286e9884504d1bb43cce93';
+        const apiKey = this.getApiKey();
 
         const pHeader = { alg: 'HS256' };
         const sHeader = JSON.stringify(pHeader);
