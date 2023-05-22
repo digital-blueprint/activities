@@ -48,7 +48,7 @@
         "@dbp-toolkit/tabulator-table": "^0.0.2",
         "@dbp-topics/clipboard": "^0.2.0",
         "@fontsource/lato": "^4.5.8",
-        "@fontsource/nunito-sans": "^4.5.8",
+        "@fontsource/nunito-sans": "^5.0.0",
         "@open-wc/scoped-elements": "^2.1.0",
         "@tugraz/font-source-sans-pro": "^0.2.4",
         "@tugraz/web-components": "^0.3.6",
