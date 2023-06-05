@@ -223,10 +223,15 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (this._('#to-upload-file-name-input')) {
             name = this._('#to-upload-file-name-input').value;
         }
-
+        let fileHash = await this.sha256(await this.fileToUpload.arrayBuffer());
         params.fileName = name;
-        params.fileHash = await this.sha256(await this.fileToUpload.arrayBuffer());
+        params.fileHash = fileHash;
         // console.dir(params);
+
+        params = {
+            cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
+        }
+
         const sig = this.createSignature(params);
 
         params = {
@@ -234,6 +239,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
             action: 'CREATEONE',
+            fileName: name,
+            fileHash: fileHash,
             sig: sig,
         };
 
@@ -280,8 +287,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
             action: 'GETALL',
-            //secret: this.getApiKey(),
         };
+
+        params = {
+            cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
+        }
 
         const sig = this.createSignature(params);
 
@@ -358,6 +368,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucket_id,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
+            action: 'PUTONE',
         };
 
 
@@ -369,12 +380,19 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         let data = {'fileName': name};
 
         params.fileName = name;
+
+        params = {
+            cs: await this.createSha256HexForUrl("/blob/files/" + this.activeFileId + "?" + new URLSearchParams(params)),
+        }
+
         const sig = this.createSignature(params);
 
         params = {
             bucketID: this.bucket_id,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
+            action: 'PUTONE',
+            fileName: name,
             sig: sig,
         };
 
@@ -462,19 +480,25 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendDeleteFileRequest(id) {
+        let creationtime = Math.floor(new Date().valueOf()/1000)
         let params = {
             bucketID: this.bucket_id,
-            creationTime: Math.floor(new Date().valueOf()/1000),
+            creationTime: creationtime,
             prefix: this.prefix,
             action: 'DELETEONE',
         };
 
-        params.fileId = id;
+        params = {
+            cs: await this.createSha256HexForUrl("/blob/files/" + id + "?" + new URLSearchParams(params)),
+        }
+
         const sig = this.createSignature(params);
+
+        params.fileId = id;
 
         params = {
             bucketID: this.bucket_id,
-            creationTime: Math.floor(new Date().valueOf()/1000),
+            creationTime: creationtime,
             prefix: this.prefix,
             action: 'DELETEONE',
             sig: sig,
@@ -914,6 +938,25 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     /**
+     * Create a SHA256 hash from a blob
+     *
+     * @param {ArrayBuffer} blob the file
+     * @returns {Promise<string>} the sha256 hash
+     */
+    async hmac_sha256(blob, key) {
+        // console.dir(blob);
+        return crypto.subtle.importKey('raw', key, {name: "HMAC", hash: "SHA-256"}, false, ["sign"])
+            .then(hashBuffer => {
+                console.log(crypto.subtle.sign({name: "HMAC", hash: "SHA-256"}, hashBuffer, blob));
+                return crypto.subtle.sign({name: "HMAC", hash: "SHA-256"}, hashBuffer, blob);
+            })
+            .then(hashArray => {
+                console.log(hashArray);
+                return  Array.from(new Uint8Array(hashArray)).map(b => b.toString(16).padStart(2, '0')).join('');
+            });
+    }
+
+    /**
      * Returns the API key (not for production!)
      *
      * This returns the API key. This implementation is intended for usage in development only!
@@ -951,6 +994,24 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             JSON.stringify(payload),
             this.hexEncode(apiKey),
         );
+    }
+
+    /**
+     * Create a valid dbp-signature locally (not for production!)
+     *
+     * This implementation of the function createSignature(payload) IS NOT FOR PRODUCTION USE!
+     * A proper implementation will create the token after checking permissions
+     * server side, keeping the value of the signing key secret!
+     *
+     * @param {string} payload to build the JSW with
+     * @returns {ArrayBuffer}
+     */
+    createSha256HexForUrl(payload) {
+        console.log(payload);
+        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(payload))
+            .then(hashArray => {
+                return  Array.from(new Uint8Array(hashArray)).map(b => b.toString(16).padStart(2, '0')).join('');
+            });;
     }
 
     /**
