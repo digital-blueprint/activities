@@ -230,7 +230,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
-        }
+        };
 
         const sig = this.createSignature(params);
 
@@ -383,7 +383,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             cs: await this.createSha256HexForUrl("/blob/files/" + this.activeFileId + "?" + new URLSearchParams(params)),
-        }
+        };
 
         const sig = this.createSignature(params);
 
@@ -480,7 +480,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendDeleteFileRequest(id) {
-        let creationtime = Math.floor(new Date().valueOf()/1000)
+        let creationtime = Math.floor(new Date().valueOf()/1000);
         let params = {
             bucketID: this.bucket_id,
             creationTime: creationtime,
@@ -490,7 +490,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             cs: await this.createSha256HexForUrl("/blob/files/" + id + "?" + new URLSearchParams(params)),
-        }
+        };
 
         const sig = this.createSignature(params);
 
@@ -1011,7 +1011,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         return crypto.subtle.digest('SHA-256', new TextEncoder().encode(payload))
             .then(hashArray => {
                 return  Array.from(new Uint8Array(hashArray)).map(b => b.toString(16).padStart(2, '0')).join('');
-            });;
+            });
     }
 
     /**
