@@ -291,7 +291,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
-        }
+        };
 
         const sig = this.createSignature(params);
 
