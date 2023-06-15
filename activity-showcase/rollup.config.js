@@ -72,7 +72,7 @@ ${getOrigin(config.matomoUrl)} ${getOrigin(config.keyCloakBaseURL)} ${getOrigin(
     config.entryPointURL
 )} \
 httpbin.org ${getOrigin(config.nextcloudBaseURL)}; \
-img-src * blob: data:`;
+img-src * blob: data: `;
 
 export default (async () => {
     let privatePath = await getDistPath(pkg.name);

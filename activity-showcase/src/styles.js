@@ -2,7 +2,6 @@ import {css, CSSResult} from 'lit';
 
 /**
  * We want to have "neutral" colors here
- *
  * @returns {CSSResult}
  */
 export function getDemoCSS() {

@@ -112,7 +112,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     /**
      * Check if a person is set in or not
-     *
      * @returns {boolean}
      */
     isLoggedIn() {
@@ -121,7 +120,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     /**
      * Check if a person has successfully logged in
-     *
      * @returns {boolean}
      */
     isLoading() {
@@ -364,9 +362,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendPutFileRequest() {
+        let now = Math.floor(new Date().valueOf()/1000);
         let params = {
             bucketID: this.bucket_id,
-            creationTime: Math.floor(new Date().valueOf()/1000),
+            creationTime: now,
             prefix: this.prefix,
             action: 'PUTONE',
         };
@@ -389,7 +388,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             bucketID: this.bucket_id,
-            creationTime: Math.floor(new Date().valueOf()/1000),
+            creationTime: now,
             prefix: this.prefix,
             action: 'PUTONE',
             fileName: name,
@@ -407,6 +406,131 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + this.activeFileId + '?' + urlParams, options);
 
+    }
+
+    async sendGetOneFile(id, binary = 0) {
+        this.loading = true;
+        const i18n = this._i18n;
+
+        try {
+            let response = await this.sendGetOneFileRequest(id, binary);
+            let responseBody = undefined;
+            if (!response.redirected) {
+                responseBody = await response.json();
+                console.log(responseBody);
+            }
+
+            if (responseBody !== undefined && response.status === 200) {
+                send({
+                    "summary": i18n.t('getone-success-title'),
+                    "body": i18n.t('getone-success-body'),
+                    "type": "success",
+                    "timeout": 5,
+                });
+            }
+            else if (responseBody == undefined && response.status === 200 && response.redirected) {
+                send({
+                    "summary": i18n.t('getone-success-title'),
+                    "body": i18n.t('getone-success-body'),
+                    "type": "success",
+                    "timeout": 5,
+                });
+                window.open(response.url).focus();
+            } else if (response.status === 404) {
+                send({
+                    "summary":  i18n.t('file-not-found-title'),
+                    "body": i18n.t('file-not-found-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else if (response.status === 400) {
+                send({
+                    "summary": i18n.t('invalid-input-title'),
+                    "body": i18n.t('invalid-input-metadata-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else if (response.status === 422) {
+                send({
+                    "summary": i18n.t('invalid-input-title'),
+                    "body": i18n.t('invalid-input-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else {
+                send({
+                    "summary": i18n.t('something-went-wrong-title'),
+                    "body": i18n.t('something-went-wrong-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            }
+        } finally {
+            await this.getFiles();
+        }
+    }
+
+    async sendGetOneFileRequest(id, binary = 0, returnAsString = 0) {
+        let now = Math.floor(new Date().valueOf()/1000);
+        let params = {};
+
+        // if binary == 1, request binary file immediatly
+        if (binary == 1) {
+            params = {
+                bucketID: this.bucket_id,
+                creationTime: now,
+                binary: 1,
+                action: 'GETONE',
+            };
+        }
+        // else get metadata
+        else {
+            params = {
+                bucketID: this.bucket_id,
+                creationTime: now,
+                action: 'GETONE',
+            };
+        }
+
+        params = {
+            cs: await this.createSha256HexForUrl("/blob/files/" + id + "?" + new URLSearchParams(params)),
+        };
+
+        const sig = this.createSignature(params);
+
+        // if binary == 1, request binary file immediatly
+        if (binary == 1) {
+            params = {
+                bucketID: this.bucket_id,
+                creationTime: now,
+                binary: 1,
+                action: 'GETONE',
+                sig: sig,
+            };
+        }
+        // else get metadata
+        else {
+            params = {
+                bucketID: this.bucket_id,
+                creationTime: now,
+                action: 'GETONE',
+                sig: sig,
+            };
+        }
+
+        const urlParams = new URLSearchParams(params);
+
+        const options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/ld+json',
+            },
+        };
+        if (returnAsString == 1) {
+            return this.entryPointUrl + '/blob/files/' + id + '?' + urlParams;
+        } else {
+            return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + urlParams, options);
+        }
     }
 
     openDeleteFileDialogue(id, fileName) {
@@ -514,7 +638,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     /**
      * Send a fetch to given url with given options
-     *
      * @param {string} url
      * @param {object} options
      * @returns {object} response (error or result)
@@ -546,8 +669,20 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let btnLink = this.createScopedElement('dbp-icon-button');
             btnLink.setAttribute('icon-name', 'link');
             btnLink.setAttribute('title', i18n.t('open'));
+            btnLink.addEventListener('click', event => {
+                this.sendGetOneFile(id, 0);
+                event.stopPropagation();
+            });
 
-            link.appendChild(btnLink);
+            //link.appendChild(btnLink);
+
+            let btnBinary = this.createScopedElement('dbp-icon-button');
+            btnBinary.setAttribute('icon-name', 'download');
+            btnBinary.setAttribute('title', 'Download');
+            btnBinary.addEventListener('click', event => {
+                this.sendGetOneFile(id, 1);
+                event.stopPropagation();
+            });
 
             let btnEdit = this.createScopedElement('dbp-icon-button');
             btnEdit.setAttribute('icon-name', 'pencil');
@@ -567,7 +702,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
 
             let div = this.createScopedElement('div');
-            div.appendChild(link);
+            div.appendChild(btnLink);
+            div.appendChild(btnBinary);
             div.appendChild(btnEdit);
             div.appendChild(btnDelete);
             div.classList.add('actions-buttons');
@@ -602,8 +738,28 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     sorter: 'alphanum',
                     formatter: (cell) => {
                         let div = this.createScopedElement('div');
+                        let p = this.createScopedElement('p');
                         div.classList.add('filename');
-                        div.innerHTML = cell.getValue();
+                        p.innerHTML = cell.getValue();
+
+                        if (cell.getData()['extension'] == "png") {
+                            p.style = "margin-left: 5px;";
+                            let img = this.createScopedElement('img');
+
+
+                            this.sendGetOneFileRequest(cell.getData()['identifier'], 1, 1)
+                                .then((response) => {
+                                    img.src = response;
+                                });
+
+                            img.width = "40";
+                            img.height = "40";
+
+                            div.style="display: flex; align-items: center;";
+
+                            div.appendChild(img);
+                        }
+                        div.appendChild(p);
                         return div;
                     },
                 },
@@ -926,7 +1082,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     /**
      * Create a SHA256 hash from a blob
-     *
      * @param {ArrayBuffer} blob the file
      * @returns {Promise<string>} the sha256 hash
      */
@@ -938,30 +1093,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     /**
-     * Create a SHA256 hash from a blob
-     *
-     * @param {ArrayBuffer} blob the file
-     * @returns {Promise<string>} the sha256 hash
-     */
-    async hmac_sha256(blob, key) {
-        // console.dir(blob);
-        return crypto.subtle.importKey('raw', key, {name: "HMAC", hash: "SHA-256"}, false, ["sign"])
-            .then(hashBuffer => {
-                console.log(crypto.subtle.sign({name: "HMAC", hash: "SHA-256"}, hashBuffer, blob));
-                return crypto.subtle.sign({name: "HMAC", hash: "SHA-256"}, hashBuffer, blob);
-            })
-            .then(hashArray => {
-                console.log(hashArray);
-                return  Array.from(new Uint8Array(hashArray)).map(b => b.toString(16).padStart(2, '0')).join('');
-            });
-    }
-
-    /**
      * Returns the API key (not for production!)
-     *
      * This returns the API key. This implementation is intended for usage in development only!
      * In production, the API key should be created securly on the server side and not leak into the frontend.
-     *
      * @returns {string}
      */
     getApiKey() {
@@ -973,11 +1107,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     /**
      * Create a valid dbp-signature locally (not for production!)
-     *
      * This implementation of the function createSignature(payload) IS NOT FOR PRODUCTION USE!
      * A proper implementation will create the token after checking permissions
      * server side, keeping the value of the signing key secret!
-     *
      * @param {object} payload to build the JSW with
      * @returns {string}
      */
@@ -998,16 +1130,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     /**
      * Create a valid dbp-signature locally (not for production!)
-     *
      * This implementation of the function createSignature(payload) IS NOT FOR PRODUCTION USE!
      * A proper implementation will create the token after checking permissions
      * server side, keeping the value of the signing key secret!
-     *
      * @param {string} payload to build the JSW with
      * @returns {ArrayBuffer}
      */
     createSha256HexForUrl(payload) {
-        console.log(payload);
         return crypto.subtle.digest('SHA-256', new TextEncoder().encode(payload))
             .then(hashArray => {
                 return  Array.from(new Uint8Array(hashArray)).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -1016,7 +1145,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     /**
      * Encode a string into hex (helper function)
-     *
      * @param {string} str
      * @returns {string}
      */

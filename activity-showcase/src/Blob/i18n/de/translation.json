@@ -1,6 +1,8 @@
 {
   "upload-success-title": "Upload war erfolgreich",
   "upload-success-body": "Sie haben erfolgreich eine Datei in der Applikation hochgeladen :)",
+  "getone-success-title": "Abfragen der Daten war erfolgreich",
+  "getone-success-body": "Sie haben erfolgreich eine Datei in der Applikation abgefragt :)",
   "invalid-input-title": "Ungültige Eingabe!",
   "invalid-input-body": "Die Eingabe ist ungültig, bitte versuchen Sie es erneut.",
   "invalid-input-metadata-body": "Die angegebenen Metadaten sind keine gültigen json.",
