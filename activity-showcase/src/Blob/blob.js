@@ -284,6 +284,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucket_id,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
+            binary: 1,
             action: 'GETALL',
         };
 
@@ -297,6 +298,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucket_id,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
+            binary: 1,
             action: 'GETALL',
             sig: sig,
         };
@@ -435,7 +437,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     "type": "success",
                     "timeout": 5,
                 });
-                window.open(response.url).focus();
             } else if (response.status === 404) {
                 send({
                     "summary":  i18n.t('file-not-found-title'),
@@ -465,6 +466,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     "timeout": 5,
                 });
             }
+
+            return response;
         } finally {
             await this.getFiles();
         }
@@ -663,26 +666,42 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
             let link = this.createScopedElement('a');
             link.setAttribute('href', contentUrl);
+            link.setAttribute('download', fileName);
             link.setAttribute('title', i18n.t('open-file'));
             link.setAttribute('target', '_blank');
 
             let btnLink = this.createScopedElement('dbp-icon-button');
             btnLink.setAttribute('icon-name', 'link');
             btnLink.setAttribute('title', i18n.t('open'));
+            btnLink.setAttribute('target', '_blank');
             btnLink.addEventListener('click', event => {
                 this.sendGetOneFile(id, 0);
                 event.stopPropagation();
             });
 
-            //link.appendChild(btnLink);
-
             let btnBinary = this.createScopedElement('dbp-icon-button');
             btnBinary.setAttribute('icon-name', 'download');
             btnBinary.setAttribute('title', 'Download');
             btnBinary.addEventListener('click', event => {
-                this.sendGetOneFile(id, 1);
+                this.sendGetOneFile(id, 1).then((response) => {
+                    if (response == undefined) {
+                        console.error("Response is undefined");
+                        return;
+                    }
+                    response.blob().then((blob) => {
+                        const objUrl = URL.createObjectURL(blob);
+                        // download file using hidden a tag
+                        let hiddenA = this.createScopedElement('a');
+                        hiddenA.setAttribute('href', objUrl);
+                        hiddenA.setAttribute('download', fileName);
+                        hiddenA.setAttribute('target', '_blank');
+                        hiddenA.click();
+                    });
+                })
                 event.stopPropagation();
             });
+
+            //link.appendChild(btnBinary);
 
             let btnEdit = this.createScopedElement('dbp-icon-button');
             btnEdit.setAttribute('icon-name', 'pencil');
