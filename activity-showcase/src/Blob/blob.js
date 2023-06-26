@@ -696,6 +696,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         hiddenA.setAttribute('download', fileName);
                         hiddenA.setAttribute('target', '_blank');
                         hiddenA.click();
+                        URL.revokeObjectURL(objUrl);
                     });
                 });
                 event.stopPropagation();
