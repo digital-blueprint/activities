@@ -697,7 +697,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         hiddenA.setAttribute('target', '_blank');
                         hiddenA.click();
                     });
-                })
+                });
                 event.stopPropagation();
             });
 
