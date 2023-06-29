@@ -477,7 +477,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         let now = Math.floor(new Date().valueOf()/1000);
         let params = {};
 
-        // if binary == 1, request binary file immediatly
+        // if binary == 1, request binary file immediately
         if (binary == 1) {
             params = {
                 bucketID: this.bucket_id,
@@ -501,7 +501,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         const sig = this.createSignature(params);
 
-        // if binary == 1, request binary file immediatly
+        // if binary == 1, request binary file immediately
         if (binary == 1) {
             params = {
                 bucketID: this.bucket_id,
