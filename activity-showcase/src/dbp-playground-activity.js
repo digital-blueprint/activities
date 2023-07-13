@@ -46,6 +46,12 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
+    changeBucketId() {
+        if (this._("#bucket-input")) {
+            this.bucketId = this._("#bucket-input").value;
+        }
+    }
+
     static get styles() {
         // language=css
         return css`
@@ -107,6 +113,26 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
                             icon-name="checkmark-circle"
                             title="Enter input"
                             @click="${this.changePrefix}"
+                    ></dbp-icon-button>
+                </div>
+            </div>
+            
+            <div class="section-titles">
+                Bucket ID
+            </div>
+            <div class="section-prefix">
+                <div class="row">
+                    <input
+                            type="text"
+                            class="input"
+                            name="bucket-input"
+                            id="bucket-input"
+                            value="${this.bucketId}"
+                    />
+                    <dbp-icon-button
+                            icon-name="checkmark-circle"
+                            title="Enter input"
+                            @click="${this.changeBucketId}"
                     ></dbp-icon-button>
                 </div>
             </div>

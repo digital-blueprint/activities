@@ -26,7 +26,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         this.uploadedFilesNumber = 0;
         this.uploadedFiles = [];
 
-        this.bucket_id = '';
+        this.bucketId = '';
         this.prefix = '';
 
         this.activeFileId = '';
@@ -60,7 +60,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             loading: { type: Boolean, attribute: false },
             fileToUpload: { type: Object, attribute: false },
 
-            bucket_id: {type: String, attribute: 'bucket-id'},
+            bucketId: {type: String, attribute: 'bucket-id'},
             prefix: {type: String, attribute: 'prefix'},
             activeFileId: {type: String, attribute: false},
             activeFileName: {type: String, attribute: false},
@@ -100,8 +100,15 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 case "prefix":
                     if (this.isLoggedIn() && !this.isLoading()
                         && this._initialFetchDone
-                        && this.bucket_id !== '') {
+                        && this.bucketId !== '') {
                             this.getFiles();
+                    }
+                    break;
+                case "bucketId":
+                    if (this.isLoggedIn() && !this.isLoading()
+                        && this._initialFetchDone
+                        && this.bucketId !== '') {
+                        this.getFiles();
                     }
                     break;
             }
@@ -208,12 +215,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async sendUploadFileRequest() {
         let params = {
-            bucketID: this.bucket_id,
+            bucketID: this.bucketId,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
             action: 'CREATEONE',
-            //validUntil: Math.floor(new Date().valueOf()/1000) + 5*60*1000,
-            //secret: this.getApiKey(),
         };
 
 
@@ -233,7 +238,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         const sig = this.createSignature(params);
 
         params = {
-            bucketID: this.bucket_id,
+            bucketID: this.bucketId,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
             action: 'CREATEONE',
@@ -248,7 +253,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         formData.append('file', this.fileToUpload);
         formData.append('prefix', this.prefix);
         formData.append('fileName', name);
-        formData.append('bucketID', this.bucket_id);
+        formData.append('bucketID', this.bucketId);
 
         const options = {
             method: 'POST',
@@ -281,7 +286,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async sendGetFilesRequest() {
         let params = {
-            bucketID: this.bucket_id,
+            bucketID: this.bucketId,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
             binary: 1,
@@ -295,7 +300,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         const sig = this.createSignature(params);
 
         params = {
-            bucketID: this.bucket_id,
+            bucketID: this.bucketId,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
             binary: 1,
@@ -366,7 +371,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     async sendPutFileRequest() {
         let now = Math.floor(new Date().valueOf()/1000);
         let params = {
-            bucketID: this.bucket_id,
+            bucketID: this.bucketId,
             creationTime: now,
             prefix: this.prefix,
             action: 'PUTONE',
@@ -389,7 +394,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         const sig = this.createSignature(params);
 
         params = {
-            bucketID: this.bucket_id,
+            bucketID: this.bucketId,
             creationTime: now,
             prefix: this.prefix,
             action: 'PUTONE',
@@ -480,7 +485,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         // if binary == 1, request binary file immediately
         if (binary == 1) {
             params = {
-                bucketID: this.bucket_id,
+                bucketID: this.bucketId,
                 creationTime: now,
                 binary: 1,
                 action: 'GETONE',
@@ -489,7 +494,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         // else get metadata
         else {
             params = {
-                bucketID: this.bucket_id,
+                bucketID: this.bucketId,
                 creationTime: now,
                 action: 'GETONE',
             };
@@ -504,7 +509,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         // if binary == 1, request binary file immediately
         if (binary == 1) {
             params = {
-                bucketID: this.bucket_id,
+                bucketID: this.bucketId,
                 creationTime: now,
                 binary: 1,
                 action: 'GETONE',
@@ -514,7 +519,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         // else get metadata
         else {
             params = {
-                bucketID: this.bucket_id,
+                bucketID: this.bucketId,
                 creationTime: now,
                 action: 'GETONE',
                 sig: sig,
@@ -609,7 +614,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     async sendDeleteFileRequest(id) {
         let creationtime = Math.floor(new Date().valueOf()/1000);
         let params = {
-            bucketID: this.bucket_id,
+            bucketID: this.bucketId,
             creationTime: creationtime,
             prefix: this.prefix,
             action: 'DELETEONE',
@@ -624,7 +629,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         params.fileId = id;
 
         params = {
-            bucketID: this.bucket_id,
+            bucketID: this.bucketId,
             creationTime: creationtime,
             prefix: this.prefix,
             action: 'DELETEONE',
@@ -637,6 +642,37 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'DELETE',
         };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + urlParams, options);
+    }
+
+    async sendDeletePrefixRequest() {
+        let creationtime = Math.floor(new Date().valueOf()/1000);
+        let params = {
+            bucketID: this.bucketId,
+            creationTime: creationtime,
+            prefix: this.prefix,
+            action: 'DELETEALL',
+        };
+
+        params = {
+            cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
+        };
+
+        const sig = this.createSignature(params);
+
+        params = {
+            bucketID: this.bucketId,
+            creationTime: creationtime,
+            prefix: this.prefix,
+            action: 'DELETEALL',
+            sig: sig,
+        };
+
+        const urlParams = new URLSearchParams(params);
+
+        const options = {
+            method: 'DELETE',
+        };
+        return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + urlParams, options);
     }
 
     /**
@@ -930,7 +966,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (this.tableInit && this.isLoggedIn() && !this.isLoading()
             && !this._initialFetchDone
             && !this.initialRequestsLoading
-            && this.bucket_id !== '') {
+            && this.bucketId !== '') {
                 this.getFiles();
         }
 
@@ -1096,6 +1132,23 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         
                     </div>
                 </div>
+                <div class="section-titles">
+                    ${i18n.t('remove-all-files')}
+                </div>
+                <div id="remove-all-files-section">
+                    <div class="row">
+                        <dbp-button 
+                                title="remove-all-files"
+                                @click="${() => {
+                                    this.sendDeletePrefixRequest().then(() => {
+                                        this.getFiles();
+                                    });
+                                }}"
+                        >
+                            ${i18n.t('remove')}
+                        </dbp-button>                     
+                    </div>
+                </div>
             </div>
         `;
     }
@@ -1120,7 +1173,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      */
     getApiKey() {
         // not for production use!
-        const apiKey = '08d848fd868d83646778b87dd0695b10f59c78e23b286e9884504d1bb43cce93';
+        let apiKey = '08d848fd868d83646778b87dd0695b10f59c78e23b286e9884504d1bb43cce93';
+
+        if (this.bucketId == 4321) {
+            apiKey = '427bb401c7e4ed7bc6d450cd8d3e7a601a50e64f7ebe59011faff77551809011';
+        }
 
         return apiKey;
     }

@@ -32,6 +32,8 @@
   "save-as": "Save as",
   "save": "Save",
   "add-new-file": "Add new file",
+  "remove-all-files": "Remove all files in this prefix",
+  "remove": "Remove",
   "select-file": "Select a file",
   "upload": "Upload",
   "ask-upload": "Are you sure you want to upload this file?",

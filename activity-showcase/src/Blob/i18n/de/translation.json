@@ -32,6 +32,8 @@
   "save-as": "Speichern unter",
   "save": "Speichern",
   "add-new-file": "Neue Datei hinzufügen",
+  "remove-all-files": "Alle Dateien dieses Prefixes löschen",
+  "remove": "Löschen",
   "select-file": "Datei wählen",
   "upload": "Hochladen",
   "ask-upload": "Sind Sie sicher, dass Sie diese Datei hochladen möchten?",
