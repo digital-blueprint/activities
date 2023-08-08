@@ -472,7 +472,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 });
             }
 
-            return response;
+            return responseBody;
         } finally {
             await this.getFiles();
         }
@@ -539,6 +539,100 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         } else {
             return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + urlParams, options);
         }
+    }
+
+    async sendDownloadFile(id) {
+        this.loading = true;
+        const i18n = this._i18n;
+
+        try {
+            let response = await this.sendDownloadFileRequest(id);
+
+            if (response !== undefined && response.status === 200) {
+                send({
+                    "summary": i18n.t('getone-success-title'),
+                    "body": i18n.t('getone-success-body'),
+                    "type": "success",
+                    "timeout": 5,
+                });
+            }
+            else if (response == undefined && response.status === 200 && response.redirected) {
+                send({
+                    "summary": i18n.t('getone-success-title'),
+                    "body": i18n.t('getone-success-body'),
+                    "type": "success",
+                    "timeout": 5,
+                });
+            } else if (response.status === 404) {
+                send({
+                    "summary":  i18n.t('file-not-found-title'),
+                    "body": i18n.t('file-not-found-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else if (response.status === 400) {
+                send({
+                    "summary": i18n.t('invalid-input-title'),
+                    "body": i18n.t('invalid-input-metadata-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else if (response.status === 422) {
+                send({
+                    "summary": i18n.t('invalid-input-title'),
+                    "body": i18n.t('invalid-input-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            } else {
+                send({
+                    "summary": i18n.t('something-went-wrong-title'),
+                    "body": i18n.t('something-went-wrong-body'),
+                    "type": "danger",
+                    "timeout": 5,
+                });
+            }
+
+            return response;
+        } finally {
+            await this.getFiles();
+        }
+    }
+
+    async sendDownloadFileRequest(id) {
+        let now = Math.floor(new Date().valueOf()/1000);
+        let params = {};
+
+        params = {
+            bucketID: this.bucketId,
+            creationTime: now,
+            action: 'GETONE',
+        };
+
+        params = {
+            cs: await this.createSha256HexForUrl("/blob/files/" + id + "/download?" + new URLSearchParams(params)),
+        };
+
+        const sig = this.createSignature(params);
+
+
+        params = {
+            bucketID: this.bucketId,
+            creationTime: now,
+            action: 'GETONE',
+            sig: sig,
+        };
+
+        const urlParams = new URLSearchParams(params);
+
+        const options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/ld+json',
+            },
+        };
+
+        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '/download?' + urlParams, options);
     }
 
     openDeleteFileDialogue(id, fileName) {
@@ -625,8 +719,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         };
 
         const sig = this.createSignature(params);
-
-        params.fileId = id;
 
         params = {
             bucketID: this.bucketId,
@@ -719,7 +811,22 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             btnBinary.setAttribute('icon-name', 'download');
             btnBinary.setAttribute('title', 'Download');
             btnBinary.addEventListener('click', event => {
-                this.sendGetOneFile(id, 1).then((response) => {
+                this.sendGetOneFile(id, 1).then(body => {
+                    // download file using hidden a tag
+                    let hiddenA = this.createScopedElement('a');
+                    hiddenA.setAttribute('href', body['contentUrl']);
+                    hiddenA.setAttribute('download', body['fileName']);
+                    hiddenA.setAttribute('target', '_blank');
+                    hiddenA.click();
+                });
+                event.stopPropagation();
+            });
+
+            let btnDownload = this.createScopedElement('dbp-icon-button');
+            btnDownload.setAttribute('icon-name', 'exit-down');
+            btnDownload.setAttribute('title', 'Download');
+            btnDownload.addEventListener('click', event => {
+                this.sendDownloadFile(id).then(response => {
                     if (response == undefined) {
                         console.error("Response is undefined");
                         return;
@@ -760,6 +867,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let div = this.createScopedElement('div');
             div.appendChild(btnLink);
             div.appendChild(btnBinary);
+            div.appendChild(btnDownload);
             div.appendChild(btnEdit);
             div.appendChild(btnDelete);
             div.classList.add('actions-buttons');
@@ -803,9 +911,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                             let img = this.createScopedElement('img');
 
 
-                            this.sendGetOneFileRequest(cell.getData()['identifier'], 1, 1)
+                            this.sendGetOneFileRequest(cell.getData()['identifier'], 1, 0)
                                 .then((response) => {
-                                    img.src = response;
+                                    response.json().then(data => {
+                                        img.src = data['contentUrl'];
+                                    });
                                 });
 
                             img.width = "40";
@@ -869,7 +979,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     download: false,
                     headerSort: false,
                     visible: true,
-                    minWidth: 150,
+                    minWidth: 200,
                     formatter: actionsButtons,
                 },
             ],
