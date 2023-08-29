@@ -218,7 +218,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucketId,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
-            action: 'CREATEONE',
+            method: 'POST',
         };
 
 
@@ -226,6 +226,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (this._('#to-upload-file-name-input')) {
             name = this._('#to-upload-file-name-input').value;
         }
+        name = encodeURIComponent(name);
         let fileHash = await this.sha256(await this.fileToUpload.arrayBuffer());
         params.fileName = name;
         params.fileHash = fileHash;
@@ -241,7 +242,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucketId,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
-            action: 'CREATEONE',
+            method: 'POST',
             fileName: name,
             fileHash: fileHash,
             sig: sig,
@@ -289,8 +290,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucketId,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
-            binary: 1,
-            action: 'GETALL',
+            includeData: 1,
+            method: 'GET',
         };
 
         params = {
@@ -303,8 +304,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucketId,
             creationTime: Math.floor(new Date().valueOf()/1000),
             prefix: this.prefix,
-            binary: 1,
-            action: 'GETALL',
+            includeData: 1,
+            method: 'GET',
             sig: sig,
         };
 
@@ -374,7 +375,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucketId,
             creationTime: now,
             prefix: this.prefix,
-            action: 'PUTONE',
+            method: 'PUT',
         };
 
 
@@ -397,7 +398,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucketId,
             creationTime: now,
             prefix: this.prefix,
-            action: 'PUTONE',
+            method: 'PUT',
             fileName: name,
             sig: sig,
         };
@@ -415,12 +416,12 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     }
 
-    async sendGetOneFile(id, binary = 0) {
+    async sendGETFile(id, includeData = 0) {
         this.loading = true;
         const i18n = this._i18n;
 
         try {
-            let response = await this.sendGetOneFileRequest(id, binary);
+            let response = await this.sendGETFileRequest(id, includeData);
             let responseBody = undefined;
             if (!response.redirected) {
                 responseBody = await response.json();
@@ -478,17 +479,17 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
-    async sendGetOneFileRequest(id, binary = 0, returnAsString = 0) {
+    async sendGETFileRequest(id, includeData = 0, returnAsString = 0) {
         let now = Math.floor(new Date().valueOf()/1000);
         let params = {};
 
-        // if binary == 1, request binary file immediately
-        if (binary == 1) {
+        // if includeData == 1, request base64 encoded file immediately
+        if (includeData == 1) {
             params = {
                 bucketID: this.bucketId,
                 creationTime: now,
-                binary: 1,
-                action: 'GETONE',
+                includeData: 1,
+                method: 'GET',
             };
         }
         // else get metadata
@@ -496,7 +497,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             params = {
                 bucketID: this.bucketId,
                 creationTime: now,
-                action: 'GETONE',
+                method: 'GET',
             };
         }
 
@@ -506,13 +507,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         const sig = this.createSignature(params);
 
-        // if binary == 1, request binary file immediately
-        if (binary == 1) {
+        // if includeData == 1, request base64 encoded file immediately
+        if (includeData == 1) {
             params = {
                 bucketID: this.bucketId,
                 creationTime: now,
-                binary: 1,
-                action: 'GETONE',
+                includeData: 1,
+                method: 'GET',
                 sig: sig,
             };
         }
@@ -521,7 +522,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             params = {
                 bucketID: this.bucketId,
                 creationTime: now,
-                action: 'GETONE',
+                method: 'GET',
                 sig: sig,
             };
         }
@@ -606,7 +607,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         params = {
             bucketID: this.bucketId,
             creationTime: now,
-            action: 'GETONE',
+            method: 'GET',
         };
 
         params = {
@@ -619,7 +620,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         params = {
             bucketID: this.bucketId,
             creationTime: now,
-            action: 'GETONE',
+            method: 'GET',
             sig: sig,
         };
 
@@ -711,7 +712,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucketId,
             creationTime: creationtime,
             prefix: this.prefix,
-            action: 'DELETEONE',
+            method: 'DELETE',
         };
 
         params = {
@@ -724,7 +725,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucketId,
             creationTime: creationtime,
             prefix: this.prefix,
-            action: 'DELETEONE',
+            method: 'DELETE',
             sig: sig,
         };
 
@@ -742,7 +743,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucketId,
             creationTime: creationtime,
             prefix: this.prefix,
-            action: 'DELETEALL',
+            method: 'DELETE',
         };
 
         params = {
@@ -755,7 +756,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketID: this.bucketId,
             creationTime: creationtime,
             prefix: this.prefix,
-            action: 'DELETEALL',
+            method: 'DELETE',
             sig: sig,
         };
 
@@ -803,7 +804,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             btnLink.setAttribute('title', i18n.t('open'));
             btnLink.setAttribute('target', '_blank');
             btnLink.addEventListener('click', event => {
-                this.sendGetOneFile(id, 0);
+                this.sendGETFile(id, 0);
                 event.stopPropagation();
             });
 
@@ -811,7 +812,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             btnBinary.setAttribute('icon-name', 'download');
             btnBinary.setAttribute('title', 'Download');
             btnBinary.addEventListener('click', event => {
-                this.sendGetOneFile(id, 1).then(body => {
+                this.sendGETFile(id, 1).then(body => {
                     // download file using hidden a tag
                     let hiddenA = this.createScopedElement('a');
                     hiddenA.setAttribute('href', body['contentUrl']);
@@ -824,7 +825,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
             let btnDownload = this.createScopedElement('dbp-icon-button');
             btnDownload.setAttribute('icon-name', 'exit-down');
-            btnDownload.setAttribute('title', 'Download');
+            btnDownload.setAttribute('title', '/download');
             btnDownload.addEventListener('click', event => {
                 this.sendDownloadFile(id).then(response => {
                     if (response == undefined) {
@@ -911,7 +912,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                             let img = this.createScopedElement('img');
 
 
-                            this.sendGetOneFileRequest(cell.getData()['identifier'], 1, 0)
+                            this.sendGETFileRequest(cell.getData()['identifier'], 1, 0)
                                 .then((response) => {
                                     response.json().then(data => {
                                         img.src = data['contentUrl'];
