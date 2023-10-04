@@ -33,6 +33,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         this.activeFileName = '';
 
         this.tableInit = false;
+
+        this.startsWith = false;
     }
 
     static get scopedElements() {
@@ -59,9 +61,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             tableInit: { type: Boolean, attribute: false },
             loading: { type: Boolean, attribute: false },
             fileToUpload: { type: Object, attribute: false },
-
             bucketId: {type: String, attribute: 'bucket-id'},
             prefix: {type: String, attribute: 'prefix'},
+            startsWith: {type: String, attribute: 'prefix-starts-with'},
             activeFileId: {type: String, attribute: false},
             activeFileName: {type: String, attribute: false},
         };
@@ -102,6 +104,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         && this._initialFetchDone
                         && this.bucketId !== '') {
                             this.getFiles();
+                    }
+                    break;
+                case "startsWith":
+                    if (this.isLoggedIn() && !this.isLoading()
+                        && this._initialFetchDone
+                        && this.bucketId !== '') {
+                        this.getFiles();
                     }
                     break;
                 case "bucketId":
@@ -294,6 +303,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'GET',
         };
 
+        if (this.startsWith == 'true') {
+            params['startsWith'] = 1;
+        }
+
         params = {
             cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
         };
@@ -306,8 +319,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             prefix: this.prefix,
             includeData: 1,
             method: 'GET',
-            sig: sig,
         };
+
+        if (this.startsWith == 'true') {
+            params['startsWith'] = 1;
+        }
+
+        params['sig'] = sig;
 
         const urlParams = new URLSearchParams(params);
 
@@ -746,6 +764,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'DELETE',
         };
 
+        if (this.startsWith == 'true') {
+            params['startsWith'] = 1;
+        }
+
         params = {
             cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
         };
@@ -757,8 +779,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             creationTime: creationtime,
             prefix: this.prefix,
             method: 'DELETE',
-            sig: sig,
         };
+
+        if (this.startsWith == 'true') {
+            params['startsWith'] = 1;
+        }
+
+        params['sig'] = sig;
 
         const urlParams = new URLSearchParams(params);
 
@@ -1257,7 +1284,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                                 }}"
                         >
                             ${i18n.t('remove')}
-                        </dbp-button>                     
+                        </dbp-button>
                     </div>
                 </div>
             </div>

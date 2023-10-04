@@ -19,6 +19,7 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
         this.entryPointUrl = '';
         this.prefix = exampleConfig.prefix;
         this.bucketId = exampleConfig.bucket_id;
+        this.startsWith = false;
     }
 
     static get scopedElements() {
@@ -36,13 +37,15 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
             entryPointUrl: {type: String, attribute: 'entry-point-url'},
             prefix: {type: String, attribute: false},
             bucketId: {type: String, attribute: false},
+            startsWith: {type: String, attribute: false},
         };
     }
 
 
     changePrefix() {
-        if (this._("#prefix-input")) {
+        if (this._("#prefix-input") || this._('#starts-with')) {
             this.prefix = this._("#prefix-input").value;
+            this.startsWith = this._('#starts-with').checked;
         }
     }
 
@@ -67,6 +70,7 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
             ${commonStyles.getButtonCSS()}
             ${demoStyles.getDemoCSS()}
             ${commonStyles.getLinkCss()}
+            ${commonStyles.getRadioAndCheckboxCss()}
             
             h2:first-child {
                 margin-top: 0;
@@ -114,6 +118,11 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
                             title="Enter input"
                             @click="${this.changePrefix}"
                     ></dbp-icon-button>
+                    <label class="button-container">
+                        Prefix is 'startsWith' (e.g. LIKE prefix%)
+                        <input type="checkbox" id="starts-with" .value="${this.startsWith}"/>
+                        <span class="checkmark"></span>
+                    </label>
                 </div>
             </div>
             
@@ -141,6 +150,7 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
                 subscribe="auth,file-handling-enabled-targets:enabled-targets,entry-point-url:entry-point-url,lang:lang"
                 prefix="${this.prefix}"
                 bucket-id="${this.bucketId}"
+                prefix-starts-with="${this.startsWith}"
             ></dbp-blob>
         `;
     }
