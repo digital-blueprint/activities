@@ -20,6 +20,7 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
         this.prefix = exampleConfig.prefix;
         this.bucketId = exampleConfig.bucket_id;
         this.startsWith = false;
+        this.noPrefix = false;
     }
 
     static get scopedElements() {
@@ -38,14 +39,22 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
             prefix: {type: String, attribute: false},
             bucketId: {type: String, attribute: false},
             startsWith: {type: String, attribute: false},
+            noPrefix: {type: String, attribute: false},
         };
     }
 
 
     changePrefix() {
-        if (this._("#prefix-input") || this._('#starts-with')) {
+        if (this._("#prefix-input") || this._('#starts-with') || this._('#no-prefix')) {
             this.prefix = this._("#prefix-input").value;
             this.startsWith = this._('#starts-with').checked;
+            this.noPrefix = this._('#no-prefix').checked;
+
+            if (this.noPrefix) {
+                this._('#prefix-input').disabled = true;
+            } else {
+                this._('#prefix-input').disabled = false;
+            }
         }
     }
 
@@ -123,6 +132,11 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
                         <input type="checkbox" id="starts-with" .value="${this.startsWith}"/>
                         <span class="checkmark"></span>
                     </label>
+                    <label class="button-container">
+                        No prefix
+                        <input type="checkbox" id="no-prefix" .value="${this.noPrefix}"/>
+                        <span class="checkmark"></span>
+                    </label>
                 </div>
             </div>
             
@@ -151,6 +165,7 @@ class DbpPlaygroundActivity extends ScopedElementsMixin(DBPLitElement) {
                 prefix="${this.prefix}"
                 bucket-id="${this.bucketId}"
                 prefix-starts-with="${this.startsWith}"
+                no-prefix="${this.noPrefix}"
             ></dbp-blob>
         `;
     }

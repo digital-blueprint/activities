@@ -35,6 +35,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         this.tableInit = false;
 
         this.startsWith = false;
+        this.noPrefix = false;
     }
 
     static get scopedElements() {
@@ -64,6 +65,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             bucketId: {type: String, attribute: 'bucket-id'},
             prefix: {type: String, attribute: 'prefix'},
             startsWith: {type: String, attribute: 'prefix-starts-with'},
+            noPrefix: {type: String, attribute: 'no-prefix'},
             activeFileId: {type: String, attribute: false},
             activeFileName: {type: String, attribute: false},
         };
@@ -110,6 +112,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     if (this.isLoggedIn() && !this.isLoading()
                         && this._initialFetchDone
                         && this.bucketId !== '') {
+                        this.getFiles();
+                    }
+                    break;
+                case "noPrefix":
+                    if (this.isLoggedIn() && !this.isLoading()
+                        && this._initialFetchDone
+                        && this.bucketId !== '') {
+                        this.prefix = '';
                         this.getFiles();
                     }
                     break;
