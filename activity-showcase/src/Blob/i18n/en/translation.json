@@ -27,6 +27,7 @@
   "additional-data": "Additional data",
   "files": "Files",
   "delete-text": "Are you sure you want to delete the file \"{{name}}\"?",
+  "delete-all-text": "Are you sure you want to delete the whole prefix \"{{name}}\"?",
   "cancel": "Cancel",
   "delete": "Delete",
   "save-as": "Save as",

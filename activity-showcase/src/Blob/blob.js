@@ -699,6 +699,22 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
+    openDeleteAllDialogue(id, fileName) {
+        this.activeFileId = id;
+        this.activeFileName = fileName;
+        if (this._('#ask-delete-all-dialogue')) {
+            this._('#ask-delete-all-dialogue').open();
+        }
+    }
+
+    closeDeleteAllDialogue() {
+        this.activeFileId = '';
+        this.activeFileName = '';
+        if (this._('#ask-delete-all-dialogue')) {
+            this._('#ask-delete-all-dialogue').close();
+        }
+    }
+
     async deleteFile(id) {
         this.loading = true;
         const i18n = this._i18n;
@@ -767,6 +783,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async sendDeletePrefixRequest() {
         let creationtime = Math.floor(new Date().valueOf()/1000);
+
+        this.closeDeleteAllDialogue();
         let params = {
             bucketID: this.bucketId,
             creationTime: creationtime,
@@ -1196,6 +1214,37 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         </div>
                     </div>
                 </dbp-modal>
+                <dbp-modal
+                        id="ask-delete-all-dialogue"
+                        title=""
+                        modal-id="delete-confirmation"
+                >
+                    <div slot="content">
+                        <div>
+                            ${i18n.t('delete-all-text', {name: this.prefix})}
+                        </div>
+
+                    </div>
+                    <div slot="footer">
+                        <div class="footer-btn-row">
+                            <dbp-button 
+                                    title="${i18n.t('cancel')}"
+                                    @click="${() => {this._("#ask-delete-all-dialogue").close();}}">
+                                ${i18n.t('cancel')}
+                            </dbp-button>
+                            <dbp-button
+                                    title="${i18n.t('delete')}"
+                                    type="is-primary" 
+                                    @click="${() => {                                    
+                                        this.sendDeletePrefixRequest().then(() => {
+                                            this.getFiles();
+                                        });
+                                    }}">
+                                ${i18n.t('delete')}
+                            </dbp-button>
+                        </div>
+                    </div>
+                </dbp-modal>
                 <div class="section-titles">
                     ${i18n.t('add-new-file')}
                 </div>
@@ -1288,9 +1337,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         <dbp-button 
                                 title="remove-all-files"
                                 @click="${() => {
-                                    this.sendDeletePrefixRequest().then(() => {
-                                        this.getFiles();
-                                    });
+                                    this.openDeleteAllDialogue();
                                 }}"
                         >
                             ${i18n.t('remove')}

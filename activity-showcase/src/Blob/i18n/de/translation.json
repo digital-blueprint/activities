@@ -27,6 +27,7 @@
   "additional-data": "Zusätzliche Daten",
   "files": "Dateien",
   "delete-text": "Sind Sie sicher, dass Sie die Datei \"{{name}}\" löschen wollen?",
+  "delete-all-text": "Sind Sie sicher, dass Sie den ganzen Prefix \"{{name}}\" löschen wollen?",
   "cancel": "Abbrechen",
   "delete": "Löschen",
   "save-as": "Speichern unter",
