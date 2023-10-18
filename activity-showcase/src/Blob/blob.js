@@ -120,7 +120,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     if (this.isLoggedIn() && !this.isLoading()
                         && this._initialFetchDone
                         && this.bucketId !== '') {
-                        this.prefix = '';
                         toGetFiles = true;
                     }
                     break;
@@ -320,6 +319,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (this.startsWith == 'true') {
             params['startsWith'] = 1;
         }
+        if (this.noPrefix == 'true') {
+            params['prefix'] = '';
+        }
 
         params = {
             cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
@@ -338,6 +340,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (this.startsWith == 'true') {
             params['startsWith'] = 1;
         }
+        if (this.noPrefix == 'true') {
+            params['prefix'] = '';
+        }
+
 
         params['sig'] = sig;
 
@@ -798,6 +804,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (this.startsWith == 'true') {
             params['startsWith'] = 1;
         }
+        if (this.noPrefix == 'true') {
+            params['prefix'] = '';
+        }
+
 
         params = {
             cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
@@ -815,6 +825,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (this.startsWith == 'true') {
             params['startsWith'] = 1;
         }
+        if (this.noPrefix == 'true') {
+            params['prefix'] = '';
+        }
+
 
         params['sig'] = sig;
 
