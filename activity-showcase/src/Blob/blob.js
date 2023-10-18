@@ -96,6 +96,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     update(changedProperties) {
+        let toGetFiles = false;
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
                 case "auth":
@@ -105,14 +106,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     if (this.isLoggedIn() && !this.isLoading()
                         && this._initialFetchDone
                         && this.bucketId !== '') {
-                            this.getFiles();
+                        toGetFiles = true;
                     }
                     break;
                 case "startsWith":
                     if (this.isLoggedIn() && !this.isLoading()
                         && this._initialFetchDone
                         && this.bucketId !== '') {
-                        this.getFiles();
+                        toGetFiles = true;
                     }
                     break;
                 case "noPrefix":
@@ -120,18 +121,22 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         && this._initialFetchDone
                         && this.bucketId !== '') {
                         this.prefix = '';
-                        this.getFiles();
+                        toGetFiles = true;
                     }
                     break;
                 case "bucketId":
                     if (this.isLoggedIn() && !this.isLoading()
                         && this._initialFetchDone
                         && this.bucketId !== '') {
-                        this.getFiles();
+                        toGetFiles = true;
                     }
                     break;
             }
         });
+
+        if (toGetFiles) {
+            this.getFiles();
+        }
 
         super.update(changedProperties);
     }
@@ -166,7 +171,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     getFileToUploadName() {
-        // console.log(this.fileToUpload);
         if (typeof this.fileToUpload.type === 'undefined') {
             return this.fileToUpload.name;
         }
@@ -453,7 +457,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let responseBody = undefined;
             if (!response.redirected) {
                 responseBody = await response.json();
-                console.log(responseBody);
             }
 
             if (responseBody !== undefined && response.status === 200) {
