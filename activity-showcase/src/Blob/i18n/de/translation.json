@@ -31,6 +31,7 @@
   "cancel": "Abbrechen",
   "delete": "Löschen",
   "save-as": "Speichern unter",
+  "valid-until": "Gültig bis (in ISO 8601 für Dauer)",
   "save": "Speichern",
   "add-new-file": "Neue Datei hinzufügen",
   "remove-all-files": "Alle Dateien dieses Prefixes löschen",

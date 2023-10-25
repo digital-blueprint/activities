@@ -31,6 +31,7 @@
   "cancel": "Cancel",
   "delete": "Delete",
   "save-as": "Save as",
+  "valid-until": "Valid until (in ISO8601 for durations)",
   "save": "Save",
   "add-new-file": "Add new file",
   "remove-all-files": "Remove all files in this prefix",

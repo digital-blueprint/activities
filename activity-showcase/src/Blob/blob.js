@@ -245,13 +245,21 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
 
         let name = this.activeFileName;
+        let retentionDuration = false;
         if (this._('#to-upload-file-name-input')) {
             name = this._('#to-upload-file-name-input').value;
         }
+        if (this._('#to-valid-until')) {
+            retentionDuration = this._('#to-valid-until').value;
+        }
         name = encodeURIComponent(name);
+        retentionDuration = encodeURIComponent(retentionDuration);
         let fileHash = await this.sha256(await this.fileToUpload.arrayBuffer());
         params.fileName = name;
         params.fileHash = fileHash;
+        if (retentionDuration) {
+            params.retentionDuration = retentionDuration;
+        }
         // console.dir(params);
 
         params = {
@@ -267,8 +275,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'POST',
             fileName: name,
             fileHash: fileHash,
-            sig: sig,
         };
+
+        if (retentionDuration) {
+            params.retentionDuration = retentionDuration;
+        }
+
+        params.sig = sig;
 
         const urlParams = new URLSearchParams(params);
 
@@ -1212,8 +1225,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                                     id="to-rename-file-name-input"
                                     value="${this.activeFileName}"
                                     required
-                            />                        </div>
-
+                            />
+                        </div>
                     </div>
                     <div slot="footer">
                         <div class="footer-btn-row">
@@ -1308,7 +1321,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                                 id="to-upload-file-name-input"
                                 value="${this.getFileToUploadName()}"
                         />
-
+                        ${i18n.t('valid-until')}:
+                        <input
+                                type="text"
+                                class="input"
+                                name="toValidUntil"
+                                id="to-valid-until"
+                                value=""
+                        />
                     </div>
                     <div class="row ${classMap({hidden: !this.isFileSelected})}">
                         <dbp-button 
