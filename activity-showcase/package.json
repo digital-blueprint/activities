@@ -57,7 +57,7 @@
         "jsrsasign": "^10.6.1",
         "jsrsasign-util": "^1.0.5",
         "jws": "^4.0.0",
-        "lit": "^2.0.0",
+        "lit": "^3.0.0",
         "universal-router": "^9.0.1"
     },
     "scripts": {
