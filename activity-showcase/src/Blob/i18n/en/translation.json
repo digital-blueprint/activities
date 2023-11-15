@@ -20,7 +20,7 @@
   "delete-missing-body": "This file is already deleted!",
   "filename": "Name",
   "size": "Size",
-  "type": "Type",
+  "type": "Mime Type",
   "creation-time": "Creation date",
   "exists-until": "Exists until",
   "last-access": "Last access",
@@ -43,5 +43,6 @@
   "open": "Open",
   "edit": "Edit",
   "bucket-quota-title": "Insufficient storage space",
-  "bucket-quota-body": "The application's storage space is insufficient. Please contact the service staff for this application."
+  "bucket-quota-body": "The application's storage space is insufficient. Please contact the service staff for this application.",
+  "add-metadata": "Additional Metadata (as JSON)"
 }

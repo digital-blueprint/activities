@@ -20,7 +20,7 @@
   "delete-missing-body": "Diese Datei wurde bereits gelöscht!",
   "filename": "Name",
   "size": "Größe",
-  "type": "Art",
+  "type": "Mime Type",
   "creation-time": "Erstelldatum",
   "exists-until": "Existiert bis",
   "last-access": "Letzter Zugriff",
@@ -43,5 +43,6 @@
   "open": "Öffnen",
   "edit": "Bearbeiten",
   "bucket-quota-title": "Speicherplatz nicht ausreichend",
-  "bucket-quota-body": "Der Speicherplatz der Applikation ist nicht ausreichend. Bitte kontaktieren Sie den Service Mitarbeiter für diese Applikation."
+  "bucket-quota-body": "Der Speicherplatz der Applikation ist nicht ausreichend. Bitte kontaktieren Sie den Service Mitarbeiter für diese Applikation.",
+  "add-metadata": "Additional Metadata (als JSON)"
 }

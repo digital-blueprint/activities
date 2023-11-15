@@ -243,27 +243,46 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'POST',
         };
 
-
         let name = this.activeFileName;
         let retentionDuration = false;
+        let additionalMetadata = false;
         if (this._('#to-upload-file-name-input')) {
             name = this._('#to-upload-file-name-input').value;
         }
         if (this._('#to-valid-until')) {
             retentionDuration = this._('#to-valid-until').value;
         }
+        if (this._('#to-add-metadata')) {
+            additionalMetadata = this._('#to-add-metadata').value;
+        }
         name = encodeURIComponent(name);
         retentionDuration = encodeURIComponent(retentionDuration);
+        additionalMetadata = encodeURIComponent(additionalMetadata);
         let fileHash = await this.sha256(await this.fileToUpload.arrayBuffer());
         params.fileName = name;
         params.fileHash = fileHash;
         if (retentionDuration) {
             params.retentionDuration = retentionDuration;
         }
-        // console.dir(params);
+
+        let formData = new FormData();
+        formData.append('file', this.fileToUpload);
+        if (additionalMetadata) {
+            params.additionalMetadata = additionalMetadata;
+            formData.append('additionalMetadata', additionalMetadata);
+        }
+
+        let formDataAsJson = {};
+        formData.forEach((value, key) => {
+            if (key != 'file') {
+                formDataAsJson[key] = value;
+            }
+        });
+        formDataAsJson = JSON.stringify(formDataAsJson);
 
         params = {
-            cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString("/blob/files?" + new URLSearchParams(params)),
+            bcs: await this.createSha256HexForString(formDataAsJson),
         };
 
         const sig = this.createSignature(params);
@@ -280,16 +299,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (retentionDuration) {
             params.retentionDuration = retentionDuration;
         }
+        if (additionalMetadata) {
+            params.additionalMetadata = additionalMetadata;
+        }
 
         params.sig = sig;
 
         const urlParams = new URLSearchParams(params);
-
-        let formData = new FormData();
-        formData.append('file', this.fileToUpload);
-        formData.append('prefix', this.prefix);
-        formData.append('fileName', name);
-        formData.append('bucketID', this.bucketId);
 
         const options = {
             method: 'POST',
@@ -337,7 +353,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
 
         params = {
-            cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString("/blob/files?" + new URLSearchParams(params)),
         };
 
         const sig = this.createSignature(params);
@@ -439,8 +455,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params.fileName = name;
 
+        let body = JSON.stringify(data);
+
         params = {
-            cs: await this.createSha256HexForUrl("/blob/files/" + this.activeFileId + "?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString("/blob/files/" + this.activeFileId + "?" + new URLSearchParams(params)),
+            bcs: await this.createSha256HexForString(body),
         };
 
         const sig = this.createSignature(params);
@@ -461,7 +480,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             headers: {
                 'Content-Type': 'application/ld+json',
             },
-            body: JSON.stringify(data),
+            body: body,
         };
         return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + this.activeFileId + '?' + urlParams, options);
 
@@ -552,7 +571,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
 
         params = {
-            cs: await this.createSha256HexForUrl("/blob/files/" + id + "?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString("/blob/files/" + id + "?" + new URLSearchParams(params)),
         };
 
         const sig = this.createSignature(params);
@@ -661,7 +680,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         };
 
         params = {
-            cs: await this.createSha256HexForUrl("/blob/files/" + id + "/download?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString("/blob/files/" + id + "/download?" + new URLSearchParams(params)),
         };
 
         const sig = this.createSignature(params);
@@ -782,7 +801,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         };
 
         params = {
-            cs: await this.createSha256HexForUrl("/blob/files/" + id + "?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString("/blob/files/" + id + "?" + new URLSearchParams(params)),
         };
 
         const sig = this.createSignature(params);
@@ -823,7 +842,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
 
         params = {
-            cs: await this.createSha256HexForUrl("/blob/files?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString("/blob/files?" + new URLSearchParams(params)),
         };
 
         const sig = this.createSignature(params);
@@ -1030,7 +1049,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     responsive: 2,
                     widthGrow: 1,
                     minWidth: 58,
-                    field: 'extension',
+                    field: 'mimeType',
                 },
                 {
                     title: i18n.t('creation-time'),
@@ -1329,6 +1348,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                                 id="to-valid-until"
                                 value=""
                         />
+                        ${i18n.t('add-metadata')}:
+                        <input
+                                type="text"
+                                class="input"
+                                name="toAddMetadata"
+                                id="to-add-metadata"
+                                value=""
+                        />
                     </div>
                     <div class="row ${classMap({hidden: !this.isFileSelected})}">
                         <dbp-button 
@@ -1445,7 +1472,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      * @param {string} payload to build the JSW with
      * @returns {ArrayBuffer}
      */
-    createSha256HexForUrl(payload) {
+    createSha256HexForString(payload) {
         return crypto.subtle.digest('SHA-256', new TextEncoder().encode(payload))
             .then(hashArray => {
                 return  Array.from(new Uint8Array(hashArray)).map(b => b.toString(16).padStart(2, '0')).join('');
