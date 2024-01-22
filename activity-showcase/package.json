@@ -58,7 +58,6 @@
         "jsrsasign-util": "^1.0.5",
         "jws": "^4.0.0",
         "lit": "^3.0.0",
-        "universal-router": "^9.0.1",
         "select2": "^4.0.10"
     },
     "scripts": {
