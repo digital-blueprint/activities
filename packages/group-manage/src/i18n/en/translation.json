@@ -1,0 +1,25 @@
+{
+    "group-manage": {
+        "login-required": "You need to login to use this application",
+        "field-is-required": "This field is required",
+        "list-groups-button-text": "List groups",
+        "create-groups-button-text": "Create group",
+        "group-name-label": "Group name",
+        "add-to-groups-button-text": "Add to Group",
+        "create-group-modal-title": "Create group",
+        "delete-group-button-text": "Delete",
+        "delete-group-button-aria-label": "Delete Group",
+        "delete-group-confirmation": "Are you sure you want to delete \"{{itemName}}\" group?",
+        "delete-group-member-confirmation": "Are you sure you want to delete \"{{itemName}}\" group member?",
+        "delete-group-member-button-text": "Delete",
+        "delete-group-member-button-aria-label": "Delete group member",
+        "create-group-member-modal-title": "Create member group",
+        "assign-to-group-button-text": "Add Member",
+        "assign-to-group-button-aria-label": "Assign member to this group",
+        "select-person-selector-button-text": "Select user",
+        "select-group-selector-button-text": "Select group",
+        "assign-to-group-modal-title": "Add to group",
+        "yes-delete": "Yes, delete",
+        "cancel": "Cancel"
+    }
+}
