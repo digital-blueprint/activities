@@ -17,7 +17,7 @@
 
     <!-- Loading spinner -->
     <script type="module">
-        import {Spinner} from '<%= getPrivateUrl('spinner.js') %>';
+        import {Spinner} from "<%= getPrivateUrl('spinner.js') %>";
         customElements.define('dbp-loading-spinner', Spinner);
     </script>
 
@@ -53,7 +53,10 @@
         }
 
 
-        .light-theme{
+        .light-theme {
+            --dbp-light-theme: 1;
+            --dbp-dark-theme: 0;
+
             --dbp-override-background: white;
             --dbp-override-content: #222120;
 
@@ -80,7 +83,9 @@
             --dbp-override-border: 1px solid #222120;
         }
 
-        .dark-theme{
+        .dark-theme {
+            --dbp-light-theme: 0;
+            --dbp-dark-theme: 1;
             --dbp-override-background: #222120;
             --dbp-override-content: white;
 
