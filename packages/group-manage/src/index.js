@@ -1,3 +1,3 @@
-import {GroupManage} from './group-manage.js';
+import { GroupManage } from './group-manage.js';
 
-export {GroupManage};
+export { GroupManage };

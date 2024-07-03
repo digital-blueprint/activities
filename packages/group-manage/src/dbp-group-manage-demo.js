@@ -7,6 +7,10 @@ import * as commonUtils from '@dbp-toolkit/common/utils';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
 
+/**
+ * @class
+ * @extends {DBPLitElement}
+ */
 export class GroupManageDemo extends ScopedElementsMixin(DBPLitElement) {
     constructor() {
         super();

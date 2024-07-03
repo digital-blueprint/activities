@@ -1,5 +1,5 @@
+/// <reference path="./group-manage.d.ts" />
 import { html } from 'lit';
-// import { property } from 'lit/decorators.js';
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
 import { ScopedElementsMixin } from '@open-wc/scoped-elements';
 import { classMap } from "lit/directives/class-map.js";
@@ -13,30 +13,46 @@ import { ResourceSelect } from '@dbp-toolkit/resource-select';
 import { getPersonFullName, getIdFromIri } from './utils.js';
 import { computePosition, autoPlacement, offset } from '@floating-ui/dom';
 
+/**
+ * @class
+ * @extends {DBPLitElement}
+ */
 export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
+
     constructor() {
         super();
+
         this.auth = {};
         this._i18n = createInstance();
         this.lang = this._i18n.language;
         this.entryPointUrl = null;
-
         this.authGroups = [];
         this.targetGroup = null;
         this.groupMember = null;
         this.groupIdentifier = null;
 
         this.userNameCache = new Map();
-        this.listIsLoaded = false;
 
+        this.listIsLoaded = false;
+        this.createGroupPopover = null;
         this.deleteGroupPopover = null;
         this.deleteGroupMemberPopover = null;
         this.addGroupMemberPopover = null;
 
+        /** @type {PersonSelect} */
+        this.personSelector = null;
+        /** @type {ResourceSelect} */
+        this.resourceSelector = null;
+
+        /** @type {Button | null} */
+        this.addToGroupButton = null;
+        /** @type {Button | null} */
+        this.listGroupButton = null;
+
+        /** @type {HTMLElement | null} */
         this.activeButton = null;
         this.activePopover = null;
         this.activeItemName = null;
-
         this.query = null;
         this.searchIsActive = false;
     }
@@ -74,6 +90,12 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     firstUpdated() {
+        this.personSelector = this._('#person-to-add-selector');
+        this.resourceSelector = this._('#group-to-add-selector');
+
+        this.addToGroupButton = this._('#add-to-group-button');
+        this.listGroupButton = this._('#list-group-button');
+
         this.createGroupPopover = this._('#create-group-popover');
         this.createGroupPopover.addEventListener('beforetoggle', this.positionPopover.bind(this));
 
@@ -121,6 +143,11 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     // MARK: PROCESS
+    /**
+     * Sets the needed properties for rendering. Full usernames, identifiers and css classes.
+     * @param {array} authGroups an array of "AuthorizationGroup" objects
+     * @returns {Promise<any[]>}
+     */
     async processAuthGroups(authGroups) {
         // console.log('Processing auth groups', authGroups);
 
@@ -178,6 +205,11 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     // MARK: Render Groups
+    /**
+     * Render authGroups to html.
+     * @param {array} authGroups
+     * @param {number} level
+     */
     renderAuthGroups(authGroups, level = 0) {
         // console.log('renderDirectory', authGroups);
 
@@ -226,61 +258,80 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     // MARK: Event handlers
+    /**
+     *
+     * @param {Event} event
+     */
     groupListButtonEventHandler(event) {
+        /** @type {HTMLElement} */
         let button;
 
-        if (event.target.tagName !== 'DBP-BUTTON') {
-            button = event.target.closest('dbp-button');
-        } else {
-            button = event.target;
-        }
+        if(event.target instanceof HTMLElement) {
 
-        this.activeButton = button;
+            if (event.target.tagName !== 'DBP-BUTTON') {
+                button = event.target.closest('dbp-button');
+            } else {
+                button = event.target;
+            }
 
-        if (button.classList.contains('delete-group-button')) {
-            this.groupIdentifier = button.getAttribute('data-group-id');
+            this.activeButton = button;
 
-            this.activeItemName = button.getAttribute('data-group-name');
-            this.activePopover = this.deleteGroupPopover;
-            this.activePopover.showPopover();
-        }
+            if (button.classList.contains('delete-group-button')) {
+                this.groupIdentifier = button.getAttribute('data-group-id');
 
-        if (button.classList.contains('delete-group-member-button')) {
-            this.groupIdentifier = button.getAttribute('data-group-id');
+                this.activeItemName = button.getAttribute('data-group-name');
+                this.activePopover = this.deleteGroupPopover;
+                this.activePopover.showPopover();
+            }
 
-            this.activeItemName = button.getAttribute('data-group-name');
-            this.activePopover = this.deleteGroupMemberPopover;
-            this.activePopover.togglePopover();
-        }
+            if (button.classList.contains('delete-group-member-button')) {
+                this.groupIdentifier = button.getAttribute('data-group-id');
 
-        if (button.classList.contains('add-group-member-button')) {
-            this.resetSelectors();
+                this.activeItemName = button.getAttribute('data-group-name');
+                this.activePopover = this.deleteGroupMemberPopover;
+                this.activePopover.togglePopover();
+            }
 
-            this.targetGroup = {};
-            this.targetGroup.identifier = button.getAttribute('data-group-id');
-            this.targetGroup.name = button.getAttribute('data-group-name');
+            if (button.classList.contains('add-group-member-button')) {
+                this.resetSelectors();
 
-            this.activePopover = this.addGroupMemberPopover;
-            this.activePopover.showPopover();
-            // Give focus to the popover to keyboard accessibility.
-            // :( Not working.
-            this._('#add-group-member-dialog-title').focus();
+                this.targetGroup = {};
+                this.targetGroup.identifier = button.getAttribute('data-group-id');
+                this.targetGroup.name = button.getAttribute('data-group-name');
 
-            // Redraw the modal title.
-            this.requestUpdate();
+                this.activePopover = this.addGroupMemberPopover;
+                this.activePopover.showPopover();
+                // Give focus to the popover to keyboard accessibility.
+                // :( Not working.
+                const popoverTitle = this._('#add-group-member-dialog-title');
+                if (popoverTitle instanceof HTMLElement) {
+                    this._('#add-group-member-dialog-title').focus();
+                }
+            }
         }
     }
 
+    /**
+     * Open / close rows containing group members.
+     * @param {Event} event
+     */
     toggleGroupHeader(event) {
         event.stopPropagation();
-        const members = event.target.closest('.row');
-        const memberList = members.querySelector('.group-member-list');
-        if (memberList) {
-            memberList.classList.toggle('open');
+        if (event.target && event.target instanceof HTMLElement) {
+            const members = event.target.closest('.row');
+            const memberList = members.querySelector('.group-member-list');
+            if (memberList) {
+                memberList.classList.toggle('open');
+            }
         }
     }
 
     // MARK: BUTTONS
+    /**
+     *
+     * @param {string} groupIdentifier - The identifier of the group to be deleted.
+     * @param {string} groupName - The name of the group to be deleted.
+     */
     renderDeleteGroupButton(groupIdentifier, groupName) {
         const i18n = this._i18n;
         return html`
@@ -295,6 +346,12 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         `;
     }
 
+    /**
+     * Renders a delete group member button with the specified group identifier and group name.
+     *
+     * @param {string} groupIdentifier - The identifier of the group member to be deleted.
+     * @param {string} groupName - The name of the group member to be deleted.
+     */
     renderDeleteGroupMemberButton(groupIdentifier, groupName) {
         const i18n = this._i18n;
         return html`
@@ -309,6 +366,12 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         `;
     }
 
+    /**
+     * Renders a add group member button with the specified group identifier and group name.
+     *
+     * @param {string} groupIdentifier - The identifier of the group member to be added.
+     * @param {string} groupName - The name of the group member to be added.
+     */
     renderAddGroupMemberButton(groupIdentifier, groupName) {
         const i18n = this._i18n;
         return html`
@@ -323,12 +386,17 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         `;
     }
 
-        // MARK: POP POSITION
+    // MARK: POP POSITION
+    /**
+     *
+     * @param {CustomEvent} event
+     */
     positionPopover(event) {
         const popover = this.activePopover;
         const invoker = this.activeButton;
         if (!popover || !invoker) return;
 
+        // @ts-ignore
         if (event.newState === 'open') {
             console.log('popover opening');
             this.enableClickOverlay();
@@ -347,6 +415,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             this.updatePosition();
         }
 
+        // @ts-ignore
         if (event.newState === 'closed') {
             this.activeButton.removeAttribute('disabled');
             if (this.activeButton.closest('.row')) {
@@ -363,6 +432,9 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
+    /**
+     * Update the position of the popover relative to the trigger button.
+     */
     updatePosition() {
         const popover = this.activePopover;
         const invoker = this.activeButton;
@@ -388,7 +460,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async fetchGroups() {
-        this._('#list-group-button').start();
+        this.listGroupButton.start();
         try {
             const response = await fetch(this.entryPointUrl + '/authorization/groups', {
                 headers: {
@@ -422,7 +494,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 }
             }
         } finally {
-            this._('#list-group-button').stop();
+            this.listGroupButton.stop();
         }
     }
 
@@ -458,7 +530,12 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async createGroup() {
-        const groupName = this._('#input-group-name').value;
+        let groupName;
+        const groupNameInput = this._('#input-group-name');
+        if (groupNameInput instanceof HTMLInputElement) {
+            groupName = groupNameInput.value;
+        }
+
         if (!groupName) {
             notify({
                 summary: 'Error!',
@@ -492,7 +569,9 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             } else {
                 const data = await response.json();
                 // Reset input field.
-                this._('#input-group-name').value = '';
+                if (groupNameInput instanceof HTMLInputElement) {
+                    groupNameInput.value = '';
+                }
                 // Re-fetch group list.
                 this.fetchGroups();
                 notify({
@@ -507,7 +586,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
-    async deleteGroup(event) {
+    async deleteGroup() {
         this.deleteGroupPopover.hidePopover();
 
         if (!this.groupIdentifier) {
@@ -604,7 +683,12 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
+    /**
+     *
+     * @param {Event} event
+     */
     async addGroupMemberButtonHandler(event) {
+        /** @type {Button} */
         let button = event.target;
         button.start();
         await this.addGroupMember();
@@ -617,8 +701,11 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             setTimeout(() => {
                 this._('#notification-no-source-error').classList.remove('show');
             }, 3000);
-            this._('#add-to-group-button').stop();
-            this._('#add-to-group-button').removeAttribute('disabled');
+            /**
+             * @type {Button}
+             */
+            this.addToGroupButton.stop();
+            this.addToGroupButton.removeAttribute('disabled');
             return;
         }
         if (!this.targetGroup) {
@@ -684,9 +771,15 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
+
     // MARK: SOURCE CHANGE
+    /**
+     *
+     * @param {CustomEvent} event
+     * @returns
+     */
     async onSourceSelectorChange(event) {
-        if (!event.target || !event.detail.value) return;
+        if (!event.target || !(event.target instanceof HTMLElement) || !event.detail.value) return;
         const targetId = event.target.id;
         if (targetId === 'person-to-add-selector') {
             const personIri = event.detail.value;
@@ -765,7 +858,13 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         `;
     }
 
+    /**
+     *
+     * @param {Event} event
+     */
     openCreateGroupPopover(event) {
+        if (!(event.target instanceof HTMLElement)) return;
+
         if (event.target.tagName === 'DBP-ICON') {
             this.activeButton = event.target.parentElement;
         } else {
@@ -776,7 +875,10 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         this.activePopover.showPopover();
 
         // Focus on the input field.
-        this.activePopover.querySelector('#input-group-name').focus();
+        const inputGroupName = this.activePopover.querySelector('#input-group-name');
+        if (inputGroupName instanceof HTMLInputElement) {
+            inputGroupName.focus();
+        }
     }
 
     closeCreateGroupPopover() {
@@ -791,7 +893,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             <div class="tooltip-button-container">
                 <dbp-button type="is-danger"
                     id="confirm-delete-button"
-                    @click="${(event) => this.deleteGroup(event)}">${i18n.t('group-manage.yes-delete')}</dbp-button>
+                    @click="${() => this.deleteGroup()}">${i18n.t('group-manage.yes-delete')}</dbp-button>
                 <dbp-button type="is-secondary"
                     id="cancel-delete-button"
                     @click="${() => this.closeDeleteGroup()}">${i18n.t('group-manage.cancel')}</dbp-button>
@@ -843,13 +945,12 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                                     @click="${(event) => {
                                         event.target.classList.add('selected');
                                         this._('#select-group-button').classList.remove('selected');
-                                        this._('#person-to-add-selector').removeAttribute('hidden');
-                                        this._('#person-to-add-selector').removeAttribute('disabled');
-                                        this._('#person-to-add-selector').setAttribute('subscribe', 'auth');
+                                        this.personSelector.removeAttribute('hidden');
+                                        this.personSelector.removeAttribute('disabled');
+                                        this.personSelector.setAttribute('subscribe', 'auth');
+                                        this.personSelector.setAttribute('entry-point-url', this.entryPointUrl);
 
-                                        this._('#person-to-add-selector').setAttribute('entry-point-url', this.entryPointUrl);
-
-                                        this._('#group-to-add-selector').setAttribute('hidden');
+                                        this.resourceSelector.setAttribute('hidden', "");
                                     }}">
                                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                             viewBox="0 0 100 100" xml:space="preserve">
@@ -867,14 +968,14 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                                     @click="${(event) => {
                                         event.target.classList.add('selected');
                                         this._('#select-user-button').classList.remove('selected');
-                                        this._('#group-to-add-selector').removeAttribute('hidden');
-                                        this._('#group-to-add-selector').removeAttribute('disabled');
+                                        this.resourceSelector.removeAttribute('hidden');
+                                        this.resourceSelector.removeAttribute('disabled');
 
-                                        this._('#group-to-add-selector').setAttribute('entry-point-url', this.entryPointUrl);
-                                        this._('#group-to-add-selector').setAttribute('resource-path', '/authorization/groups?getChildGroupCandidatesForGroupIdentifier=' + this.targetGroup['identifier']);
-                                        this._('#group-to-add-selector').updateResources();
+                                        this.resourceSelector.setAttribute('entry-point-url', this.entryPointUrl);
+                                        this.resourceSelector.setAttribute('resource-path', '/authorization/groups?getChildGroupCandidatesForGroupIdentifier=' + this.targetGroup['identifier']);
+                                        this.resourceSelector.updateResources();
 
-                                        this._('#person-to-add-selector').setAttribute('hidden');
+                                        this.personSelector.setAttribute('hidden', "");
                                     }}">
                                     <svg version="1.1" id="Layer_2_1_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                         viewBox="0 0 100 100" xml:space="preserve">
@@ -923,7 +1024,10 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
     closeAddGroupMemberPopover() {
         this.activePopover.hidePopover();
-        this._('#add-to-group-button').stop();
+        /**
+         * @type {Button}
+         */
+        this.addToGroupButton.stop();
         // Reset button state.
         this._('#select-user-button').classList.remove('selected');
         this._('#select-group-button').classList.remove('selected');
@@ -932,11 +1036,20 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     // MARK: SEARCH
+    /**
+     * Update the group list when search query changes.
+     * @param {Event} event
+     */
     updateSearchQuery(event) {
-        this.query = event.target.value.toLowerCase();
-        this.searchGroups();
+        if (event.target instanceof HTMLInputElement) {
+            this.query = event.target.value.toLowerCase();
+            this.searchGroups();
+        }
     }
 
+    /**
+     * Hide rows not matching search query.
+     */
     searchGroups() {
         if (this.query && this.query.length >= 3) {
             this.searchIsActive = true;
@@ -962,10 +1075,11 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
                 matchedGroups.forEach(groupFind => {
                     // Highlight find rows.
-                    groupFind.closest('.row').classList.add('find');
-                    // groupFind.closest('.group-header').classList.remove('hide');
-                    // Travers up the DOM and OPEN all parent groups.
-                    this.traversUntilRootGroup(groupFind, 'add');
+                    if (groupFind instanceof HTMLElement) {
+                        groupFind.closest('.row').classList.add('find');
+                        // Travers up the DOM and OPEN all parent groups.
+                        this.traversUntilRootGroup(groupFind, 'add');
+                    }
                 });
 
             } else {
@@ -973,8 +1087,9 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 this._('#group-search').classList.add('not-found');
 
                 this._a('.group-name').forEach((name) => {
-                    name.closest('.row').classList.remove('find');
-                    // name.closest('.group-header').classList.remove('hide');
+                    if (name instanceof HTMLElement) {
+                        name.closest('.row').classList.remove('find');
+                    }
                 });
                 this.collapseAllGroups();
             }
@@ -987,31 +1102,37 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             }
             // Remove highlights and collapse all groups.
             this._a('.group-name').forEach((name) => {
-                name.closest('.row').classList.remove('find');
+                if (name instanceof HTMLElement) {
+                    name.closest('.row').classList.remove('find');
+                }
             });
             // this.collapseAllGroups();
         }
     }
 
+    /**
+     *
+     * @param {Node} startElement
+     * @param {string} action
+     * @returns {Node | null}
+     */
     traversUntilRootGroup(startElement, action) {
         // .group-name
         let currentElement = startElement;
 
         while (currentElement) {
             // End condition.
-            if (currentElement.closest('.row').classList.contains('root-row')) {
+            if (currentElement instanceof HTMLElement && currentElement.closest('.row').classList.contains('root-row')) {
                 return currentElement;
             }
+
             // Travers up the DOM and open all parent groups.
+            /** @type {HTMLElement} */
             const parentGroup = currentElement.parentElement.closest('.group-member-list');
 
             if (action == 'add') {
                 parentGroup.classList.add('open');
-                // // Hide all elements on the same level expect the found one.
-                // parentGroup.querySelectorAll('.row').forEach((row) => {
-                //     row.classList.add('hidden');
-                // });
-                if (currentElement.closest('.group-header')) {
+                if (currentElement instanceof HTMLElement && currentElement.closest('.group-header')) {
                     currentElement.closest('.group-header').classList.add('find-item');
                 }
             } else {
@@ -1038,18 +1159,19 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     resetSelectors() {
-        this._('#person-to-add-selector').setAttribute('hidden');
-        this._('#person-to-add-selector').clear();
+        this.personSelector.setAttribute('hidden', "");
+        this.personSelector.clear();
 
-        this._('#group-to-add-selector').setAttribute('hidden');
-        this._('#group-to-add-selector').setAttribute('value', '');
+        this.resourceSelector.setAttribute('hidden', "");
+        this.resourceSelector.setAttribute('value', '');
     }
 
-    collapseAllGroups(event) {
+    collapseAllGroups() {
         this._a('.group-member-list').forEach((groupMember) => {
-            groupMember.classList.remove('open');
+            if (groupMember instanceof HTMLElement) {
+                groupMember.classList.remove('open');
+            }
         });
-        // this._('#expand-collapse-all').classList.remove('expanded');
     }
 
     // expandAllGroups(event) {
@@ -1058,26 +1180,40 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     //     });
     // }
 
+    /**
+     *
+     * @param {Event} event
+     */
     expandCollapseAllGroups(event) {
-        const button = event.target;
+        if (event.target instanceof HTMLElement) {
+            const button = event.target;
 
-        if (button.classList.contains('expanded')) {
-            button.setAttribute('aria-label', 'Expand all groups');
-            button.setAttribute('title', 'Expand all groups');
-            this._a('.group-member-list').forEach((groupMember) => {
-                groupMember.classList.remove('open');
-            });
-        } else {
-            button.setAttribute('aria-label', 'Collapse all groups');
-            button.setAttribute('title', 'Collapse all groups');
-            this._a('.group-member-list').forEach((groupMember) => {
-                groupMember.classList.add('open');
-            });
+            if (button.classList.contains('expanded')) {
+                button.setAttribute('aria-label', 'Expand all groups');
+                button.setAttribute('title', 'Expand all groups');
+                this._a('.group-member-list').forEach((groupMember) => {
+                    if (groupMember instanceof HTMLElement) {
+                        groupMember.classList.remove('open');
+                    }
+                });
+            } else {
+                button.setAttribute('aria-label', 'Collapse all groups');
+                button.setAttribute('title', 'Collapse all groups');
+                this._a('.group-member-list').forEach((groupMember) => {
+                    if (groupMember instanceof HTMLElement) {
+                        groupMember.classList.add('open');
+                    }
+                });
+            }
+
+            button.classList.toggle('expanded');
         }
-
-        button.classList.toggle('expanded');
     }
 
+    /**
+     * Sort group members, childgroups first then users (like in a file manager).
+     * @param {array} groupMembers
+     */
     listByGroupFirst(groupMembers) {
         groupMembers.sort((a, b) => {
             // Sort by childGroup not null first

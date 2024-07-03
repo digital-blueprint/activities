@@ -1,11 +1,8 @@
 import { css, unsafeCSS } from 'lit';
-import { getIconSVGURL } from '@dbp-toolkit/common';
 
 export function getGroupManageCSS() {
     // language=css
     return css`
-        /* mask-image: url('${unsafeCSS(getIconSVGURL('chevron-left'))}'); */
-
         :host {
             --border-color: color-mix(in srgb, var(--dbp-content) 30%, transparent);
             --border-color-rotated: color-mix(in srgb, var(--dbp-content) 60%, transparent);
