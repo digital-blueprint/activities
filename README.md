@@ -1,4 +1,4 @@
-# Common Activities
+# Activity showcase
 
 ## Overview
 
