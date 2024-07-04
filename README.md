@@ -29,6 +29,9 @@ Jump to <https://localhost:8001>, and you should get the Activity Showcase page.
 
 `cd packges/some-package` and continue development with `npm run watch` etc.
 
+> [!TIP]
+> Make sure that the `activity-showcase` package has your package as dependency!
+
 ## Other commands
 
 * `npm run test` -  Run test for all packages
