@@ -1109,6 +1109,13 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             if (matchedGroups.length > 0) {
                 this._('#group-search').classList.remove('not-found');
 
+                // Remove found class from every items.
+                this._a('.group-name').forEach((name) => {
+                    if (name instanceof HTMLElement) {
+                        name.closest('.row').classList.remove('found');
+                    }
+                });
+
                 unmatchedGroups.forEach(groupNotFind => {
                     // Travers up the DOM and CLOSE all parent groups.
                     this.traversUntilRootGroup(groupNotFind, 'remove');
@@ -1167,7 +1174,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 return currentElement;
             }
 
-            // Travers up the DOM and open all parent groups.
+            // Travers up the DOM, open/close all parent groups and add/remove found-item classes.
             /** @type {HTMLElement} */
             const parentGroup = currentElement.parentElement.closest('.group-member-list');
 
@@ -1178,6 +1185,9 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 }
             } else {
                 parentGroup.classList.remove('open');
+                if (currentElement.closest('.group-header')) {
+                    currentElement.closest('.group-header').classList.remove('found-item');
+                }
             }
             currentElement = parentGroup;
         }
