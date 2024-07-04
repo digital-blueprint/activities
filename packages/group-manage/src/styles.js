@@ -112,7 +112,7 @@ export function getGroupManageCSS() {
             container: group-row / inline-size;
         }
 
-        .row:has( & > .group-member-list.open) {
+        .row:has(.group-member-list.open:first-of-type) {
             border-left: 3px solid var(--dbp-content);
         }
 
@@ -154,7 +154,7 @@ export function getGroupManageCSS() {
             opacity: 1;
         }
 
-        .row.find > .group-header,
+        .row.found > .group-header,
         .row.hover > .group-header,
         .group-header.hover,
         .group-header:hover,
@@ -163,7 +163,7 @@ export function getGroupManageCSS() {
             opacity: .7;
         }
 
-        .row.find > .group-header .group-controls,
+        .row.found > .group-header .group-controls,
         .row.hover > .group-header .group-controls,
         .group-header.hover .group-controls,
         .group-header:hover .group-controls,
@@ -171,8 +171,15 @@ export function getGroupManageCSS() {
             opacity: 1;
         }
 
-        .search-is-active .row:not(.found):has(& > .group-header:not(.find-item) > .user-name-icon) {
-            display: none !important;
+        /* Hide all rows that don't contains found items as a direct child */
+        .search-is-active .row:not(.found):has(.group-header:not(.found-item)) > .group-header {
+            display: none ;
+        }
+
+        /* Unhide rows that contains found items. */
+        .search-is-active .row:has(.found) > .group-header,
+        .search-is-active .row.found > .group-header.found-item {
+            display: flex !important;
         }
 
         .group-list-container {

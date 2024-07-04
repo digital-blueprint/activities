@@ -1115,9 +1115,9 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 });
 
                 matchedGroups.forEach(groupFind => {
-                    // Highlight find rows.
+                    // Highlight found rows.
                     if (groupFind instanceof HTMLElement) {
-                        groupFind.closest('.row').classList.add('find');
+                        groupFind.closest('.row').classList.add('found');
                         // Travers up the DOM and OPEN all parent groups.
                         this.traversUntilRootGroup(groupFind, 'add');
                     }
@@ -1129,7 +1129,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
                 this._a('.group-name').forEach((name) => {
                     if (name instanceof HTMLElement) {
-                        name.closest('.row').classList.remove('find');
+                        name.closest('.row').classList.remove('found');
                     }
                 });
                 this.collapseAllGroups();
@@ -1144,7 +1144,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             // Remove highlights and collapse all groups.
             this._a('.group-name').forEach((name) => {
                 if (name instanceof HTMLElement) {
-                    name.closest('.row').classList.remove('find');
+                    name.closest('.row').classList.remove('found');
                 }
             });
             // this.collapseAllGroups();
@@ -1174,7 +1174,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             if (action == 'add') {
                 parentGroup.classList.add('open');
                 if (currentElement.closest('.group-header')) {
-                    currentElement.closest('.group-header').classList.add('find-item');
+                    currentElement.closest('.group-header').classList.add('found-item');
                 }
             } else {
                 parentGroup.classList.remove('open');
