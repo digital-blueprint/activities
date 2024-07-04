@@ -161,14 +161,15 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
         let authGroupToRender = await Promise.all(authGroups.map(async (item) => {
             if (item['@type'] === 'AuthorizationGroup') {
+                let memberCount = this.getAllMembersCount(item.members);
                 return {
                     iri: item['@id'],
                     id: item.identifier,
                     name: item.name,
                     type: item['@type'],
                     cssClass: 'root-group',
-                    memberCount: item.members.length,
-                    members: item.members.length > 0 ? await this.processAuthGroups(item.members) : null
+                    memberCount: memberCount,
+                    members: memberCount > 0 ? await this.processAuthGroups(item.members) : null
                 };
             }
             if (item['@type'] === 'AuthorizationGroupMember') {
@@ -190,9 +191,9 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                     cssClass = 'child-group-icon';
                 }
 
-                const memberCount = item.childGroup !== null &&
+                let memberCount = item.childGroup !== null &&
                     item.childGroup.members !== null &&
-                    item.childGroup.members.length > 0 ? item.childGroup.members.length : null;
+                    item.childGroup.members.length > 0 ? this.getAllMembersCount(item.childGroup.members): null;
 
                 return {
                     name: name,
@@ -208,6 +209,44 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         }));
 
         return authGroupToRender;
+    }
+
+    /**
+     * Count all members of a group recursively.
+     * @param {Array} groups
+     * @returns {number}
+     */
+    getAllMembersCount(groups) {
+
+        if (!Array.isArray(groups) || groups.length === 0) {
+            return 0;
+        }
+
+        /**
+         * Do the recursion.
+         * @param {object} group
+         * @returns {number}
+         */
+        function countRecursive(group) {
+            let count = 0;
+            if (group.userIdentifier) {
+                count += 1;
+            }
+            if (group.childGroup) {
+                count += 1;
+                for (const member of group.childGroup.members || []) {
+                    count += countRecursive(member);
+                }
+            }
+            return count;
+        }
+
+        let totalCount = 0;
+        for (const member of groups) {
+            totalCount += countRecursive(member);
+        }
+
+        return totalCount;
     }
 
     // MARK: Render Groups

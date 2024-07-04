@@ -112,7 +112,7 @@ export function getGroupManageCSS() {
             container: group-row / inline-size;
         }
 
-        .row:has( > .group-member-list.open) {
+        .row:has( & > .group-member-list.open) {
             border-left: 3px solid var(--dbp-content);
         }
 
@@ -171,9 +171,8 @@ export function getGroupManageCSS() {
             opacity: 1;
         }
 
-        .search-is-active .row:not(.found):has(> .group-header:not(.find-item) > .user-name-icon) {
+        .search-is-active .row:not(.found):has(& > .group-header:not(.find-item) > .user-name-icon) {
             display: none !important;
-            /* color: red; */
         }
 
         .group-list-container {
@@ -188,10 +187,6 @@ export function getGroupManageCSS() {
             margin-top: 2em;
             margin-bottom: 2em;
             height: fit-content;
-        }
-
-        .group-member {
-            /* border-bottom: 1px solid var(--border-color); */
         }
 
         .group-member-list[data-level] > li > .group-member {
@@ -235,11 +230,13 @@ export function getGroupManageCSS() {
         }
 
         .member-count-badge {
-            backgroud-color: ;
             font-size: .8em;
             width: 1.5em;
-            height: 1.5em;
+            width: 3ch;
             line-height: 1.5em;
+            line-height: 3ch;
+            padding: 0;
+            padding: .5ch;
             display: inline-block;
             color: var(--dbp-content);
             text-align: center;
