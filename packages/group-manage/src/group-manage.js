@@ -26,6 +26,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         this._i18n = createInstance();
         this.lang = this._i18n.language;
         this.entryPointUrl = null;
+        this.isFirstUpdated = false;
         this.authGroups = [];
         this.targetGroup = null;
         this.groupMember = null;
@@ -90,6 +91,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     firstUpdated() {
+        this.isFirstUpdated = true;
         this.personSelector = this._('#person-to-add-selector');
         this.resourceSelector = this._('#group-to-add-selector');
 
@@ -107,6 +109,12 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
         this.deleteGroupMemberPopover = this._('#delete-group-member-popover');
         this.deleteGroupMemberPopover.addEventListener('beforetoggle', this.positionPopover.bind(this));
+
+        if (this.auth['login-status'] === 'logged-in') {
+            if (this.isFirstUpdated && !this.listIsLoaded) {
+                this.fetchGroups();
+            }
+        }
     }
 
     disconnectedCallback() {
@@ -131,8 +139,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                     break;
                 case 'auth':
                     if (this.auth['login-status'] === 'logged-in') {
-                        console.log('logged in');
-                        if (!this.listIsLoaded) {
+                        if (this.isFirstUpdated && !this.listIsLoaded) {
                             this.fetchGroups();
                         }
                     }
@@ -483,6 +490,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                     this.authGroups = await this.processAuthGroups(authGroupsResponse['hydra:member']);
                     const groupListContainer = this._('.group-list-container');
                     groupListContainer.classList.add('visible');
+                    this.listIsLoaded = true;
                     return;
                 } else {
                     notify({
