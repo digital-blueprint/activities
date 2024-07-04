@@ -1,4 +1,4 @@
-import { css, unsafeCSS } from 'lit';
+import { css } from 'lit';
 
 export function getGroupManageCSS() {
     // language=css
