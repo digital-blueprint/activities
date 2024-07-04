@@ -9,7 +9,7 @@ import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
 
 /**
  * @class
- * @extends {DBPLitElement}
+ * @augments {DBPLitElement}
  */
 export class GroupManageDemo extends ScopedElementsMixin(DBPLitElement) {
     constructor() {

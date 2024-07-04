@@ -1,4 +1,3 @@
-/// <reference path="./group-manage.d.ts" />
 import { html } from 'lit';
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
 import { ScopedElementsMixin } from '@open-wc/scoped-elements';
@@ -15,7 +14,7 @@ import { computePosition, autoPlacement, offset } from '@floating-ui/dom';
 
 /**
  * @class
- * @extends {DBPLitElement}
+ * @augments {DBPLitElement}
  */
 export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
@@ -152,7 +151,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     // MARK: PROCESS
     /**
      * Sets the needed properties for rendering. Full usernames, identifiers and css classes.
-     * @param {array} authGroups an array of "AuthorizationGroup" objects
+     * @param {Array} authGroups an array of "AuthorizationGroup" objects
      * @returns {Promise<any[]>}
      */
     async processAuthGroups(authGroups) {
@@ -214,7 +213,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     // MARK: Render Groups
     /**
      * Render authGroups to html.
-     * @param {array} authGroups
+     * @param {Array} authGroups
      * @param {number} level
      */
     renderAuthGroups(authGroups, level = 0) {
@@ -310,10 +309,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 this.activePopover.showPopover();
                 // Give focus to the popover to keyboard accessibility.
                 // :( Not working.
-                const popoverTitle = this._('#add-group-member-dialog-title');
-                if (popoverTitle instanceof HTMLElement) {
-                    this._('#add-group-member-dialog-title').focus();
-                }
+                this._('#add-group-member-dialog-title').focus();
             }
         }
     }
@@ -324,8 +320,9 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
      */
     toggleGroupHeader(event) {
         event.stopPropagation();
-        if (event.target && event.target instanceof HTMLElement) {
-            const members = event.target.closest('.row');
+        if (event.target) {
+            const target = /** @type {HTMLElement} */ (event.target);
+            const members = target.closest('.row');
             const memberList = members.querySelector('.group-member-list');
             if (memberList) {
                 memberList.classList.toggle('open');
@@ -782,9 +779,8 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
     // MARK: SOURCE CHANGE
     /**
-     *
+     * Set groupMember object on person or group-selector changes.
      * @param {CustomEvent} event
-     * @returns
      */
     async onSourceSelectorChange(event) {
         if (!event.target || !(event.target instanceof HTMLElement) || !event.detail.value) return;
@@ -883,10 +879,8 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         this.activePopover.showPopover();
 
         // Focus on the input field.
-        const inputGroupName = this.activePopover.querySelector('#input-group-name');
-        if (inputGroupName instanceof HTMLInputElement) {
-            inputGroupName.focus();
-        }
+        const inputGroupName = /** @type {HTMLInputElement} */ (this.activePopover.querySelector('#input-group-name'));
+        inputGroupName.focus();
     }
 
     closeCreateGroupPopover() {
@@ -1126,11 +1120,11 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
      */
     traversUntilRootGroup(startElement, action) {
         // .group-name
-        let currentElement = startElement;
+        let currentElement = /** @type {HTMLElement}*/ (startElement);
 
         while (currentElement) {
             // End condition.
-            if (currentElement instanceof HTMLElement && currentElement.closest('.row').classList.contains('root-row')) {
+            if (currentElement.closest('.row').classList.contains('root-row')) {
                 return currentElement;
             }
 
@@ -1140,7 +1134,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
             if (action == 'add') {
                 parentGroup.classList.add('open');
-                if (currentElement instanceof HTMLElement && currentElement.closest('.group-header')) {
+                if (currentElement.closest('.group-header')) {
                     currentElement.closest('.group-header').classList.add('find-item');
                 }
             } else {
@@ -1193,34 +1187,32 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
      * @param {Event} event
      */
     expandCollapseAllGroups(event) {
-        if (event.target instanceof HTMLElement) {
-            const button = event.target;
+        const button = /** @type {HTMLElement} */ (event.target);
 
-            if (button.classList.contains('expanded')) {
-                button.setAttribute('aria-label', 'Expand all groups');
-                button.setAttribute('title', 'Expand all groups');
-                this._a('.group-member-list').forEach((groupMember) => {
-                    if (groupMember instanceof HTMLElement) {
-                        groupMember.classList.remove('open');
-                    }
-                });
-            } else {
-                button.setAttribute('aria-label', 'Collapse all groups');
-                button.setAttribute('title', 'Collapse all groups');
-                this._a('.group-member-list').forEach((groupMember) => {
-                    if (groupMember instanceof HTMLElement) {
-                        groupMember.classList.add('open');
-                    }
-                });
-            }
-
-            button.classList.toggle('expanded');
+        if (button.classList.contains('expanded')) {
+            button.setAttribute('aria-label', 'Expand all groups');
+            button.setAttribute('title', 'Expand all groups');
+            this._a('.group-member-list').forEach((groupMember) => {
+                if (groupMember instanceof HTMLElement) {
+                    groupMember.classList.remove('open');
+                }
+            });
+        } else {
+            button.setAttribute('aria-label', 'Collapse all groups');
+            button.setAttribute('title', 'Collapse all groups');
+            this._a('.group-member-list').forEach((groupMember) => {
+                if (groupMember instanceof HTMLElement) {
+                    groupMember.classList.add('open');
+                }
+            });
         }
+
+        button.classList.toggle('expanded');
     }
 
     /**
      * Sort group members, childgroups first then users (like in a file manager).
-     * @param {array} groupMembers
+     * @param {Array} groupMembers
      */
     listByGroupFirst(groupMembers) {
         groupMembers.sort((a, b) => {
