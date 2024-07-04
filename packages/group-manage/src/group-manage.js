@@ -1088,12 +1088,20 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
+    clearSearch() {
+        this.query = null;
+        const searchField = /** @type {HTMLInputElement} */ (this._('#group-search'));
+        searchField.value = '';
+        this.searchGroups();
+    }
+
     /**
      * Hide rows not matching search query.
      */
     searchGroups() {
         if (this.query && this.query.length >= 3) {
             this.searchIsActive = true;
+            this._('.search-container').classList.add('active');
 
             const groupNames = this._a('.group-name');
 
@@ -1143,18 +1151,21 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             }
         } else {
             this.searchIsActive = false;
-            if (this.query.length >= 3) {
+            if (this.query && this.query.length >= 3) {
                 this._('#group-search').classList.add('not-found');
             } else {
                 this._('#group-search').classList.remove('not-found');
+                this._('.search-container').classList.remove('active');
             }
             // Remove highlights and collapse all groups.
             this._a('.group-name').forEach((name) => {
                 if (name instanceof HTMLElement) {
                     name.closest('.row').classList.remove('found');
+                    this.traversUntilRootGroup(name, 'remove');
                 }
             });
-            // this.collapseAllGroups();
+
+            this.collapseAllGroups();
         }
     }
 
@@ -1321,8 +1332,11 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                             </div>
                             <div class="group-list-container">
                                 <div class="list-header">
-                                    <input type="text" id="group-search" placeholder="Search by name" autocomplete='off' spellcheck='false' autocorrect='off'
-                                        @input="${(event) => this.updateSearchQuery(event)}">
+                                    <div class="search-container">
+                                        <input type="text" id="group-search" placeholder="Search by name" autocomplete='off' spellcheck='false' autocorrect='off'
+                                            @input="${(event) => this.updateSearchQuery(event)}">
+                                            <dbp-icon name="close" @click="${this.clearSearch}"></dbp-icon>
+                                    </div>
                                     <dbp-icon-button id="expand-collapse-all"
                                         class="expand-collapse-button"
                                         icon-name="chevron-down"

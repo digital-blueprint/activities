@@ -182,6 +182,22 @@ export function getGroupManageCSS() {
             display: flex !important;
         }
 
+        .search-container {
+            position: relative;
+        }
+
+        .search-container dbp-icon {
+            opacity: 0;
+            position: absolute;
+            right: .5em;
+            top: .5em;
+            transition: opacity var(--animation-time) linear;
+        }
+
+        .search-container.active dbp-icon {
+            opacity: 1;
+        }
+
         .group-list-container {
             opacity: 0;
             height: 0;
