@@ -8,7 +8,7 @@ import json from '@rollup/plugin-json';
 import serve from 'rollup-plugin-serve';
 import url from '@rollup/plugin-url';
 import del from 'rollup-plugin-delete';
-// import {getPackagePath, getDistPath} from '../../rollup.utils.js';
+import {getPackagePath, getDistPath} from '../../vendor/toolkit/rollup.utils.js';
 
 const build = typeof process.env.BUILD !== 'undefined' ? process.env.BUILD : 'local';
 console.log('build: ' + build);
@@ -56,16 +56,3 @@ export default (async () => {
         ],
     };
 })();
-
-async function getPackagePath(packageName, assetPath) {
-    let packageRoot;
-    let current = require.resolve('./package.json');
-    if (require(current).name === packageName) {
-        // current package
-        packageRoot = path.dirname(current);
-    } else {
-        // Other packages from nodes_modules etc.
-        packageRoot = path.dirname(require.resolve(packageName + '/package.json'));
-    }
-    return path.relative(process.cwd(), path.join(packageRoot, assetPath));
-}
