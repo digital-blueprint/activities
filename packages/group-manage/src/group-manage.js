@@ -24,19 +24,30 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         this.auth = {};
         this._i18n = createInstance();
         this.lang = this._i18n.language;
+        /** @type {string | null} */
         this.entryPointUrl = null;
+        /** @type {boolean} */
         this.isFirstUpdated = false;
+        /** @type {Array} */
         this.authGroups = [];
+        /** @type {object | null} */
         this.targetGroup = null;
+        /** @type {object | null} */
         this.groupMember = null;
+        /** @type {string | null} */
         this.groupIdentifier = null;
-
+        /** @type {Map<string, string>} */
         this.userNameCache = new Map();
 
+        /** @type {boolean} */
         this.listIsLoaded = false;
+        /** @type {HTMLElement | null} */
         this.createGroupPopover = null;
+        /** @type {HTMLElement | null} */
         this.deleteGroupPopover = null;
+        /** @type {HTMLElement | null} */
         this.deleteGroupMemberPopover = null;
+        /** @type {HTMLElement | null} */
         this.addGroupMemberPopover = null;
 
         /** @type {PersonSelect} */
@@ -51,9 +62,13 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
         /** @type {HTMLElement | null} */
         this.activeButton = null;
+        /** @type {HTMLElement | null} */
         this.activePopover = null;
+        /** @type {string | null} */
         this.activeItemName = null;
+        /** @type {string | null} */
         this.query = null;
+        /** @type {boolean} */
         this.searchIsActive = false;
     }
 
@@ -86,7 +101,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
     connectedCallback() {
         super.connectedCallback();
-        // window.addEventListener('resize', this.positionPopover.bind(this));
+        window.addEventListener('resize', this.updatePosition.bind(this));
     }
 
     firstUpdated() {
@@ -118,7 +133,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        // window.removeEventListener('resize', this.positionPopover);
+        window.removeEventListener('resize', this.updatePosition);
 
         this.deleteGroupPopover.removeEventListener('beforetoggle', this.positionPopover);
         this.deleteGroupMemberPopover.addEventListener('beforetoggle', this.positionPopover);
@@ -1014,7 +1029,8 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
                                         this.resourceSelector.setAttribute('entry-point-url', this.entryPointUrl);
                                         this.resourceSelector.setAttribute('resource-path', '/authorization/groups?getChildGroupCandidatesForGroupIdentifier=' + this.targetGroup['identifier']);
-                                        this.resourceSelector.updateResources();
+                                        // this.resourceSelector.updateResources();
+                                        this.resourceSelector._updateAll();
 
                                         this.personSelector.setAttribute('hidden', "");
                                     }}">
@@ -1039,7 +1055,9 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                             <dbp-resource-select
                                 hidden
                                 disabled
-                                subscribe="auth"
+                                use-search
+
+                                subscribe="lang,entry-point-url,auth"
                                 id="group-to-add-selector"
                                 lang="${this.lang}"
                                 resource-path="/authorization/groups"
@@ -1208,7 +1226,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
     /* utils */
 
-    formatGroupResource(select, resource) {
+    formatGroupResource(resource) {
         return resource['name'];
     }
 
