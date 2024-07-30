@@ -7,7 +7,7 @@ import json from '@rollup/plugin-json';
 import serve from 'rollup-plugin-serve';
 import url from '@rollup/plugin-url';
 import del from 'rollup-plugin-delete';
-import {getPackagePath} from '../../vendor/toolkit/rollup.utils.js';
+import {getPackagePath} from '@dbp-toolkit/dev-utils';
 import process from 'node:process';
 
 const build = typeof process.env.BUILD !== 'undefined' ? process.env.BUILD : 'local';

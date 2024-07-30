@@ -23,8 +23,6 @@
   "author": "",
   "license": "LGPL-2.1-or-later",
   "devDependencies": {
-    "find-cache-dir": "^5.0.0",
-    "lerna": "^8.0.0",
-    "selfsigned": "^2.0.0"
+    "lerna": "^8.0.0"
   }
 }
