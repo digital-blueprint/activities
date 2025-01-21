@@ -17,10 +17,6 @@
     "enabled": false
   },
   "packageRules": [
-    {
-      "matchPackageNames": ["@open-wc/scoped-elements"],
-      "allowedVersions": "<3"
-    }
   ],
   "cloneSubmodules": true
 }

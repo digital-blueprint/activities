@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
-import { ScopedElementsMixin } from '@open-wc/scoped-elements';
+import { ScopedElementsMixin } from '@dbp-toolkit/common';
 import { classMap } from "lit/directives/class-map.js";
 import { createInstance } from './i18n.js';
 import { Icon, Button, IconButton, LoadingButton, InlineNotification } from '@dbp-toolkit/common';
