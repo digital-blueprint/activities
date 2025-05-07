@@ -1,4 +1,4 @@
-import { css } from 'lit';
+import {css} from 'lit';
 
 export function getGroupManageCSS() {
     // language=css
@@ -7,17 +7,17 @@ export function getGroupManageCSS() {
             --border-color: color-mix(in srgb, var(--dbp-content) 30%, transparent);
             --border-color-rotated: color-mix(in srgb, var(--dbp-content) 60%, transparent);
             --input-bg-color: color-mix(in srgb, var(--dbp-content) 80%, transparent);
-            --animation-time: .25s;
+            --animation-time: 0.25s;
             --table-line-height: 3em;
             --space: 2em;
-            --space-half: calc(var(--space) * .5);
+            --space-half: calc(var(--space) * 0.5);
             --space-2x: calc(var(--space) * 2);
             --space-3x: calc(var(--space) * 3);
             --space-4x: calc(var(--space) * 4);
         }
 
         ::backdrop {
-            background-color: rgba(0,0,0,0.75);
+            background-color: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(2px);
         }
 
@@ -36,7 +36,7 @@ export function getGroupManageCSS() {
         }
 
         .section-heading {
-            margin-bottom: .5em;
+            margin-bottom: 0.5em;
         }
 
         .form {
@@ -49,32 +49,32 @@ export function getGroupManageCSS() {
             display: flex;
             flex-direction: column;
             max-width: fit-content;
-            gap: .3em;
+            gap: 0.3em;
         }
 
-        input[type="text"] {
+        input[type='text'] {
             height: 1.9em;
-            padding: 0 .5em;
+            padding: 0 0.5em;
             background-color: var(--dbp-background);
             color: var(--dbp-content);
             border: 1px solid var(--border-color);
             /* transition: border-color var(--animation-duration) ease-in; */
         }
 
-        input[type="text"].not-found {
+        input[type='text'].not-found {
             border-color: var(--dbp-danger);
             box-shadow: inset 0px 0 7px 0px var(--dbp-danger);
         }
 
-        input[type="text"]:not(:focus):invalid {
+        input[type='text']:not(:focus):invalid {
             outline: 3px solid var(--dbp-danger);
         }
 
-        input[type="text"]:not(:focus):invalid + .form-error {
+        input[type='text']:not(:focus):invalid + .form-error {
             display: block;
         }
 
-        input[type="text"]:valid + .form-error {
+        input[type='text']:valid + .form-error {
             display: none;
         }
 
@@ -105,7 +105,8 @@ export function getGroupManageCSS() {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: var(--space-half) calc(var(--space-half) / 2) var(--space-half) var(--space-half);
+            padding: var(--space-half) calc(var(--space-half) / 2) var(--space-half)
+                var(--space-half);
         }
 
         .row {
@@ -160,7 +161,7 @@ export function getGroupManageCSS() {
         .group-header:hover,
         .group-member:hover {
             filter: invert(1);
-            opacity: .7;
+            opacity: 0.7;
         }
 
         .row.found > .group-header .group-controls,
@@ -173,7 +174,7 @@ export function getGroupManageCSS() {
 
         /* Hide all rows that don't contains found items as a direct child */
         .search-is-active .row:not(.found):has(.group-header:not(.found-item)) > .group-header {
-            display: none ;
+            display: none;
         }
 
         /* Unhide rows that contains found items. */
@@ -189,8 +190,8 @@ export function getGroupManageCSS() {
         .search-container dbp-icon {
             opacity: 0;
             position: absolute;
-            right: .5em;
-            top: .5em;
+            right: 0.5em;
+            top: 0.5em;
             transition: opacity var(--animation-time) linear;
         }
 
@@ -253,13 +254,13 @@ export function getGroupManageCSS() {
         }
 
         .member-count-badge {
-            font-size: .8em;
+            font-size: 0.8em;
             width: 1.5em;
             width: 3ch;
             line-height: 1.5em;
             line-height: 3ch;
             padding: 0;
-            padding: .5ch;
+            padding: 0.5ch;
             display: inline-block;
             color: var(--dbp-content);
             text-align: center;
@@ -299,7 +300,7 @@ export function getGroupManageCSS() {
             container: list-container / inline-size;
         }
 
-        @container list-container (width < 415px){
+        @container list-container (width < 415px) {
             .button-container {
                 flex-direction: column;
                 gap: var(--space-half);
@@ -310,14 +311,12 @@ export function getGroupManageCSS() {
             }
         }
 
-
-
         .button-container button.select-user-button,
         .button-container button.select-group-button {
             position: relative;
             overflow: hidden;
             display: flex;
-            gap: .9em;
+            gap: 0.9em;
             align-items: center;
         }
 
@@ -337,7 +336,7 @@ export function getGroupManageCSS() {
 
         .button-container button.select-user-button:before,
         .button-container button.select-group-button:before {
-            content: "";
+            content: '';
             display: block;
             width: 2.5em;
             height: 2.5em;
@@ -424,7 +423,6 @@ export function getGroupManageCSS() {
                 display: block;
             }
         }
-
 
         /* tooltips */
 

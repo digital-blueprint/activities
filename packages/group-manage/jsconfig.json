@@ -1,15 +1,9 @@
-
 {
     "extends": "../../jsconfig.json",
     "compilerOptions": {
         "maxNodeModuleJsDepth": 0,
-        "allowJs": true,
+        "allowJs": true
     },
-    "include": [
-        "src/**/*.js"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist",
-    ]
+    "include": ["src/**/*.js"],
+    "exclude": ["node_modules", "dist"]
 }

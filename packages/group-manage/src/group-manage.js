@@ -1,23 +1,22 @@
-import { html } from 'lit';
+import {html} from 'lit';
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
-import { ScopedElementsMixin } from '@dbp-toolkit/common';
-import { classMap } from "lit/directives/class-map.js";
-import { createInstance } from './i18n.js';
-import { Icon, Button, IconButton, LoadingButton, InlineNotification } from '@dbp-toolkit/common';
+import {ScopedElementsMixin} from '@dbp-toolkit/common';
+import {classMap} from 'lit/directives/class-map.js';
+import {createInstance} from './i18n.js';
+import {Icon, Button, IconButton, LoadingButton, InlineNotification} from '@dbp-toolkit/common';
 import * as commonStyles from '@dbp-toolkit/common/styles';
-import { getGroupManageCSS } from './styles.js';
-import { send as notify } from '@dbp-toolkit/common/notification';
-import { PersonSelect } from '@dbp-toolkit/person-select';
-import { ResourceSelect } from '@dbp-toolkit/resource-select';
-import { getPersonFullName, getIdFromIri } from './utils.js';
-import { computePosition, autoPlacement, offset } from '@floating-ui/dom';
+import {getGroupManageCSS} from './styles.js';
+import {send as notify} from '@dbp-toolkit/common/notification';
+import {PersonSelect} from '@dbp-toolkit/person-select';
+import {ResourceSelect} from '@dbp-toolkit/resource-select';
+import {getPersonFullName, getIdFromIri} from './utils.js';
+import {computePosition, autoPlacement, offset} from '@floating-ui/dom';
 
 /**
  * @class
  * @augments {DBPLitElement}
  */
 export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
-
     constructor() {
         super();
 
@@ -87,15 +86,15 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     static get properties() {
         return {
             ...super.properties,
-            auth: { type: Object },
-            lang: { type: String },
-            entryPointUrl: { type: String, attribute: 'entry-point-url' },
-            authGroups: { type: Array, attribute: false },
-            targetGroup: { type: Object, attribute: false },
-            groupMember: { type: Object, attribute: false },
-            activeItemName: { type: Array, attribute: false },
-            query: { type: String, attribute: false },
-            searchIsActive: { type: Boolean, attribute: false },
+            auth: {type: Object},
+            lang: {type: String},
+            entryPointUrl: {type: String, attribute: 'entry-point-url'},
+            authGroups: {type: Array, attribute: false},
+            targetGroup: {type: Object, attribute: false},
+            groupMember: {type: Object, attribute: false},
+            activeItemName: {type: Array, attribute: false},
+            query: {type: String, attribute: false},
+            searchIsActive: {type: Boolean, attribute: false},
         };
     }
 
@@ -119,10 +118,16 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         this.deleteGroupPopover.addEventListener('beforetoggle', this.positionPopover.bind(this));
 
         this.addGroupMemberPopover = this._('#add-group-member-popover');
-        this.addGroupMemberPopover.addEventListener('beforetoggle', this.positionPopover.bind(this));
+        this.addGroupMemberPopover.addEventListener(
+            'beforetoggle',
+            this.positionPopover.bind(this),
+        );
 
         this.deleteGroupMemberPopover = this._('#delete-group-member-popover');
-        this.deleteGroupMemberPopover.addEventListener('beforetoggle', this.positionPopover.bind(this));
+        this.deleteGroupMemberPopover.addEventListener(
+            'beforetoggle',
+            this.positionPopover.bind(this),
+        );
 
         if (this.auth['login-status'] === 'logged-in') {
             if (this.isFirstUpdated && !this.listIsLoaded) {
@@ -174,54 +179,62 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
         this.listByGroupFirst(authGroups);
 
-        let authGroupToRender = await Promise.all(authGroups.map(async (item) => {
-            if (item['@type'] === 'AuthorizationGroup') {
-                let memberCount = this.getAllMembersCount(item.members);
-                return {
-                    iri: item['@id'],
-                    id: item.identifier,
-                    name: item.name,
-                    type: item['@type'],
-                    cssClass: 'root-group',
-                    memberCount: memberCount,
-                    members: memberCount > 0 ? await this.processAuthGroups(item.members) : null
-                };
-            }
-            if (item['@type'] === 'AuthorizationGroupMember') {
-                let name, id, cssClass, itemType, rootId;
-
-                if (item.userIdentifier !== null) {
-                    name = await this.fetchFullnameFromUserid(item.userIdentifier);
-                    id = getIdFromIri(item['@id']);
-                    itemType = 'user';
-                    // TODO: fix html class names and markup.
-                    cssClass = 'user-name-icon';
+        let authGroupToRender = await Promise.all(
+            authGroups.map(async (item) => {
+                if (item['@type'] === 'AuthorizationGroup') {
+                    let memberCount = this.getAllMembersCount(item.members);
+                    return {
+                        iri: item['@id'],
+                        id: item.identifier,
+                        name: item.name,
+                        type: item['@type'],
+                        cssClass: 'root-group',
+                        memberCount: memberCount,
+                        members:
+                            memberCount > 0 ? await this.processAuthGroups(item.members) : null,
+                    };
                 }
-                if (item.childGroup !== null) {
-                    name = item.childGroup.name;
-                    id = getIdFromIri(item['@id']);
-                    rootId = item.childGroup.identifier;
-                    itemType = 'groupMember';
-                    // TODO: fix html class names and markup.
-                    cssClass = 'child-group-icon';
+                if (item['@type'] === 'AuthorizationGroupMember') {
+                    let name, id, cssClass, itemType, rootId;
+
+                    if (item.userIdentifier !== null) {
+                        name = await this.fetchFullnameFromUserid(item.userIdentifier);
+                        id = getIdFromIri(item['@id']);
+                        itemType = 'user';
+                        // TODO: fix html class names and markup.
+                        cssClass = 'user-name-icon';
+                    }
+                    if (item.childGroup !== null) {
+                        name = item.childGroup.name;
+                        id = getIdFromIri(item['@id']);
+                        rootId = item.childGroup.identifier;
+                        itemType = 'groupMember';
+                        // TODO: fix html class names and markup.
+                        cssClass = 'child-group-icon';
+                    }
+
+                    let memberCount =
+                        item.childGroup !== null &&
+                        item.childGroup.members !== null &&
+                        item.childGroup.members.length > 0
+                            ? this.getAllMembersCount(item.childGroup.members)
+                            : null;
+
+                    return {
+                        name: name,
+                        id: id,
+                        rootId: rootId,
+                        type: item['@type'],
+                        cssClass: cssClass,
+                        itemType: itemType,
+                        memberCount: memberCount,
+                        childGroup: memberCount
+                            ? await this.processAuthGroups(item.childGroup.members)
+                            : null,
+                    };
                 }
-
-                let memberCount = item.childGroup !== null &&
-                    item.childGroup.members !== null &&
-                    item.childGroup.members.length > 0 ? this.getAllMembersCount(item.childGroup.members): null;
-
-                return {
-                    name: name,
-                    id: id,
-                    rootId: rootId,
-                    type: item['@type'],
-                    cssClass: cssClass,
-                    itemType: itemType,
-                    memberCount: memberCount,
-                    childGroup: memberCount ? await this.processAuthGroups(item.childGroup.members) : null
-                };
-            }
-        }));
+            }),
+        );
 
         return authGroupToRender;
     }
@@ -232,7 +245,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
      * @returns {number}
      */
     getAllMembersCount(groups) {
-
         if (!Array.isArray(groups) || groups.length === 0) {
             return 0;
         }
@@ -275,44 +287,83 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
         if (!Array.isArray(authGroups)) return;
 
-        const firstIteration = (level === 0);
+        const firstIteration = level === 0;
         level++;
 
         return html`
-            <ul class="${classMap({ 'group-member-list': !firstIteration })}" data-level="${level}">
-
-                ${authGroups.map(item => html`
-                    <li class="row ${level == 1 ? 'root-row' : null}">
-                        ${item.type === 'AuthorizationGroup'
-                            ? html`
-                                <div class="${classMap({ 'group-header': firstIteration, 'group-header group-member': !firstIteration })}" style="--data-level:${level}">
-                                    <span class="group-name ${item.cssClass}" data-identifier=${item.id} @click="${this.toggleGroupHeader}">
-                                        ${item.name}
-                                        ${item.memberCount ? html`<span class="member-count-badge">${item.memberCount}</span>` : null}
-                                    </span>
-                                    <span class="group-controls">
-                                        ${this.renderDeleteGroupButton(item.id, item.name)}
-                                        ${this.renderAddGroupMemberButton(item.id, item.name)}
-                                    </span>
-                                </div>
-                                ${item.members ? this.renderAuthGroups(item.members, level) : ''}
-                            `
-                            : html`
-                                <div class="${classMap({ 'group-header group-member': !firstIteration })}" style="--data-level:${level}">
-                                    <span class="group-name ${item.cssClass}" data-identifier=${item.id} @click="${this.toggleGroupHeader}">
-                                        ${item.name}
-                                        ${item.memberCount ? html`<span class="member-count-badge">${item.memberCount}</span>` : null}
-                                    </span>
-                                    <span class="group-controls">
-                                        ${this.renderDeleteGroupMemberButton(item.id, item.name)}
-                                        ${item.itemType === 'groupMember' ? this.renderAddGroupMemberButton(item.rootId, item.name) : ''}
-                                    </span>
-                                </div>
-                                ${item.childGroup ? this.renderAuthGroups(item.childGroup, level) : ''}
-                            `
-                        }
-                    </li>
-                `)}
+            <ul class="${classMap({'group-member-list': !firstIteration})}" data-level="${level}">
+                ${authGroups.map(
+                    (item) => html`
+                        <li class="row ${level == 1 ? 'root-row' : null}">
+                            ${item.type === 'AuthorizationGroup'
+                                ? html`
+                                      <div
+                                          class="${classMap({
+                                              'group-header': firstIteration,
+                                              'group-header group-member': !firstIteration,
+                                          })}"
+                                          style="--data-level:${level}">
+                                          <span
+                                              class="group-name ${item.cssClass}"
+                                              data-identifier=${item.id}
+                                              @click="${this.toggleGroupHeader}">
+                                              ${item.name}
+                                              ${item.memberCount
+                                                  ? html`
+                                                        <span class="member-count-badge">
+                                                            ${item.memberCount}
+                                                        </span>
+                                                    `
+                                                  : null}
+                                          </span>
+                                          <span class="group-controls">
+                                              ${this.renderDeleteGroupButton(item.id, item.name)}
+                                              ${this.renderAddGroupMemberButton(item.id, item.name)}
+                                          </span>
+                                      </div>
+                                      ${item.members
+                                          ? this.renderAuthGroups(item.members, level)
+                                          : ''}
+                                  `
+                                : html`
+                                      <div
+                                          class="${classMap({
+                                              'group-header group-member': !firstIteration,
+                                          })}"
+                                          style="--data-level:${level}">
+                                          <span
+                                              class="group-name ${item.cssClass}"
+                                              data-identifier=${item.id}
+                                              @click="${this.toggleGroupHeader}">
+                                              ${item.name}
+                                              ${item.memberCount
+                                                  ? html`
+                                                        <span class="member-count-badge">
+                                                            ${item.memberCount}
+                                                        </span>
+                                                    `
+                                                  : null}
+                                          </span>
+                                          <span class="group-controls">
+                                              ${this.renderDeleteGroupMemberButton(
+                                                  item.id,
+                                                  item.name,
+                                              )}
+                                              ${item.itemType === 'groupMember'
+                                                  ? this.renderAddGroupMemberButton(
+                                                        item.rootId,
+                                                        item.name,
+                                                    )
+                                                  : ''}
+                                          </span>
+                                      </div>
+                                      ${item.childGroup
+                                          ? this.renderAuthGroups(item.childGroup, level)
+                                          : ''}
+                                  `}
+                        </li>
+                    `,
+                )}
             </ul>
         `;
     }
@@ -326,8 +377,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         /** @type {HTMLElement} */
         let button;
 
-        if(event.target instanceof HTMLElement) {
-
+        if (event.target instanceof HTMLElement) {
             if (event.target.tagName !== 'DBP-BUTTON') {
                 button = event.target.closest('dbp-button');
             } else {
@@ -400,7 +450,8 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 data-group-name="${groupName}"
                 data-group-id="${groupIdentifier}">
                 <dbp-icon name="trash" aria-hidden="true"></dbp-icon>
-                ${i18n.t('group-manage.delete-group-button-text')}</dbp-button>
+                ${i18n.t('group-manage.delete-group-button-text')}
+            </dbp-button>
         `;
     }
 
@@ -420,7 +471,8 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 data-group-name="${groupName}"
                 data-group-id="${groupIdentifier}">
                 <dbp-icon name="trash" aria-hidden="true"></dbp-icon>
-                ${i18n.t('group-manage.delete-group-member-button-text')}</dbp-button>
+                ${i18n.t('group-manage.delete-group-member-button-text')}
+            </dbp-button>
         `;
     }
 
@@ -440,7 +492,8 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 data-group-name="${groupName}"
                 data-group-id="${groupIdentifier}">
                 <dbp-icon name="users" aria-hidden="true"></dbp-icon>
-                ${i18n.t('group-manage.assign-to-group-button-text')}</dbp-button>
+                ${i18n.t('group-manage.assign-to-group-button-text')}
+            </dbp-button>
         `;
     }
 
@@ -465,7 +518,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             }
 
             if (Array.isArray(this.activePopover.querySelectorAll('dbp-button'))) {
-                this.activePopover.querySelectorAll('dbp-button').forEach(popoverButton => {
+                this.activePopover.querySelectorAll('dbp-button').forEach((popoverButton) => {
                     popoverButton.removeAttribute('disabled');
                 });
             }
@@ -481,7 +534,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             }
             this.activeButton = null;
 
-            this.activePopover.querySelectorAll('dbp-button').forEach(popoverButton => {
+            this.activePopover.querySelectorAll('dbp-button').forEach((popoverButton) => {
                 popoverButton.removeAttribute('disabled');
             });
             this.activePopover = null;
@@ -499,11 +552,14 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         if (!popover || !invoker) return;
 
         computePosition(invoker, popover, {
-            middleware: [offset(16), autoPlacement({
-                alignment: 'end',
-                allowedPlacements: ['top-end'],
-            })],
-        }).then(({ x, y, middlewareData }) => {
+            middleware: [
+                offset(16),
+                autoPlacement({
+                    alignment: 'end',
+                    allowedPlacements: ['top-end'],
+                }),
+            ],
+        }).then(({x, y, middlewareData}) => {
             Object.assign(popover.style, {
                 left: `${x}px`,
                 top: `${y}px`,
@@ -537,8 +593,13 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 });
             } else {
                 const authGroupsResponse = await response.json();
-                if (Array.isArray(authGroupsResponse['hydra:member']) && authGroupsResponse['hydra:member'].length > 0) {
-                    this.authGroups = await this.processAuthGroups(authGroupsResponse['hydra:member']);
+                if (
+                    Array.isArray(authGroupsResponse['hydra:member']) &&
+                    authGroupsResponse['hydra:member'].length > 0
+                ) {
+                    this.authGroups = await this.processAuthGroups(
+                        authGroupsResponse['hydra:member'],
+                    );
                     const groupListContainer = this._('.group-list-container');
                     groupListContainer.classList.add('visible');
                     this.listIsLoaded = true;
@@ -562,12 +623,15 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             return this.userNameCache.get(userIdentifier);
         } else {
             try {
-                const response = await fetch(this.entryPointUrl + `/base/people/${userIdentifier}`, {
-                    headers: {
-                        'Content-Type': 'application/ld+json',
-                        Authorization: 'Bearer ' + this.auth.token,
+                const response = await fetch(
+                    this.entryPointUrl + `/base/people/${userIdentifier}`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/ld+json',
+                            Authorization: 'Bearer ' + this.auth.token,
+                        },
                     },
-                });
+                );
                 if (!response.ok) {
                     console.log('Error: ', response);
                     notify({
@@ -605,16 +669,16 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             return;
         }
         const data = {
-            name: groupName
+            name: groupName,
         };
         try {
             const response = await fetch(this.entryPointUrl + '/authorization/groups', {
-                method: "POST",
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/ld+json',
                     Authorization: 'Bearer ' + this.auth.token,
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
             });
 
             if (!response.ok) {
@@ -661,13 +725,16 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         const groupIdentifier = this.groupIdentifier;
 
         try {
-            const response = await fetch(this.entryPointUrl + `/authorization/groups/${groupIdentifier}`, {
-                method: "DELETE",
-                headers: {
-                    'Content-Type': 'application/ld+json',
-                    Authorization: 'Bearer ' + this.auth.token,
+            const response = await fetch(
+                this.entryPointUrl + `/authorization/groups/${groupIdentifier}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/ld+json',
+                        Authorization: 'Bearer ' + this.auth.token,
+                    },
                 },
-            });
+            );
 
             if (response.status !== 204) {
                 console.log('Error: ', response);
@@ -709,13 +776,16 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         const groupIdentifier = this.groupIdentifier;
 
         try {
-            const response = await fetch(this.entryPointUrl + `/authorization/group-members/${groupIdentifier}`, {
-                method: "DELETE",
-                headers: {
-                    'Content-Type': 'application/ld+json',
-                    Authorization: 'Bearer ' + this.auth.token,
+            const response = await fetch(
+                this.entryPointUrl + `/authorization/group-members/${groupIdentifier}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/ld+json',
+                        Authorization: 'Bearer ' + this.auth.token,
+                    },
                 },
-            });
+            );
 
             if (response.status !== 204) {
                 console.log('Error: ', response);
@@ -780,7 +850,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         const targetGroupId = this.targetGroup['identifier'];
         const groupName = this.targetGroup['name'];
         const data = {
-            "group": `/authorization/groups/${targetGroupId}`,
+            group: `/authorization/groups/${targetGroupId}`,
         };
 
         if (this.groupMember.type === 'person') {
@@ -792,12 +862,12 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
         try {
             const response = await fetch(this.entryPointUrl + '/authorization/group-members', {
-                method: "POST",
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/ld+json',
                     Authorization: 'Bearer ' + this.auth.token,
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
             });
 
             if (!response.ok) {
@@ -829,7 +899,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             // this.closeAddGroupMemberPopover();
         }
     }
-
 
     // MARK: SOURCE CHANGE
     /**
@@ -865,40 +934,59 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         const i18n = this._i18n;
 
         return html`
-            <div id="create-group-popover" class="create-group-popover tooltip"
+            <div
+                id="create-group-popover"
+                class="create-group-popover tooltip"
                 popover="manual"
                 aria-labelledby="">
                 <div class="dialog-inner">
                     <header class="dialog-header">
-                        <h3 id="add-group-dialog-title">${i18n.t('group-manage.assign-to-group-modal-title')}</h3>
+                        <h3 id="add-group-dialog-title">
+                            ${i18n.t('group-manage.assign-to-group-modal-title')}
+                        </h3>
                         <dbp-icon name="close" @click="${this.closeCreateGroupPopover}"></dbp-icon>
                     </header>
                     <div slot="content">
                         <div id="create-group-form" class="form">
                             <label for="group-name" class="form-label">
                                 ${i18n.t('group-manage.group-name-label')}
-                                <input type="text" id="input-group-name" required
-                                    autocomplete='off' spellcheck='false' autocorrect='off'
-                                    name="group-name" placeholder="Enter group name"
+                                <input
+                                    type="text"
+                                    id="input-group-name"
+                                    required
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                    autocorrect="off"
+                                    name="group-name"
+                                    placeholder="Enter group name"
                                     @keydown="${(event) => {
                                         const groupNameField = event.target;
                                         // Enable submit form with Enter keys.
-                                        if (event.code === 'Enter' || event.code === 'NumpadEnter') {
+                                        if (
+                                            event.code === 'Enter' ||
+                                            event.code === 'NumpadEnter'
+                                        ) {
                                             if (groupNameField.validity.valid) {
-                                                this._('#create-group-button').removeAttribute('disabled');
+                                                this._('#create-group-button').removeAttribute(
+                                                    'disabled',
+                                                );
                                                 this.createGroup();
                                             } else {
                                                 groupNameField.blur();
                                             }
                                         }
                                     }}"
-                                                            @input="${(event) => {
+                                    @input="${(event) => {
                                         const groupNameField = event.target;
                                         if (groupNameField.validity.valid) {
-                                            this._('#create-group-button').removeAttribute('disabled');
+                                            this._('#create-group-button').removeAttribute(
+                                                'disabled',
+                                            );
                                         }
-                                    }}">
-                                <span class="form-error">${i18n.t('group-manage.field-is-required')}</span>
+                                    }}" />
+                                <span class="form-error">
+                                    ${i18n.t('group-manage.field-is-required')}
+                                </span>
                             </label>
                             <dbp-loading-button
                                 disabled
@@ -933,7 +1021,9 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         this.activePopover.showPopover();
 
         // Focus on the input field.
-        const inputGroupName = /** @type {HTMLInputElement} */ (this.activePopover.querySelector('#input-group-name'));
+        const inputGroupName = /** @type {HTMLInputElement} */ (
+            this.activePopover.querySelector('#input-group-name')
+        );
         inputGroupName.focus();
     }
 
@@ -944,18 +1034,30 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     renderGroupDeleteConfirmationPopover() {
         const i18n = this._i18n;
 
-        return html`<div id="delete-group-popover" popover="manual" class="tooltip" role="tooltip">
-            <p class="tooltip-title">${i18n.t('group-manage.delete-group-confirmation', { itemName: this.activeItemName })}</p>
-            <div class="tooltip-button-container">
-                <dbp-button type="is-danger"
-                    id="confirm-delete-button"
-                    @click="${() => this.deleteGroup()}">${i18n.t('group-manage.yes-delete')}</dbp-button>
-                <dbp-button type="is-secondary"
-                    id="cancel-delete-button"
-                    @click="${() => this.closeDeleteGroup()}">${i18n.t('group-manage.cancel')}</dbp-button>
+        return html`
+            <div id="delete-group-popover" popover="manual" class="tooltip" role="tooltip">
+                <p class="tooltip-title">
+                    ${i18n.t('group-manage.delete-group-confirmation', {
+                        itemName: this.activeItemName,
+                    })}
+                </p>
+                <div class="tooltip-button-container">
+                    <dbp-button
+                        type="is-danger"
+                        id="confirm-delete-button"
+                        @click="${() => this.deleteGroup()}">
+                        ${i18n.t('group-manage.yes-delete')}
+                    </dbp-button>
+                    <dbp-button
+                        type="is-secondary"
+                        id="cancel-delete-button"
+                        @click="${() => this.closeDeleteGroup()}">
+                        ${i18n.t('group-manage.cancel')}
+                    </dbp-button>
+                </div>
+                <div class="arrow"></div>
             </div>
-            <div class="arrow"></div>
-        </div>`;
+        `;
     }
 
     closeDeleteGroup() {
@@ -965,18 +1067,30 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     renderGroupMemberDeleteConfirmationPopover() {
         const i18n = this._i18n;
 
-        return html`<div id="delete-group-member-popover" popover="manual" class="tooltip" role="tooltip">
-            <p class="tooltip-title">${i18n.t('group-manage.delete-group-member-confirmation', { itemName: this.activeItemName })}</p>
-            <div class="tooltip-button-container">
-                <dbp-button type="is-danger"
-                    id="confirm-delete-member-button"
-                    @click="${(event) => this.deleteGroupMember(event)}">${i18n.t('group-manage.yes-delete')}</dbp-button>
-                <dbp-button type="is-secondary"
-                    id="cancel-delete-member-button"
-                    @click="${() => this.closeDeleteGroupMember()}">${i18n.t('group-manage.cancel')}</dbp-button>
+        return html`
+            <div id="delete-group-member-popover" popover="manual" class="tooltip" role="tooltip">
+                <p class="tooltip-title">
+                    ${i18n.t('group-manage.delete-group-member-confirmation', {
+                        itemName: this.activeItemName,
+                    })}
+                </p>
+                <div class="tooltip-button-container">
+                    <dbp-button
+                        type="is-danger"
+                        id="confirm-delete-member-button"
+                        @click="${(event) => this.deleteGroupMember(event)}">
+                        ${i18n.t('group-manage.yes-delete')}
+                    </dbp-button>
+                    <dbp-button
+                        type="is-secondary"
+                        id="cancel-delete-member-button"
+                        @click="${() => this.closeDeleteGroupMember()}">
+                        ${i18n.t('group-manage.cancel')}
+                    </dbp-button>
+                </div>
+                <div class="arrow"></div>
             </div>
-            <div class="arrow"></div>
-        </div>`;
+        `;
     }
 
     closeDeleteGroupMember() {
@@ -987,59 +1101,99 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         const i18n = this._i18n;
 
         return html`
-            <div id="add-group-member-popover" class="add-group-member-popover tooltip"
-                popover="manual" aria-labelledby="add-group-member-dialog-title">
+            <div
+                id="add-group-member-popover"
+                class="add-group-member-popover tooltip"
+                popover="manual"
+                aria-labelledby="add-group-member-dialog-title">
                 <div class="dialog-inner">
                     <header class="dialog-header">
-                        <h3 id="add-group-member-dialog-title" tabindex="1">${i18n.t('group-manage.assign-to-group-modal-title')} ${this.targetGroup?.name ? this.targetGroup.name : null}</h3>
-                        <dbp-icon name="close" @click="${() => { this.closeAddGroupMemberPopover(); }}"></dbp-icon>
+                        <h3 id="add-group-member-dialog-title" tabindex="1">
+                            ${i18n.t('group-manage.assign-to-group-modal-title')}
+                            ${this.targetGroup?.name ? this.targetGroup.name : null}
+                        </h3>
+                        <dbp-icon
+                            name="close"
+                            @click="${() => {
+                                this.closeAddGroupMemberPopover();
+                            }}"></dbp-icon>
                     </header>
                     <div class="content">
                         <div id="add-group-member-form" class="form">
                             <div class="button-container">
-                                <button class="button is-secondary select-user-button" id="select-user-button"
+                                <button
+                                    class="button is-secondary select-user-button"
+                                    id="select-user-button"
                                     @click="${(event) => {
                                         event.target.classList.add('selected');
                                         this._('#select-group-button').classList.remove('selected');
                                         this.personSelector.removeAttribute('hidden');
                                         this.personSelector.removeAttribute('disabled');
                                         this.personSelector.setAttribute('subscribe', 'auth');
-                                        this.personSelector.setAttribute('entry-point-url', this.entryPointUrl);
+                                        this.personSelector.setAttribute(
+                                            'entry-point-url',
+                                            this.entryPointUrl,
+                                        );
 
-                                        this.resourceSelector.setAttribute('hidden', "");
+                                        this.resourceSelector.setAttribute('hidden', '');
                                     }}">
-                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                            viewBox="0 0 100 100" xml:space="preserve">
-                                        <path class="st0" d="M8.5,87.7"/>
+                                    <svg
+                                        version="1.1"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                                        x="0px"
+                                        y="0px"
+                                        viewBox="0 0 100 100"
+                                        xml:space="preserve">
+                                        <path class="st0" d="M8.5,87.7" />
                                         <g>
-                                            <path d="M50,57c13.2,0,24-10.8,24-24S63.2,9,50,9C36.8,9,26,19.7,26,33S36.8,57,50,57z M50,14.5c10.2,0,18.5,8.3,18.5,18.5
-                                            S60.2,51.5,50,51.5S31.5,43.2,31.5,33S39.8,14.5,50,14.5z"/>
-                                            <path d="M97.9,86.2C84.7,74.5,67.7,68,50,68S15.3,74.5,2.1,86.2c-1.1,1-1.2,2.7-0.2,3.9c1,1.1,2.7,1.2,3.9,0.2
-                                            C17.9,79.5,33.7,73.5,50,73.5s32.1,6,44.3,16.8c0.5,0.5,1.2,0.7,1.8,0.7c0.8,0,1.5-0.3,2.1-0.9C99.2,89,99.1,87.2,97.9,86.2z"/>
+                                            <path
+                                                d="M50,57c13.2,0,24-10.8,24-24S63.2,9,50,9C36.8,9,26,19.7,26,33S36.8,57,50,57z M50,14.5c10.2,0,18.5,8.3,18.5,18.5
+                                            S60.2,51.5,50,51.5S31.5,43.2,31.5,33S39.8,14.5,50,14.5z" />
+                                            <path
+                                                d="M97.9,86.2C84.7,74.5,67.7,68,50,68S15.3,74.5,2.1,86.2c-1.1,1-1.2,2.7-0.2,3.9c1,1.1,2.7,1.2,3.9,0.2
+                                            C17.9,79.5,33.7,73.5,50,73.5s32.1,6,44.3,16.8c0.5,0.5,1.2,0.7,1.8,0.7c0.8,0,1.5-0.3,2.1-0.9C99.2,89,99.1,87.2,97.9,86.2z" />
                                         </g>
                                     </svg>
                                     ${i18n.t('group-manage.select-person-selector-button-text')}
                                 </button>
-                                <button class="button is-secondary select-group-button" id="select-group-button"
+                                <button
+                                    class="button is-secondary select-group-button"
+                                    id="select-group-button"
                                     @click="${(event) => {
                                         event.target.classList.add('selected');
                                         this._('#select-user-button').classList.remove('selected');
                                         this.resourceSelector.removeAttribute('hidden');
                                         this.resourceSelector.removeAttribute('disabled');
 
-                                        this.resourceSelector.setAttribute('entry-point-url', this.entryPointUrl);
-                                        this.resourceSelector.setAttribute('resource-path', '/authorization/groups?getChildGroupCandidatesForGroupIdentifier=' + this.targetGroup['identifier']);
+                                        this.resourceSelector.setAttribute(
+                                            'entry-point-url',
+                                            this.entryPointUrl,
+                                        );
+                                        this.resourceSelector.setAttribute(
+                                            'resource-path',
+                                            '/authorization/groups?getChildGroupCandidatesForGroupIdentifier=' +
+                                                this.targetGroup['identifier'],
+                                        );
                                         // this.resourceSelector.updateResources();
                                         this.resourceSelector._updateAll();
 
-                                        this.personSelector.setAttribute('hidden', "");
+                                        this.personSelector.setAttribute('hidden', '');
                                     }}">
-                                    <svg version="1.1" id="Layer_2_1_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                        viewBox="0 0 100 100" xml:space="preserve">
-                                        <path d="M92.6,15.4H55.3l-2.9-5.3l-0.1-0.2c-1.1-1.7-3.1-2.7-5-2.7H7.4c-3.2,0-5.8,2.6-5.8,5.8v74.1c0,3.2,2.6,5.8,5.8,5.8h85.1
+                                    <svg
+                                        version="1.1"
+                                        id="Layer_2_1_"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                                        x="0px"
+                                        y="0px"
+                                        viewBox="0 0 100 100"
+                                        xml:space="preserve">
+                                        <path
+                                            d="M92.6,15.4H55.3l-2.9-5.3l-0.1-0.2c-1.1-1.7-3.1-2.7-5-2.7H7.4c-3.2,0-5.8,2.6-5.8,5.8v74.1c0,3.2,2.6,5.8,5.8,5.8h85.1
                                             c3.2,0,5.8-2.6,5.8-5.8V43.9v-3V21.1C98.3,18,95.7,15.4,92.6,15.4z M92.6,20.9c0.2,0,0.3,0.2,0.3,0.3v14.1c-0.1,0-0.2,0-0.3,0H66.3
                                             c-0.1,0-0.2,0-0.4-0.2l-7.7-14.1H92.6z M92.8,87.1c0,0.1-0.1,0.3-0.3,0.3H7.4c-0.1,0-0.3-0.1-0.3-0.3V12.9c0-0.1,0.1-0.3,0.3-0.3
-                                            l39.8,0c0.1,0,0.3,0.1,0.4,0.2l13.6,24.8l0.1,0.2c1.2,1.8,2.9,2.7,5,2.7h26.2c0.1,0,0.3,0.1,0.3,0.3v3V87.1z"/>
+                                            l39.8,0c0.1,0,0.3,0.1,0.4,0.2l13.6,24.8l0.1,0.2c1.2,1.8,2.9,2.7,5,2.7h26.2c0.1,0,0.3,0.1,0.3,0.3v3V87.1z" />
                                     </svg>
                                     ${i18n.t('group-manage.select-group-selector-button-text')}
                                 </button>
@@ -1050,13 +1204,13 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                                 disabled
                                 id="person-to-add-selector"
                                 lang="${this.lang}"
-                                @change="${(event) => this.onSourceSelectorChange(event)}"></dbp-person-select>
+                                @change="${(event) =>
+                                    this.onSourceSelectorChange(event)}"></dbp-person-select>
 
                             <dbp-resource-select
                                 hidden
                                 disabled
                                 use-search
-
                                 subscribe="lang,entry-point-url,auth"
                                 id="group-to-add-selector"
                                 lang="${this.lang}"
@@ -1073,8 +1227,16 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                             ${i18n.t('group-manage.add-to-groups-button-text')}
                         </dbp-loading-button>
                     </footer>
-                    <dbp-inline-notification id="notification-no-source-error" summary="Error" body="You must select a source first." type="danger"></dbp-inline-notification>
-                    <dbp-inline-notification id="notification-no-target-error" summary="Error" body="You must select a target." type="danger"></dbp-inline-notification>
+                    <dbp-inline-notification
+                        id="notification-no-source-error"
+                        summary="Error"
+                        body="You must select a source first."
+                        type="danger"></dbp-inline-notification>
+                    <dbp-inline-notification
+                        id="notification-no-target-error"
+                        summary="Error"
+                        body="You must select a target."
+                        type="danger"></dbp-inline-notification>
                 </div>
                 <div class="arrow"></div>
             </div>
@@ -1124,13 +1286,18 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             const groupNames = this._a('.group-name');
 
             const matchedGroups = Array.from(groupNames).filter((groupNameElement) => {
-                const hasText = Array.from(groupNameElement.childNodes).filter(child => {
-                    return child.nodeType === Node.TEXT_NODE && child.nodeValue.trim().toLowerCase().match(this.query);
+                const hasText = Array.from(groupNameElement.childNodes).filter((child) => {
+                    return (
+                        child.nodeType === Node.TEXT_NODE &&
+                        child.nodeValue.trim().toLowerCase().match(this.query)
+                    );
                 });
                 return hasText.length > 0;
             });
 
-            const unmatchedGroups = Array.from(groupNames).filter(element => !matchedGroups.includes(element));
+            const unmatchedGroups = Array.from(groupNames).filter(
+                (element) => !matchedGroups.includes(element),
+            );
 
             if (matchedGroups.length > 0) {
                 this._('#group-search').classList.remove('not-found');
@@ -1142,12 +1309,12 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                     }
                 });
 
-                unmatchedGroups.forEach(groupNotFind => {
+                unmatchedGroups.forEach((groupNotFind) => {
                     // Travers up the DOM and CLOSE all parent groups.
                     this.traversUntilRootGroup(groupNotFind, 'remove');
                 });
 
-                matchedGroups.forEach(groupFind => {
+                matchedGroups.forEach((groupFind) => {
                     // Highlight found rows.
                     if (groupFind instanceof HTMLElement) {
                         groupFind.closest('.row').classList.add('found');
@@ -1155,7 +1322,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                         this.traversUntilRootGroup(groupFind, 'add');
                     }
                 });
-
             } else {
                 // No results found.
                 this._('#group-search').classList.add('not-found');
@@ -1239,10 +1405,10 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     resetSelectors() {
-        this.personSelector.setAttribute('hidden', "");
+        this.personSelector.setAttribute('hidden', '');
         this.personSelector.clear();
 
-        this.resourceSelector.setAttribute('hidden', "");
+        this.resourceSelector.setAttribute('hidden', '');
         this.resourceSelector.setAttribute('value', '');
     }
 
@@ -1327,55 +1493,67 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
         return html`
             <div class="group-manager">
-
                 <section class="list-groups section">
                     <h2 class="section-heading">Authorization groups</h2>
-                        <div class="component-container ${classMap({ hidden: !showComponent })}">
-                            <div class="button-container">
-                                <dbp-loading-button
-                                    id="list-group-button"
-                                    @click="${() => this.fetchGroupsButtonHandler()}"
-                                    type="is-primary">
-                                    <dbp-icon name="reload" aria-hidden="true"></dbp-icon>
-                                    ${i18n.t('group-manage.list-groups-button-text')}
-                                </dbp-loading-button>
-                                <dbp-loading-button
-                                    id="open-create-group-button"
-                                    popovertarget="create-group-popover"
-                                    @click="${(event) => this.openCreateGroupPopover(event)}"
-                                    type="is-primary">
-                                    <dbp-icon name="plus" aria-hidden="true"></dbp-icon>
-                                    ${i18n.t('group-manage.create-groups-button-text')}
-                                </dbp-loading-button>
-                            </div>
-                            <div class="group-list-container">
-                                <div class="list-header">
-                                    <div class="search-container">
-                                        <input type="text" id="group-search" placeholder="Search by name" autocomplete='off' spellcheck='false' autocorrect='off'
-                                            @input="${(event) => this.updateSearchQuery(event)}">
-                                            <dbp-icon name="close" @click="${this.clearSearch}"></dbp-icon>
-                                    </div>
-                                    <dbp-icon-button id="expand-collapse-all"
-                                        class="expand-collapse-button"
-                                        icon-name="chevron-down"
-                                        title="Expand All"
-                                        aria-label="Expand All"
-                                        @click="${(event) => this.expandCollapseAllGroups(event)}"></dbp-icon-button>
-                                </div>
-                                <div class="group-list ${classMap({ 'search-is-active': this.searchIsActive })}" @click="${(event) => this.groupListButtonEventHandler(event)}">
-                                    ${this.renderAuthGroups(this.authGroups)}
-                                </div>
-                            </div>
-
-                            <div id="modal-container">
-                                ${this.renderGroupDeleteConfirmationPopover()}
-                                ${this.renderGroupMemberDeleteConfirmationPopover()}
-                                ${this.renderCreateGroupPopover()}
-                                ${this.renderAddGroupMemberPopover()}
-                            </div>
-                            <div id="prevent-click-overlay"></div>
+                    <div class="component-container ${classMap({hidden: !showComponent})}">
+                        <div class="button-container">
+                            <dbp-loading-button
+                                id="list-group-button"
+                                @click="${() => this.fetchGroupsButtonHandler()}"
+                                type="is-primary">
+                                <dbp-icon name="reload" aria-hidden="true"></dbp-icon>
+                                ${i18n.t('group-manage.list-groups-button-text')}
+                            </dbp-loading-button>
+                            <dbp-loading-button
+                                id="open-create-group-button"
+                                popovertarget="create-group-popover"
+                                @click="${(event) => this.openCreateGroupPopover(event)}"
+                                type="is-primary">
+                                <dbp-icon name="plus" aria-hidden="true"></dbp-icon>
+                                ${i18n.t('group-manage.create-groups-button-text')}
+                            </dbp-loading-button>
                         </div>
-                        <p class="login-required ${classMap({ hidden: showComponent })}">${i18n.t('group-manage.login-required')}</p>
+                        <div class="group-list-container">
+                            <div class="list-header">
+                                <div class="search-container">
+                                    <input
+                                        type="text"
+                                        id="group-search"
+                                        placeholder="Search by name"
+                                        autocomplete="off"
+                                        spellcheck="false"
+                                        autocorrect="off"
+                                        @input="${(event) => this.updateSearchQuery(event)}" />
+                                    <dbp-icon name="close" @click="${this.clearSearch}"></dbp-icon>
+                                </div>
+                                <dbp-icon-button
+                                    id="expand-collapse-all"
+                                    class="expand-collapse-button"
+                                    icon-name="chevron-down"
+                                    title="Expand All"
+                                    aria-label="Expand All"
+                                    @click="${(event) =>
+                                        this.expandCollapseAllGroups(event)}"></dbp-icon-button>
+                            </div>
+                            <div
+                                class="group-list ${classMap({
+                                    'search-is-active': this.searchIsActive,
+                                })}"
+                                @click="${(event) => this.groupListButtonEventHandler(event)}">
+                                ${this.renderAuthGroups(this.authGroups)}
+                            </div>
+                        </div>
+
+                        <div id="modal-container">
+                            ${this.renderGroupDeleteConfirmationPopover()}
+                            ${this.renderGroupMemberDeleteConfirmationPopover()}
+                            ${this.renderCreateGroupPopover()} ${this.renderAddGroupMemberPopover()}
+                        </div>
+                        <div id="prevent-click-overlay"></div>
+                    </div>
+                    <p class="login-required ${classMap({hidden: showComponent})}">
+                        ${i18n.t('group-manage.login-required')}
+                    </p>
                 </section>
             </div>
         `;

@@ -1,24 +1,20 @@
 {
     "group-manage": {
-        "login-required": "Sie müssen sich anmelden, um diese Anwendung zu nutzen",
-        "field-is-required": "Dieses Feld ist erforderlich",
-        "list-groups-button-text": "Gruppen auflisten",
-        "create-groups-button-text": "Gruppe erstellen",
         "add-to-groups-button-text": "Zur Gruppe hinzufügen",
-        "create-group-modal-title": "Gruppe erstellen",
-        "delete-group-button-text": "Löschen",
-        "delete-group-button-aria-label": "Group löschen",
-        "delete-group-confirmation": "Sind Sie sicher, dass Sie die Gruppe \"{{itemName}}\" löschen wollen?",
-        "delete-group-member-confirmation": "Sind Sie sicher, dass Sie die Gruppenmitglied \"{{itemName}}\" löschen wollen?",
-        "delete-group-member-button-text": "Löschen",
-        "delete-group-member-button-aria-label": "Gruppenmitglied löschen",
-        "create-group-member-modal-title": "Mitgliedergruppe erstellen",
         "assign-to-group-button-text": "Mitglied zuweisen",
-        "assign-to-group-button-aria-label": "Mitglied zu dieser Gruppe zuweisen",
-        "select-person-selector-button-text": "Benutzer auswählen",
-        "select-group-selector-button-text": "Gruppe auswählen",
         "assign-to-group-modal-title": "Zur Gruppe hinzufügen",
-        "yes-delete": "Ja, löschen",
-        "cancel": "Abbrechen"
+        "cancel": "Abbrechen",
+        "create-groups-button-text": "Gruppe erstellen",
+        "delete-group-button-text": "Löschen",
+        "delete-group-confirmation": "Sind Sie sicher, dass Sie die Gruppe \"{{itemName}}\" löschen wollen?",
+        "delete-group-member-button-text": "Löschen",
+        "delete-group-member-confirmation": "Sind Sie sicher, dass Sie die Gruppenmitglied \"{{itemName}}\" löschen wollen?",
+        "field-is-required": "Dieses Feld ist erforderlich",
+        "group-name-label": "Gruppenname",
+        "list-groups-button-text": "Gruppen auflisten",
+        "login-required": "Sie müssen sich anmelden, um diese Anwendung zu nutzen",
+        "select-group-selector-button-text": "Gruppe auswählen",
+        "select-person-selector-button-text": "Benutzer auswählen",
+        "yes-delete": "Ja, löschen"
     }
 }

@@ -1,1 +1,1 @@
-module.exports = require('../../karma.common.conf.js');
+module.exports = require('../../karma.common.conf.cjs');

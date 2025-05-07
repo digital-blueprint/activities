@@ -2,20 +2,17 @@
 
 ## Overview
 
-The clipboard activity `dbp-clipboard-managing` is for displaying, deleting and saving data from and to the clipboard. 
+The clipboard activity `dbp-clipboard-managing` is for displaying, deleting and saving data from and to the clipboard.
 
-It is best used together the `dbp-file-sink` / `dbp-file-source` web components with enabled `clipboard` target 
+It is best used together the `dbp-file-sink` / `dbp-file-source` web components with enabled `clipboard` target
 in order to manage files which are stored in the clipboard.
 
 So for example if there are files saved in the clipboard with the `dbp-file-sink`, you can navigate to the `dbp-clipboard-managing` activity
 and then save these files permanently, instead of navigating to the `dbp-file-sink` again.
 
-
 ## Usage
 
-`
-<dbp-clipboard-management> </dbp-clipboard-management>
-`
+`<dbp-clipboard-management> </dbp-clipboard-management>`
 
 ## Attributes
 

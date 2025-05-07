@@ -10,14 +10,18 @@ npm i @dbp-toolkit/group-manage
 
 ```html
 <dbp-group-manage></dbp-group-manage>
-<script type="module" src="node_modules/@dbp-toolkit/group-manage/dist/dbp-group-manage.js"></script>
+<script
+    type="module"
+    src="node_modules/@dbp-toolkit/group-manage/dist/dbp-group-manage.js"></script>
 ```
 
 Or directly via CDN:
 
 ```html
 <dbp-group-manage></dbp-group-manage>
-<script type="module" src="https://unpkg.com/@dbp-toolkit/group-manage@0.1.0/dist/dbp-group-manage.js"></script>
+<script
+    type="module"
+    src="https://unpkg.com/@dbp-toolkit/group-manage@0.1.0/dist/dbp-group-manage.js"></script>
 ```
 
 ## Attributes
@@ -32,7 +36,6 @@ Or directly via CDN:
 - `disabled` (optional): if set the component will be disabled
 
 ## Override Properties
-
 
 ## Local development
 

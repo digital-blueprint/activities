@@ -3,12 +3,12 @@ import {css, html} from 'lit';
 import {ScopedElementsMixin} from '@dbp-toolkit/common';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {Icon, IconButton, LoadingButton, MiniSpinner, Modal} from '@dbp-toolkit/common';
-import DBPLitElement from "@dbp-toolkit/common/dbp-lit-element";
-import {FileSource} from "@dbp-toolkit/file-handling";
+import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
+import {FileSource} from '@dbp-toolkit/file-handling';
 import {classMap} from 'lit/directives/class-map.js';
 import {send} from '@dbp-toolkit/common/notification';
-import {TabulatorTable} from "@dbp-toolkit/tabulator-table";
-import {humanFileSize} from "@dbp-toolkit/common/i18next";
+import {TabulatorTable} from '@dbp-toolkit/tabulator-table';
+import {humanFileSize} from '@dbp-toolkit/common/i18next';
 import {jws} from 'jsrsasign';
 
 export class Blob extends ScopedElementsMixin(DBPLitElement) {
@@ -46,7 +46,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             'dbp-file-source': FileSource,
             'dbp-modal': Modal,
             'dbp-mini-spinner': MiniSpinner,
-            'dbp-tabulator-table': TabulatorTable
+            'dbp-tabulator-table': TabulatorTable,
         };
     }
 
@@ -54,14 +54,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         return {
             ...super.properties,
             lang: {type: String},
-            auth: { type: Object },
+            auth: {type: Object},
             entryPointUrl: {type: String, attribute: 'entry-point-url'},
             isFileSelected: {type: Boolean, attribute: false},
             uploadedFilesNumber: {type: Number, attribute: false},
-            initialRequestsLoading: { type: Boolean, attribute: false },
-            tableInit: { type: Boolean, attribute: false },
-            loading: { type: Boolean, attribute: false },
-            fileToUpload: { type: Object, attribute: false },
+            initialRequestsLoading: {type: Boolean, attribute: false},
+            tableInit: {type: Boolean, attribute: false},
+            loading: {type: Boolean, attribute: false},
+            fileToUpload: {type: Object, attribute: false},
             bucketId: {type: String, attribute: 'bucket-id'},
             prefix: {type: String, attribute: 'prefix'},
             startsWith: {type: String, attribute: 'prefix-starts-with'},
@@ -99,34 +99,46 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         let toGetFiles = false;
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
-                case "auth":
+                case 'auth':
                     this._updateAuth();
                     break;
-                case "prefix":
-                    if (this.isLoggedIn() && !this.isLoading()
-                        && this._initialFetchDone
-                        && this.bucketId !== '') {
+                case 'prefix':
+                    if (
+                        this.isLoggedIn() &&
+                        !this.isLoading() &&
+                        this._initialFetchDone &&
+                        this.bucketId !== ''
+                    ) {
                         toGetFiles = true;
                     }
                     break;
-                case "startsWith":
-                    if (this.isLoggedIn() && !this.isLoading()
-                        && this._initialFetchDone
-                        && this.bucketId !== '') {
+                case 'startsWith':
+                    if (
+                        this.isLoggedIn() &&
+                        !this.isLoading() &&
+                        this._initialFetchDone &&
+                        this.bucketId !== ''
+                    ) {
                         toGetFiles = true;
                     }
                     break;
-                case "noPrefix":
-                    if (this.isLoggedIn() && !this.isLoading()
-                        && this._initialFetchDone
-                        && this.bucketId !== '') {
+                case 'noPrefix':
+                    if (
+                        this.isLoggedIn() &&
+                        !this.isLoading() &&
+                        this._initialFetchDone &&
+                        this.bucketId !== ''
+                    ) {
                         toGetFiles = true;
                     }
                     break;
-                case "bucketId":
-                    if (this.isLoggedIn() && !this.isLoading()
-                        && this._initialFetchDone
-                        && this.bucketId !== '') {
+                case 'bucketId':
+                    if (
+                        this.isLoggedIn() &&
+                        !this.isLoading() &&
+                        this._initialFetchDone &&
+                        this.bucketId !== ''
+                    ) {
                         toGetFiles = true;
                     }
                     break;
@@ -145,7 +157,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      * @returns {boolean}
      */
     isLoggedIn() {
-        return (this.auth.person !== undefined && this.auth.person !== null);
+        return this.auth.person !== undefined && this.auth.person !== null;
     }
 
     /**
@@ -153,9 +165,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      * @returns {boolean}
      */
     isLoading() {
-        if (this._loginStatus === "logged-out")
-            return false;
-        return (!this.isLoggedIn() && this.auth.token !== undefined);
+        if (this._loginStatus === 'logged-out') return false;
+        return !this.isLoggedIn() && this.auth.token !== undefined;
     }
 
     fileSelected(event) {
@@ -174,7 +185,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             return this.fileToUpload.name;
         }
         const [, fileSubType] = this.fileToUpload.type.split('/');
-        return this.fileToUpload.name.replace("." + fileSubType, '');
+        return this.fileToUpload.name.replace('.' + fileSubType, '');
     }
 
     async uploadFile() {
@@ -185,50 +196,50 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let responseBody = await response.json();
             if (responseBody !== undefined && response.status === 201) {
                 send({
-                    "summary": i18n.t('upload-success-title'),
-                    "body": i18n.t('upload-success-body'),
-                    "type": "success",
-                    "timeout": 5,
+                    summary: i18n.t('upload-success-title'),
+                    body: i18n.t('upload-success-body'),
+                    type: 'success',
+                    timeout: 5,
                 });
             } else if (response.status === 400) {
                 send({
-                    "summary": i18n.t('invalid-input-title'),
-                    "body": i18n.t('invalid-input-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('invalid-input-title'),
+                    body: i18n.t('invalid-input-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else if (response.status === 403) {
                 send({
-                    "summary": i18n.t('signature-failed-title'),
-                    "body": i18n.t('signature-failed-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('signature-failed-title'),
+                    body: i18n.t('signature-failed-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else if (response.status === 422) {
                 send({
-                    "summary": i18n.t('invalid-input-title'),
-                    "body": i18n.t('invalid-input-metadata-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('invalid-input-title'),
+                    body: i18n.t('invalid-input-metadata-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else if (response.status === 507) {
                 send({
-                    "summary": i18n.t('bucket-quota-title'),
-                    "body": i18n.t('bucket-quota-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('bucket-quota-title'),
+                    body: i18n.t('bucket-quota-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else {
                 send({
-                    "summary": i18n.t('something-went-wrong-title'),
-                    "body":  i18n.t('something-went-wrong-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('something-went-wrong-title'),
+                    body: i18n.t('something-went-wrong-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             }
         } finally {
-            if (this._("#ask-upload-dialogue")) {
-                this._("#ask-upload-dialogue").close();
+            if (this._('#ask-upload-dialogue')) {
+                this._('#ask-upload-dialogue').close();
             }
             this.removeFileToUpload();
             await this.getFiles();
@@ -238,7 +249,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     async sendUploadFileRequest() {
         let params = {
             bucketID: this.bucketId,
-            creationTime: Math.floor(new Date().valueOf()/1000),
+            creationTime: Math.floor(new Date().valueOf() / 1000),
             prefix: this.prefix,
             method: 'POST',
         };
@@ -281,7 +292,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         formDataAsJson = JSON.stringify(formDataAsJson);
 
         params = {
-            ucs: await this.createSha256HexForString("/blob/files?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString('/blob/files?' + new URLSearchParams(params)),
             bcs: await this.createSha256HexForString(formDataAsJson),
         };
 
@@ -289,7 +300,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             bucketID: this.bucketId,
-            creationTime: Math.floor(new Date().valueOf()/1000),
+            creationTime: Math.floor(new Date().valueOf() / 1000),
             prefix: this.prefix,
             method: 'POST',
             fileName: name,
@@ -339,7 +350,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     async sendGetFilesRequest() {
         let params = {
             bucketID: this.bucketId,
-            creationTime: Math.floor(new Date().valueOf()/1000),
+            creationTime: Math.floor(new Date().valueOf() / 1000),
             prefix: this.prefix,
             includeData: 1,
             method: 'GET',
@@ -353,14 +364,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
 
         params = {
-            ucs: await this.createSha256HexForString("/blob/files?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString('/blob/files?' + new URLSearchParams(params)),
         };
 
         const sig = this.createSignature(params);
 
         params = {
             bucketID: this.bucketId,
-            creationTime: Math.floor(new Date().valueOf()/1000),
+            creationTime: Math.floor(new Date().valueOf() / 1000),
             prefix: this.prefix,
             includeData: 1,
             method: 'GET',
@@ -372,7 +383,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (this.noPrefix == 'true') {
             params['prefix'] = '';
         }
-
 
         params['sig'] = sig;
 
@@ -396,38 +406,38 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let responseBody = await response.json();
             if (responseBody !== undefined && response.status === 200) {
                 send({
-                    "summary": i18n.t('rename-success-title'),
-                    "body": i18n.t('rename-success-body'),
-                    "type": "success",
-                    "timeout": 5,
+                    summary: i18n.t('rename-success-title'),
+                    body: i18n.t('rename-success-body'),
+                    type: 'success',
+                    timeout: 5,
                 });
             } else if (response.status === 404) {
                 send({
-                    "summary":  i18n.t('file-not-found-title'),
-                    "body": i18n.t('file-not-found-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('file-not-found-title'),
+                    body: i18n.t('file-not-found-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else if (response.status === 400) {
                 send({
-                    "summary": i18n.t('invalid-input-title'),
-                    "body": i18n.t('invalid-input-metadata-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('invalid-input-title'),
+                    body: i18n.t('invalid-input-metadata-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else if (response.status === 422) {
                 send({
-                    "summary": i18n.t('invalid-input-title'),
-                    "body": i18n.t('invalid-input-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('invalid-input-title'),
+                    body: i18n.t('invalid-input-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else {
                 send({
-                    "summary": i18n.t('something-went-wrong-title'),
-                    "body": i18n.t('something-went-wrong-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('something-went-wrong-title'),
+                    body: i18n.t('something-went-wrong-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             }
         } finally {
@@ -437,7 +447,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendPutFileRequest() {
-        let now = Math.floor(new Date().valueOf()/1000);
+        let now = Math.floor(new Date().valueOf() / 1000);
         let params = {
             bucketID: this.bucketId,
             creationTime: now,
@@ -445,20 +455,21 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'PUT',
         };
 
-
         let name = this.activeFileName;
         if (this._('#to-rename-file-name-input')) {
             name = this._('#to-rename-file-name-input').value;
         }
 
-        let data = {'fileName': name};
+        let data = {fileName: name};
 
         params.fileName = name;
 
         let body = JSON.stringify(data);
 
         params = {
-            ucs: await this.createSha256HexForString("/blob/files/" + this.activeFileId + "?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString(
+                '/blob/files/' + this.activeFileId + '?' + new URLSearchParams(params),
+            ),
             bcs: await this.createSha256HexForString(body),
         };
 
@@ -482,8 +493,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             },
             body: body,
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + this.activeFileId + '?' + urlParams, options);
-
+        return await this.httpGetAsync(
+            this.entryPointUrl + '/blob/files/' + this.activeFileId + '?' + urlParams,
+            options,
+        );
     }
 
     async sendGETFile(id, includeData = 0) {
@@ -499,46 +512,49 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
             if (responseBody !== undefined && response.status === 200) {
                 send({
-                    "summary": i18n.t('getone-success-title'),
-                    "body": i18n.t('getone-success-body'),
-                    "type": "success",
-                    "timeout": 5,
+                    summary: i18n.t('getone-success-title'),
+                    body: i18n.t('getone-success-body'),
+                    type: 'success',
+                    timeout: 5,
                 });
-            }
-            else if (responseBody == undefined && response.status === 200 && response.redirected) {
+            } else if (
+                responseBody == undefined &&
+                response.status === 200 &&
+                response.redirected
+            ) {
                 send({
-                    "summary": i18n.t('getone-success-title'),
-                    "body": i18n.t('getone-success-body'),
-                    "type": "success",
-                    "timeout": 5,
+                    summary: i18n.t('getone-success-title'),
+                    body: i18n.t('getone-success-body'),
+                    type: 'success',
+                    timeout: 5,
                 });
             } else if (response.status === 404) {
                 send({
-                    "summary":  i18n.t('file-not-found-title'),
-                    "body": i18n.t('file-not-found-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('file-not-found-title'),
+                    body: i18n.t('file-not-found-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else if (response.status === 400) {
                 send({
-                    "summary": i18n.t('invalid-input-title'),
-                    "body": i18n.t('invalid-input-metadata-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('invalid-input-title'),
+                    body: i18n.t('invalid-input-metadata-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else if (response.status === 422) {
                 send({
-                    "summary": i18n.t('invalid-input-title'),
-                    "body": i18n.t('invalid-input-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('invalid-input-title'),
+                    body: i18n.t('invalid-input-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else {
                 send({
-                    "summary": i18n.t('something-went-wrong-title'),
-                    "body": i18n.t('something-went-wrong-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('something-went-wrong-title'),
+                    body: i18n.t('something-went-wrong-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             }
 
@@ -549,7 +565,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendGETFileRequest(id, includeData = 0, returnAsString = 0) {
-        let now = Math.floor(new Date().valueOf()/1000);
+        let now = Math.floor(new Date().valueOf() / 1000);
         let params = {};
 
         // if includeData == 1, request base64 encoded file immediately
@@ -571,7 +587,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
 
         params = {
-            ucs: await this.createSha256HexForString("/blob/files/" + id + "?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString(
+                '/blob/files/' + id + '?' + new URLSearchParams(params),
+            ),
         };
 
         const sig = this.createSignature(params);
@@ -607,7 +625,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (returnAsString == 1) {
             return this.entryPointUrl + '/blob/files/' + id + '?' + urlParams;
         } else {
-            return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + urlParams, options);
+            return await this.httpGetAsync(
+                this.entryPointUrl + '/blob/files/' + id + '?' + urlParams,
+                options,
+            );
         }
     }
 
@@ -620,46 +641,45 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
             if (response !== undefined && response.status === 200) {
                 send({
-                    "summary": i18n.t('getone-success-title'),
-                    "body": i18n.t('getone-success-body'),
-                    "type": "success",
-                    "timeout": 5,
+                    summary: i18n.t('getone-success-title'),
+                    body: i18n.t('getone-success-body'),
+                    type: 'success',
+                    timeout: 5,
                 });
-            }
-            else if (response == undefined && response.status === 200 && response.redirected) {
+            } else if (response == undefined && response.status === 200 && response.redirected) {
                 send({
-                    "summary": i18n.t('getone-success-title'),
-                    "body": i18n.t('getone-success-body'),
-                    "type": "success",
-                    "timeout": 5,
+                    summary: i18n.t('getone-success-title'),
+                    body: i18n.t('getone-success-body'),
+                    type: 'success',
+                    timeout: 5,
                 });
             } else if (response.status === 404) {
                 send({
-                    "summary":  i18n.t('file-not-found-title'),
-                    "body": i18n.t('file-not-found-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('file-not-found-title'),
+                    body: i18n.t('file-not-found-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else if (response.status === 400) {
                 send({
-                    "summary": i18n.t('invalid-input-title'),
-                    "body": i18n.t('invalid-input-metadata-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('invalid-input-title'),
+                    body: i18n.t('invalid-input-metadata-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else if (response.status === 422) {
                 send({
-                    "summary": i18n.t('invalid-input-title'),
-                    "body": i18n.t('invalid-input-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('invalid-input-title'),
+                    body: i18n.t('invalid-input-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             } else {
                 send({
-                    "summary": i18n.t('something-went-wrong-title'),
-                    "body": i18n.t('something-went-wrong-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('something-went-wrong-title'),
+                    body: i18n.t('something-went-wrong-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             }
 
@@ -670,7 +690,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendDownloadFileRequest(id) {
-        let now = Math.floor(new Date().valueOf()/1000);
+        let now = Math.floor(new Date().valueOf() / 1000);
         let params = {};
 
         params = {
@@ -680,11 +700,12 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         };
 
         params = {
-            ucs: await this.createSha256HexForString("/blob/files/" + id + "/download?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString(
+                '/blob/files/' + id + '/download?' + new URLSearchParams(params),
+            ),
         };
 
         const sig = this.createSignature(params);
-
 
         params = {
             bucketID: this.bucketId,
@@ -702,7 +723,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             },
         };
 
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '/download?' + urlParams, options);
+        return await this.httpGetAsync(
+            this.entryPointUrl + '/blob/files/' + id + '/download?' + urlParams,
+            options,
+        );
     }
 
     openDeleteFileDialogue(id, fileName) {
@@ -765,34 +789,33 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let response = await this.sendDeleteFileRequest(id);
             if (response.status === 204) {
                 send({
-                    "summary": i18n.t('delete-success-title'),
-                    "body": i18n.t('delete-success-body'),
-                    "type": "success",
-                    "timeout": 5,
+                    summary: i18n.t('delete-success-title'),
+                    body: i18n.t('delete-success-body'),
+                    type: 'success',
+                    timeout: 5,
                 });
             } else if (response.status === 404) {
                 send({
-                    "summary": i18n.t('delete-missing-title'),
-                    "body": i18n.t('delete-missing-body'),
-                    "type": "warning",
-                    "timeout": 5,
+                    summary: i18n.t('delete-missing-title'),
+                    body: i18n.t('delete-missing-body'),
+                    type: 'warning',
+                    timeout: 5,
                 });
             } else {
                 send({
-                    "summary": i18n.t('something-went-wrong-title'),
-                    "body": i18n.t('something-went-wrong-body'),
-                    "type": "danger",
-                    "timeout": 5,
+                    summary: i18n.t('something-went-wrong-title'),
+                    body: i18n.t('something-went-wrong-body'),
+                    type: 'danger',
+                    timeout: 5,
                 });
             }
-
         } finally {
             await this.getFiles();
         }
     }
 
     async sendDeleteFileRequest(id) {
-        let creationtime = Math.floor(new Date().valueOf()/1000);
+        let creationtime = Math.floor(new Date().valueOf() / 1000);
         let params = {
             bucketID: this.bucketId,
             creationTime: creationtime,
@@ -801,7 +824,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         };
 
         params = {
-            ucs: await this.createSha256HexForString("/blob/files/" + id + "?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString(
+                '/blob/files/' + id + '?' + new URLSearchParams(params),
+            ),
         };
 
         const sig = this.createSignature(params);
@@ -819,11 +844,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         const options = {
             method: 'DELETE',
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files/' + id + '?' + urlParams, options);
+        return await this.httpGetAsync(
+            this.entryPointUrl + '/blob/files/' + id + '?' + urlParams,
+            options,
+        );
     }
 
     async sendDeletePrefixRequest() {
-        let creationtime = Math.floor(new Date().valueOf()/1000);
+        let creationtime = Math.floor(new Date().valueOf() / 1000);
 
         this.closeDeleteAllDialogue();
         let params = {
@@ -840,9 +868,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             params['prefix'] = '';
         }
 
-
         params = {
-            ucs: await this.createSha256HexForString("/blob/files?" + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString('/blob/files?' + new URLSearchParams(params)),
         };
 
         const sig = this.createSignature(params);
@@ -860,7 +887,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (this.noPrefix == 'true') {
             params['prefix'] = '';
         }
-
 
         params['sig'] = sig;
 
@@ -880,10 +906,11 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      */
     async httpGetAsync(url, options) {
         return await fetch(url, options)
-            .then(result => {
+            .then((result) => {
                 if (!result.ok) throw result;
                 return result;
-            }).catch(error => {
+            })
+            .catch((error) => {
                 return error;
             });
     }
@@ -892,7 +919,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         const i18n = this._i18n;
 
         const actionsButtons = (cell, formatterParams) => {
-
             let id = cell.getData()['identifier'];
             let fileName = cell.getData()['fileName'];
             let contentUrl = cell.getData()['contentUrl'];
@@ -907,7 +933,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             btnLink.setAttribute('icon-name', 'link');
             btnLink.setAttribute('title', i18n.t('open'));
             btnLink.setAttribute('target', '_blank');
-            btnLink.addEventListener('click', event => {
+            btnLink.addEventListener('click', (event) => {
                 this.sendGETFile(id, 0);
                 event.stopPropagation();
             });
@@ -915,8 +941,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let btnBinary = this.createScopedElement('dbp-icon-button');
             btnBinary.setAttribute('icon-name', 'download');
             btnBinary.setAttribute('title', 'Download');
-            btnBinary.addEventListener('click', event => {
-                this.sendGETFile(id, 1).then(body => {
+            btnBinary.addEventListener('click', (event) => {
+                this.sendGETFile(id, 1).then((body) => {
                     // download file using hidden a tag
                     let hiddenA = this.createScopedElement('a');
                     hiddenA.setAttribute('href', body['contentUrl']);
@@ -930,10 +956,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let btnDownload = this.createScopedElement('dbp-icon-button');
             btnDownload.setAttribute('icon-name', 'exit-down');
             btnDownload.setAttribute('title', '/download');
-            btnDownload.addEventListener('click', event => {
-                this.sendDownloadFile(id).then(response => {
+            btnDownload.addEventListener('click', (event) => {
+                this.sendDownloadFile(id).then((response) => {
                     if (response == undefined) {
-                        console.error("Response is undefined");
+                        console.error('Response is undefined');
                         return;
                     }
                     response.blob().then((blob) => {
@@ -955,7 +981,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let btnEdit = this.createScopedElement('dbp-icon-button');
             btnEdit.setAttribute('icon-name', 'pencil');
             btnEdit.setAttribute('title', i18n.t('edit'));
-            btnEdit.addEventListener('click', event => {
+            btnEdit.addEventListener('click', (event) => {
                 this.openEditFileDialogue(id, fileName);
                 event.stopPropagation();
             });
@@ -963,11 +989,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let btnDelete = this.createScopedElement('dbp-icon-button');
             btnDelete.setAttribute('icon-name', 'trash');
             btnDelete.setAttribute('title', i18n.t('delete'));
-            btnDelete.addEventListener('click', event => {
+            btnDelete.addEventListener('click', (event) => {
                 this.openDeleteFileDialogue(id, fileName);
                 event.stopPropagation();
             });
-
 
             let div = this.createScopedElement('div');
             div.appendChild(btnLink);
@@ -983,7 +1008,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         const options = {
             layout: 'fitColumns',
             selectable: false,
-            placeholder: "Es wurden noch keine Dateien hinzugefügt.",
+            placeholder: 'Es wurden noch keine Dateien hinzugefügt.',
             responsiveLayout: 'collapse',
             responsiveLayoutCollapseStartOpen: false,
             columnHeaderVertAlign: 'middle',
@@ -999,7 +1024,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     formatter: 'responsiveCollapse',
                 },
                 {
-                    title:  i18n.t('filename'),
+                    title: i18n.t('filename'),
                     responsive: 0,
                     widthGrow: 5,
                     minWidth: 150,
@@ -1011,22 +1036,22 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         div.classList.add('filename');
                         p.innerHTML = cell.getValue();
 
-                        if (cell.getData()['extension'] == "png") {
-                            p.style = "margin-left: 5px;";
+                        if (cell.getData()['extension'] == 'png') {
+                            p.style = 'margin-left: 5px;';
                             let img = this.createScopedElement('img');
 
-
-                            this.sendGETFileRequest(cell.getData()['identifier'], 1, 0)
-                                .then((response) => {
-                                    response.json().then(data => {
+                            this.sendGETFileRequest(cell.getData()['identifier'], 1, 0).then(
+                                (response) => {
+                                    response.json().then((data) => {
                                         img.src = data['contentUrl'];
                                     });
-                                });
+                                },
+                            );
 
-                            img.width = "40";
-                            img.height = "40";
+                            img.width = '40';
+                            img.height = '40';
 
-                            div.style="display: flex; align-items: center;";
+                            div.style = 'display: flex; align-items: center;';
 
                             div.appendChild(img);
                         }
@@ -1094,14 +1119,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async setData() {
-        if (this._("#tabulator-table-blob")) {
-            await this._("#tabulator-table-blob").setData(this.uploadedFiles);
+        if (this._('#tabulator-table-blob')) {
+            await this._('#tabulator-table-blob').setData(this.uploadedFiles);
         }
     }
 
     async setOptions() {
-        if (this._("#tabulator-table-blob") && !this.tableInit) {
-            this._("#tabulator-table-blob").options = await this.getOptions();
+        if (this._('#tabulator-table-blob') && !this.tableInit) {
+            this._('#tabulator-table-blob').options = await this.getOptions();
             this.tableInit = true;
         }
     }
@@ -1109,13 +1134,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     static get styles() {
         // language=css
         return css`
-            .row{
+            .row {
                 display: flex;
                 gap: 1em;
                 align-items: center;
                 min-height: 40px;
             }
-            
+
             ${commonStyles.getThemeCSS()}
             ${commonStyles.getGeneralCSS(false)}
             ${commonStyles.getButtonCSS()}
@@ -1124,30 +1149,30 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             ${commonStyles.getRadioAndCheckboxCss()}
             
             .section-titles {
-              font-size: 1.3em;
-              color: var(--dbp-override-muted);
-              text-transform: uppercase;
-              padding-bottom: 0.5em;
-              padding-top: 1.5em;
+                font-size: 1.3em;
+                color: var(--dbp-override-muted);
+                text-transform: uppercase;
+                padding-bottom: 0.5em;
+                padding-top: 1.5em;
             }
-            
-            .ml-1{
+
+            .ml-1 {
                 margin-left: 1em;
             }
-            
+
             .footer-btn-row {
                 display: flex;
                 justify-content: space-between;
             }
-            
-            .file-link{
+
+            .file-link {
                 display: flex;
                 justify-content: center;
                 flex-direction: column;
                 line-height: 1em;
             }
-            
-            .file-row{
+
+            .file-row {
                 display: flex;
                 gap: 1em;
                 align-items: center;
@@ -1156,7 +1181,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 max-width: 500px;
                 padding-bottom: 1rem;
             }
-            
+
             .file-link span {
                 white-space: nowrap;
                 max-width: 280px;
@@ -1165,11 +1190,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             }
 
             @media only screen and (orientation: portrait) and (max-width: 768px) {
-
                 .file-link span {
                     max-width: 180px;
                 }
-
             }
         `;
     }
@@ -1177,12 +1200,15 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     render() {
         const i18n = this._i18n;
 
-
-        if (this.tableInit && this.isLoggedIn() && !this.isLoading()
-            && !this._initialFetchDone
-            && !this.initialRequestsLoading
-            && this.bucketId !== '') {
-                this.getFiles();
+        if (
+            this.tableInit &&
+            this.isLoggedIn() &&
+            !this.isLoading() &&
+            !this._initialFetchDone &&
+            !this.initialRequestsLoading &&
+            this.bucketId !== ''
+        ) {
+            this.getFiles();
         }
 
         return html`
@@ -1218,7 +1244,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         <div class="footer-btn-row">
                             <dbp-button 
                                     title="${i18n.t('cancel')}"
-                                    @click="${() => {this._("#ask-delete-dialogue").close();}}">
+                                    @click="${() => {
+                                        this._('#ask-delete-dialogue').close();
+                                    }}">
                                 ${i18n.t('cancel')}
                             </dbp-button>
                             <dbp-button
@@ -1251,7 +1279,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         <div class="footer-btn-row">
                             <dbp-button
                                     title="${i18n.t('cancel')}"
-                                    @click="${() => {this._("#edit-dialogue").close();}}">
+                                    @click="${() => {
+                                        this._('#edit-dialogue').close();
+                                    }}">
                                 ${i18n.t('cancel')}
                             </dbp-button>
                             <dbp-button 
@@ -1278,13 +1308,15 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         <div class="footer-btn-row">
                             <dbp-button 
                                     title="${i18n.t('cancel')}"
-                                    @click="${() => {this._("#ask-delete-all-dialogue").close();}}">
+                                    @click="${() => {
+                                        this._('#ask-delete-all-dialogue').close();
+                                    }}">
                                 ${i18n.t('cancel')}
                             </dbp-button>
                             <dbp-button
                                     title="${i18n.t('delete')}"
                                     type="is-primary" 
-                                    @click="${() => {                                    
+                                    @click="${() => {
                                         this.sendDeletePrefixRequest().then(() => {
                                             this.getFiles();
                                         });
@@ -1360,7 +1392,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                     <div class="row ${classMap({hidden: !this.isFileSelected})}">
                         <dbp-button 
                                 title="${i18n.t('upload')}"
-                                @click="${()=>{this._("#ask-upload-dialogue").open();}}"
+                                @click="${() => {
+                                    this._('#ask-upload-dialogue').open();
+                                }}"
                         >
                             ${i18n.t('upload')}
                         </dbp-button>
@@ -1378,7 +1412,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                                 <div class="footer-btn-row">
                                     <dbp-button 
                                             title="${i18n.t('cancel')}"
-                                            @click="${() => {this._("#ask-upload-dialogue").close();}}">
+                                            @click="${() => {
+                                                this._('#ask-upload-dialogue').close();
+                                            }}">
                                         ${i18n.t('cancel')}
                                     </dbp-button>
                                     <dbp-button 
@@ -1419,9 +1455,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      */
     async sha256(blob) {
         // console.dir(blob);
-        return crypto.subtle.digest('SHA-256', blob)
-                .then(hashBuffer => Array.from(new Uint8Array(hashBuffer)))
-                .then(hashArray => hashArray.map(b => b.toString(16).padStart(2, '0')).join(''));
+        return crypto.subtle
+            .digest('SHA-256', blob)
+            .then((hashBuffer) => Array.from(new Uint8Array(hashBuffer)))
+            .then((hashArray) => hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''));
     }
 
     /**
@@ -1453,15 +1490,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         // not for production use!
         const apiKey = this.getApiKey();
 
-        const pHeader = { alg: 'HS256' };
+        const pHeader = {alg: 'HS256'};
         const sHeader = JSON.stringify(pHeader);
 
-        return jws.JWS.sign(
-            pHeader.alg,
-            sHeader,
-            JSON.stringify(payload),
-            this.hexEncode(apiKey),
-        );
+        return jws.JWS.sign(pHeader.alg, sHeader, JSON.stringify(payload), this.hexEncode(apiKey));
     }
 
     /**
@@ -1473,9 +1505,12 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      * @returns {ArrayBuffer}
      */
     createSha256HexForString(payload) {
-        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(payload))
-            .then(hashArray => {
-                return  Array.from(new Uint8Array(hashArray)).map(b => b.toString(16).padStart(2, '0')).join('');
+        return crypto.subtle
+            .digest('SHA-256', new TextEncoder().encode(payload))
+            .then((hashArray) => {
+                return Array.from(new Uint8Array(hashArray))
+                    .map((b) => b.toString(16).padStart(2, '0'))
+                    .join('');
             });
     }
 
@@ -1485,9 +1520,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      * @returns {string}
      */
     hexEncode(str) {
-        let result = "";
-        for (let i=0; i<str.length; i++) {
-            result += ("00"+str.charCodeAt(i).toString(16)).slice(-2);
+        let result = '';
+        for (let i = 0; i < str.length; i++) {
+            result += ('00' + str.charCodeAt(i).toString(16)).slice(-2);
         }
         return result;
     }

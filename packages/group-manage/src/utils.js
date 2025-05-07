@@ -35,6 +35,6 @@ export function getPersonFullName(person) {
  */
 export function getIdFromIri(iri) {
     const segments = iri.split('/');
-    const filteredSegments = segments.filter(segment => segment.length > 0);
+    const filteredSegments = segments.filter((segment) => segment.length > 0);
     return filteredSegments[filteredSegments.length - 1];
 }
