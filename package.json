@@ -11,10 +11,10 @@
     "activity-showcase"
   ],
   "scripts": {
-    "test": "lerna run --no-sort test",
-    "build": "lerna run --no-sort build",
-    "check": "lerna --no-sort run check",
-    "fix": "lerna --no-sort run fix",
+    "test": "lerna run --no-sort --no-bail test",
+    "build": "lerna run --no-sort --no-bail build",
+    "check": "lerna --no-sort run --no-bail check",
+    "fix": "lerna --no-sort run --no-bail fix",
     "version-patch": "lerna version patch",
     "version-minor": "lerna version minor",
     "version": "lerna version",
