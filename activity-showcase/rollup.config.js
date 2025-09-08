@@ -13,7 +13,14 @@ import md from 'rollup-plugin-md';
 import emitEJS from 'rollup-plugin-emit-ejs';
 import {getBabelOutputPlugin} from '@rollup/plugin-babel';
 import appConfig from './app.config.js';
-import {generateTLSConfig, getBuildInfo, getPackagePath, getDistPath} from '@dbp-toolkit/dev-utils';
+import {
+    generateTLSConfig,
+    getBuildInfo,
+    getPackagePath,
+    getDistPath,
+    getCopyTargets,
+    getUrlOptions,
+} from '@dbp-toolkit/dev-utils';
 import {createRequire} from 'node:module';
 import process from 'node:process';
 
@@ -178,15 +185,7 @@ Dependencies:
                     },
                 },
             }),
-            urlPlugin({
-                limit: 0,
-                include: [
-                    await getPackagePath('select2', '**/*.css'),
-                    await getPackagePath('highlight.js', '**/*.css'),
-                ],
-                emitFiles: true,
-                fileName: 'shared/[name].[hash][extname]',
-            }),
+            urlPlugin(await getUrlOptions(pkg.name, 'shared')),
             useTerser ? terser() : false,
             copy({
                 targets: [
@@ -221,22 +220,6 @@ Dependencies:
                         dest: 'dist/' + (await getDistPath(pkg.name)),
                     },
                     {
-                        src: await getPackagePath('@dbp-toolkit/common', 'assets/icons/*.svg'),
-                        dest: 'dist/' + (await getDistPath('@dbp-toolkit/common', 'icons')),
-                    },
-                    {
-                        src: await getPackagePath('tabulator-tables', 'dist/css'),
-                        dest:
-                            'dist/' +
-                            (await getDistPath('@dbp-toolkit/file-handling', 'tabulator-tables')),
-                    },
-                    {
-                        src: await getPackagePath('tabulator-tables', 'dist/css'),
-                        dest:
-                            'dist/' +
-                            (await getDistPath('@dbp-toolkit/tabulator-table', 'tabulator-tables')),
-                    },
-                    {
                         src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
                         dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
                     },
@@ -245,6 +228,7 @@ Dependencies:
                         dest: 'dist/' + (await getDistPath(pkg.name)),
                         rename: 'tug_spinner.js',
                     },
+                    ...(await getCopyTargets(pkg.name, 'dist')),
                 ],
             }),
             useBabel &&
