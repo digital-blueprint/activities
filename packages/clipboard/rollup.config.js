@@ -10,6 +10,7 @@ import process from 'node:process';
 
 const build = typeof process.env.BUILD !== 'undefined' ? process.env.BUILD : 'local';
 console.log('build: ' + build);
+let isRolldown = process.argv.some((arg) => arg.includes('rolldown'));
 
 export default (async () => {
     return {
@@ -33,9 +34,9 @@ export default (async () => {
             del({
                 targets: 'dist/*',
             }),
-            resolve(),
-            commonjs(),
-            json(),
+            !isRolldown && resolve(),
+            !isRolldown && commonjs(),
+            !isRolldown && json(),
             build !== 'local' && build !== 'test' ? terser() : false,
             copy({
                 targets: [
