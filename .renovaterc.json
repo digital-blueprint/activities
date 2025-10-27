@@ -13,9 +13,6 @@
   "composer": {
     "enabled": false
   },
-  "poetry": {
-    "enabled": false
-  },
   "packageRules": [
   ],
   "cloneSubmodules": true
