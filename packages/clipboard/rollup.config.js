@@ -1,16 +1,14 @@
-import {globSync} from 'glob';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import copy from 'rollup-plugin-copy';
+import {globSync} from 'node:fs';
 import terser from '@rollup/plugin-terser';
-import json from '@rollup/plugin-json';
 import serve from 'rollup-plugin-serve';
-import del from 'rollup-plugin-delete';
+import {assetPlugin} from '@dbp-toolkit/dev-utils';
 import process from 'node:process';
+import {createRequire} from 'node:module';
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json');
 
 const build = typeof process.env.BUILD !== 'undefined' ? process.env.BUILD : 'local';
 console.log('build: ' + build);
-let isRolldown = process.argv.some((arg) => arg.includes('rolldown'));
 
 export default (async () => {
     return {
@@ -21,6 +19,7 @@ export default (async () => {
             chunkFileNames: 'shared/[name].[hash].js',
             format: 'esm',
             sourcemap: true,
+            cleanDir: true,
         },
         preserveEntrySignatures: false,
         onwarn: function (warning, warn) {
@@ -31,15 +30,9 @@ export default (async () => {
             warn(warning);
         },
         plugins: [
-            del({
-                targets: 'dist/*',
-            }),
-            !isRolldown && resolve(),
-            !isRolldown && commonjs(),
-            !isRolldown && json(),
             build !== 'local' && build !== 'test' ? terser() : false,
-            copy({
-                targets: [
+            await assetPlugin(pkg.name, 'dist', {
+                copyTargets: [
                     {src: 'assets/index.html', dest: 'dist'},
                     {src: 'assets/favicon.ico', dest: 'dist'},
                 ],

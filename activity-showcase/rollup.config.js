@@ -1,14 +1,7 @@
 import url from 'node:url';
-import {globSync} from 'glob';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import copy from 'rollup-plugin-copy';
-import terser from '@rollup/plugin-terser';
-import json from '@rollup/plugin-json';
+import {globSync} from 'node:fs';
 import serve from 'rollup-plugin-serve';
-import urlPlugin from '@rollup/plugin-url';
 import license from 'rollup-plugin-license';
-import del from 'rollup-plugin-delete';
 import md from './rollup-plugin-md.js';
 import emitEJS from 'rollup-plugin-emit-ejs';
 import {getBabelOutputPlugin} from '@rollup/plugin-babel';
@@ -18,8 +11,7 @@ import {
     getBuildInfo,
     getPackagePath,
     getDistPath,
-    getCopyTargets,
-    getUrlOptions,
+    assetPlugin,
 } from '@dbp-toolkit/dev-utils';
 import {createRequire} from 'node:module';
 import process from 'node:process';
@@ -29,11 +21,9 @@ const pkg = require('./package.json');
 const appEnv = typeof process.env.APP_ENV !== 'undefined' ? process.env.APP_ENV : 'local';
 const watch = process.env.ROLLUP_WATCH === 'true';
 const buildFull = (!watch && appEnv !== 'test') || process.env.FORCE_FULL !== undefined;
-let useTerser = buildFull;
 let useBabel = buildFull;
 let checkLicenses = buildFull;
 let useHTTPS = true;
-let isRolldown = process.argv.some((arg) => arg.includes('rolldown'));
 
 console.log('APP_ENV: ' + appEnv);
 
@@ -89,6 +79,8 @@ export default (async () => {
             chunkFileNames: 'shared/[name].[hash].js',
             format: 'esm',
             sourcemap: true,
+            minify: buildFull,
+            cleanDir: true,
         },
         preserveEntrySignatures: false,
         // external: ['zlib', 'http', 'fs', 'https', 'url'],
@@ -110,9 +102,6 @@ export default (async () => {
             '.css': 'js', // work around rolldown handling the CSS import before the URL plugin can
         },
         plugins: [
-            del({
-                targets: 'dist/*',
-            }),
             emitEJS({
                 src: 'assets',
                 include: ['**/*.ejs', '**/.*.ejs'],
@@ -141,11 +130,6 @@ export default (async () => {
                     siteSubName: config.siteSubName,
                 },
             }),
-            !isRolldown &&
-                resolve({
-                    browser: true,
-                    preferBuiltins: true,
-                }),
             checkLicenses &&
                 license({
                     banner: {
@@ -180,8 +164,6 @@ Dependencies:
                         },
                     },
                 }),
-            !isRolldown && commonjs(),
-            !isRolldown && json(),
             md({
                 include: ['../../**/*.md'],
                 marked: {
@@ -190,10 +172,8 @@ Dependencies:
                     },
                 },
             }),
-            urlPlugin(await getUrlOptions(pkg.name, 'shared')),
-            useTerser ? terser() : false,
-            copy({
-                targets: [
+            await assetPlugin(pkg.name, 'dist', {
+                copyTargets: [
                     {src: 'assets/*.css', dest: 'dist/' + (await getDistPath(pkg.name))},
 
                     {src: 'assets/*.metadata.json', dest: 'dist'},
@@ -209,12 +189,14 @@ Dependencies:
                     },
                     {src: 'assets/silent-check-sso.html', dest: 'dist'},
                     {
-                        src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files/*'),
-                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
+                        src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files'),
+                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts')),
+                        rename: 'source-sans-pro',
                     },
                     {
-                        src: await getPackagePath('@fontsource/nunito-sans', '*'),
-                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/nunito-sans')),
+                        src: await getPackagePath('@fontsource/nunito-sans', '.'),
+                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts')),
+                        rename: 'nunito-sans',
                     },
                     {
                         src: await getPackagePath('@dbp-toolkit/common', 'src/spinner.js'),
@@ -225,15 +207,10 @@ Dependencies:
                         dest: 'dist/' + (await getDistPath(pkg.name)),
                     },
                     {
-                        src: await getPackagePath('@tugraz/font-source-sans-pro', 'files/*'),
-                        dest: 'dist/' + (await getDistPath(pkg.name, 'fonts/source-sans-pro')),
-                    },
-                    {
                         src: await getPackagePath('@tugraz/web-components', 'src/spinner.js'),
                         dest: 'dist/' + (await getDistPath(pkg.name)),
                         rename: 'tug_spinner.js',
                     },
-                    ...(await getCopyTargets(pkg.name, 'dist')),
                 ],
             }),
             useBabel &&
