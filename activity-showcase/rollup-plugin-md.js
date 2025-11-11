@@ -1,28 +1,43 @@
 // SPDX-Identifier: ISC
 // Fork of abandoned https://github.com/xiaofuzi/rollup-plugin-md to support newer rollup
 
-import {marked} from 'marked';
-import {createFilter} from '@rollup/pluginutils';
+import {Marked} from 'marked';
+import {markedHighlight} from 'marked-highlight';
+import hljs from 'highlight.js';
 
 const ext = /\.md$/;
 
 export default function md(options = {}) {
-    const filter = createFilter(options.include || ['**/*.md'], options.exclude);
-    if (options.marked) {
-        marked.setOptions(options.marked);
-    }
+    const marked = new Marked(
+        markedHighlight({
+            emptyLangClass: 'hljs',
+            langPrefix: 'hljs language-',
+            highlight(code, lang, info) {
+                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                return hljs.highlight(code, {language}).value;
+            },
+        }),
+    );
+
     return {
         name: 'md',
 
-        transform(md, id) {
-            if (!ext.test(id)) return null;
-            if (!filter(id)) return null;
+        transform: {
+            filter: {
+                id: {
+                    include: options.include || ['**/*.md'],
+                    exclude: options.exclude,
+                },
+            },
+            handler: function (md, id) {
+                if (!ext.test(id)) return null;
 
-            const data = options.marked === false ? md : marked(md);
-            return {
-                code: `export default ${JSON.stringify(data.toString())};`,
-                map: {mappings: ''},
-            };
+                const data = marked.parse(md);
+                return {
+                    code: `export default ${JSON.stringify(data.toString())};`,
+                    map: {mappings: ''},
+                };
+            },
         },
     };
 }
