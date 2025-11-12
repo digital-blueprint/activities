@@ -44,7 +44,6 @@
         "@dbp-toolkit/common": "^0.3.0",
         "@dbp-toolkit/font-source-sans-pro": "^0.2.0",
         "@dbp-toolkit/language-select": "^0.3.0",
-        "@dbp-toolkit/provider": "^0.2.0",
         "@dbp-toolkit/tabulator-table": "^0.1.0",
         "@dbp-topics/clipboard": "^0.2.0",
         "@dbp-topics/group-manage": "^0.1.0",
