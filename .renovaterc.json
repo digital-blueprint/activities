@@ -5,6 +5,7 @@
     "schedule:weekends",
     ":automergePatch"
   ],
+  "postUpdateOptions": ["npmDedupe"],
   "ignorePresets": [":prHourlyLimit2"],
   "rangeStrategy": "update-lockfile",
   "lockFileMaintenance": {
