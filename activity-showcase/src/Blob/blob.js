@@ -566,7 +566,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async sendGETFileRequest(id, includeData = 0, returnAsString = 0) {
         let now = Math.floor(new Date().valueOf() / 1000);
-        let params = {};
+        let params;
 
         // if includeData == 1, request base64 encoded file immediately
         if (includeData == 1) {
@@ -691,7 +691,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async sendDownloadFileRequest(id) {
         let now = Math.floor(new Date().valueOf() / 1000);
-        let params = {};
+        let params;
 
         params = {
             bucketID: this.bucketId,
