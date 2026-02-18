@@ -32,7 +32,7 @@
         "marked-highlight": "^2.2.3",
         "mocha": "^11.0.0",
         "prettier": "^3.0.0",
-        "rolldown": "1.0.0-rc.4",
+        "rolldown": "^1.0.0-rc.5",
         "rollup-plugin-emit-ejs": "^3.1.0",
         "rollup-plugin-license": "^3.0.0",
         "rollup-plugin-serve": "^3.0.0"

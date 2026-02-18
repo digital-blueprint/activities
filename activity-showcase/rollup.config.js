@@ -83,10 +83,6 @@ export default (async () => {
             cleanDir: true,
         },
         preserveEntrySignatures: false,
-        experimental: {
-            // https://github.com/rolldown/rolldown/issues/8027#issuecomment-3834034108
-            chunkOptimization: false,
-        },
         // external: ['zlib', 'http', 'fs', 'https', 'url'],
         onwarn: function (warning, warn) {
             // ignore "suggestions" warning re "use strict"
