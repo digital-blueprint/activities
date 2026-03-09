@@ -1,5 +1,4 @@
 import {globSync} from 'node:fs';
-import terser from '@rollup/plugin-terser';
 import serve from 'rollup-plugin-serve';
 import {assetPlugin} from '@dbp-toolkit/dev-utils';
 import process from 'node:process';
@@ -30,7 +29,6 @@ export default (async () => {
             warn(warning);
         },
         plugins: [
-            build !== 'local' && build !== 'test' ? terser() : false,
             await assetPlugin(pkg.name, 'dist', {
                 copyTargets: [
                     {src: 'assets/index.html', dest: 'dist'},
