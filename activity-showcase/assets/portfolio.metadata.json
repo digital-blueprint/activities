@@ -1,0 +1,18 @@
+{
+    "element": "dbp-portfolio",
+    "module_src": "dbp-portfolio.js",
+    "routing_name": "portfolio",
+    "name": {
+        "de": "Meine Aufgaben",
+        "en": "My Tasks"
+    },
+    "short_name": {
+        "de": "Meine Aufgaben",
+        "en": "My Tasks"
+    },
+    "description": {
+        "de": "Übersicht aller ausstehenden Aufgaben, wie das Unterzeichnen von Dokumenten, Freigaben und Genehmigungen.",
+        "en": "Overview of all pending tasks, such as signing documents, sharing and approving items."
+    },
+    "subscribe": "lang"
+}
