@@ -184,7 +184,7 @@ Dependencies:
                     },
                     {src: 'assets/silent-check-sso.html', dest: 'dist'},
                     {
-                        src: await getPackagePath('@dbp-toolkit/font-source-sans-pro', 'files'),
+                        src: await getPackagePath('@tugraz/font-source-sans-pro', 'files'),
                         dest: 'dist/' + (await getDistPath(pkg.name, 'fonts')),
                         rename: 'source-sans-pro',
                     },
