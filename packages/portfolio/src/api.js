@@ -34,7 +34,12 @@ export class ApiError extends Error {
      * @returns {Promise<ApiError>}
      */
     static async fromResponse(response) {
-        const body = await response.json();
+        let body;
+        try {
+            body = await response.json();
+        } catch {
+            body = {detail: response.statusText};
+        }
         return new ApiError(response.status, response.statusText, body);
     }
 }
