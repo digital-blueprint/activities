@@ -14,5 +14,5 @@
         "de": "Übersicht aller ausstehenden Aufgaben, wie das Unterzeichnen von Dokumenten, Freigaben und Genehmigungen.",
         "en": "Overview of all pending tasks, such as signing documents, sharing and approving items."
     },
-    "subscribe": "lang"
+    "subscribe": "lang,auth,entry-point-url"
 }
