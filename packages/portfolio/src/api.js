@@ -140,7 +140,7 @@ export class PortfolioApi {
     /**
      * @param {string} workflowId
      * @param {string} action
-     * @param {object} [payload={}]
+     * @param {object} [payload]
      * @returns {Promise<PortfolioWorkflowActionResult>}
      */
     async triggerWorkflowAction(workflowId, action, payload = {}) {

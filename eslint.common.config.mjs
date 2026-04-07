@@ -24,7 +24,8 @@ export default [
             "jsdoc/require-returns": 0,
             "jsdoc/require-param-type": 0,
             "jsdoc/require-returns-description": 0,
-            'jsdoc/tag-lines': 0
+            'jsdoc/tag-lines': 0,
+            "jsdoc/require-property-description": 0,
         },
     },
 ];
