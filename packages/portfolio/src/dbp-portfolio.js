@@ -80,7 +80,15 @@ export class DbpPortfolio extends AuthMixin(
 
     async _triggerAction(workflowId, actionId) {
         try {
-            await this._api().triggerWorkflowAction(workflowId, actionId);
+            let response = await this._api().triggerWorkflowAction(workflowId, actionId);
+            if (response.message !== null) {
+                notify({
+                    summary: response.message.title,
+                    body: response.message.text,
+                    type: response.message.type == 'error' ? 'danger' : response.message.type,
+                    timeout: 5,
+                });
+            }
             // Re-fetch the updated workflow and patch local state
             const updated = await this._api().getWorkflow(workflowId);
             this._workflows = this._workflows.map((w) =>
