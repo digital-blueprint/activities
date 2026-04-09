@@ -369,6 +369,9 @@ export class DbpPortfolio extends AuthMixin(
                 color: var(--dbp-on-secondary-surface, #fff);
                 text-decoration: none;
                 font: inherit;
+                border-color: var(--dbp-on-secondary-surface, #6c757d);
+                border-width: 1px;
+                border-style: solid;
             }
 
             .action-link:hover {
