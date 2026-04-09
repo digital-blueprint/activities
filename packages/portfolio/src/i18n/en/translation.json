@@ -1,1 +1,9 @@
-{}
+{
+    "reload": "Reload",
+    "workflow-state": {
+        "active": "Active",
+        "archived": "Archived",
+        "cancelled": "Cancelled",
+        "done": "Completed"
+    }
+}

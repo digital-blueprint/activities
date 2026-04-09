@@ -34,6 +34,20 @@ export class DbpPortfolio extends AuthMixin(
         };
     }
 
+    update(changedProperties) {
+        super.update(changedProperties);
+
+        changedProperties.forEach((oldValue, propName) => {
+            switch (propName) {
+                case 'lang':
+                    if (this.isLoggedIn()) {
+                        this._fetchWorkflows();
+                    }
+                    break;
+            }
+        });
+    }
+
     loginCallback() {
         this._fetchWorkflows();
     }
@@ -174,7 +188,7 @@ export class DbpPortfolio extends AuthMixin(
                                 @click=${() => this._selectWorkflow(workflow)}>
                                 <span class="workflow-name">${workflow.name}</span>
                                 <span class="workflow-state state-${workflow.state}">
-                                    ${workflow.state}
+                                    ${this._getWorkflowStateText(workflow.state)}
                                 </span>
                             </button>
                             ${isSelected ? this._renderDetail(workflow) : ''}
@@ -199,13 +213,32 @@ export class DbpPortfolio extends AuthMixin(
                               <dbp-loading-button
                                   class="reload-button"
                                   @click=${this._fetchWorkflows}>
-                                  Reload
+                                  ${this._i18n.t('reload')}
                               </dbp-loading-button>
                           </div>
                           ${this._renderWorkflows()}
                       `}
             </div>
         `;
+    }
+
+    /**
+     * @param {string} state
+     * @returns {string}
+     */
+    _getWorkflowStateText(state) {
+        switch (state) {
+            case 'active':
+                return this._i18n.t('workflow-state.active');
+            case 'done':
+                return this._i18n.t('workflow-state.done');
+            case 'cancelled':
+                return this._i18n.t('workflow-state.cancelled');
+            case 'archived':
+                return this._i18n.t('workflow-state.archived');
+            default:
+                return state;
+        }
     }
 
     static get styles() {
