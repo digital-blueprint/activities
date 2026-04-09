@@ -130,7 +130,7 @@ export class DbpPortfolio extends AuthMixin(
     _renderActions(workflow) {
         if (!workflow.availableActions?.length) {
             return html`
-                <p class="no-actions">No actions available.</p>
+                <p class="no-actions">${this._i18n.t('no-actions-available')}</p>
             `;
         }
         return html`
