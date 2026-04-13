@@ -184,7 +184,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                 if (item['@type'] === 'AuthorizationGroup') {
                     let memberCount = this.getAllMembersCount(item.members);
                     return {
-                        iri: item['@id'],
                         id: item.identifier,
                         name: item.name,
                         type: item['@type'],
@@ -199,14 +198,14 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
                     if (item.userIdentifier !== null) {
                         name = await this.fetchFullnameFromUserid(item.userIdentifier);
-                        id = getIdFromIri(item['@id']);
+                        id = item.identifier;
                         itemType = 'user';
                         // TODO: fix html class names and markup.
                         cssClass = 'user-name-icon';
                     }
                     if (item.childGroup !== null) {
                         name = item.childGroup.name;
-                        id = getIdFromIri(item['@id']);
+                        id = item['identifier'];
                         rootId = item.childGroup.identifier;
                         itemType = 'groupMember';
                         // TODO: fix html class names and markup.
@@ -576,12 +575,15 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     async fetchGroups() {
         this.listGroupButton.start();
         try {
-            const response = await fetch(this.entryPointUrl + '/authorization/groups', {
-                headers: {
-                    'Content-Type': 'application/ld+json',
-                    Authorization: 'Bearer ' + this.auth.token,
+            const response = await fetch(
+                this.entryPointUrl + '/authorization/groups?perPage=9999',
+                {
+                    headers: {
+                        'Content-Type': 'application/ld+json',
+                        Authorization: 'Bearer ' + this.auth.token,
+                    },
                 },
-            });
+            );
 
             if (!response.ok) {
                 console.log('Error: ', response);
@@ -633,6 +635,9 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                     },
                 );
                 if (!response.ok) {
+                    if (response.status === 404) {
+                        return userIdentifier;
+                    }
                     console.log('Error: ', response);
                     notify({
                         summary: 'Error!',
