@@ -311,8 +311,7 @@ export function getGroupManageCSS() {
             }
         }
 
-        .button-container button.select-user-button,
-        .button-container button.select-group-button {
+        .button-container button.select-user-button {
             position: relative;
             overflow: hidden;
             display: flex;
@@ -320,22 +319,18 @@ export function getGroupManageCSS() {
             align-items: center;
         }
 
-        .button-container button.select-user-button svg,
-        .button-container button.select-group-button svg {
+        .button-container button.select-user-button svg {
             width: 1.2em;
             height: 1.2em;
             fill: var(--dbp-content);
         }
 
         .button-container button.select-user-button.selected:before,
-        .button-container button.select-group-button.selected:before,
-        .button-container button.select-user-button:hover:before,
-        .button-container button.select-group-button:hover:before {
+        .button-container button.select-user-button:hover:before {
             transform: translateX(0);
         }
 
-        .button-container button.select-user-button:before,
-        .button-container button.select-group-button:before {
+        .button-container button.select-user-button:before {
             content: '';
             display: block;
             width: 2.5em;

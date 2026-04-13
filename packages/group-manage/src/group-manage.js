@@ -51,9 +51,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
         /** @type {PersonSelect} */
         this.personSelector = null;
-        /** @type {ResourceSelect} */
-        this.resourceSelector = null;
-
         /** @type {Button | null} */
         this.addToGroupButton = null;
         /** @type {Button | null} */
@@ -106,8 +103,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     firstUpdated() {
         this.isFirstUpdated = true;
         this.personSelector = this._('#person-to-add-selector');
-        this.resourceSelector = this._('#group-to-add-selector');
-
         this.addToGroupButton = this._('#add-to-group-button');
         this.listGroupButton = this._('#list-group-button');
 
@@ -1131,7 +1126,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                                     id="select-user-button"
                                     @click="${(event) => {
                                         event.target.classList.add('selected');
-                                        this._('#select-group-button').classList.remove('selected');
                                         this.personSelector.removeAttribute('hidden');
                                         this.personSelector.removeAttribute('disabled');
                                         this.personSelector.setAttribute('subscribe', 'auth');
@@ -1139,8 +1133,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                                             'entry-point-url',
                                             this.entryPointUrl,
                                         );
-
-                                        this.resourceSelector.setAttribute('hidden', '');
                                     }}">
                                     <svg
                                         version="1.1"
@@ -1162,46 +1154,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                                     </svg>
                                     ${i18n.t('group-manage.select-person-selector-button-text')}
                                 </button>
-                                <button
-                                    class="button is-secondary select-group-button"
-                                    id="select-group-button"
-                                    @click="${(event) => {
-                                        event.target.classList.add('selected');
-                                        this._('#select-user-button').classList.remove('selected');
-                                        this.resourceSelector.removeAttribute('hidden');
-                                        this.resourceSelector.removeAttribute('disabled');
-
-                                        this.resourceSelector.setAttribute(
-                                            'entry-point-url',
-                                            this.entryPointUrl,
-                                        );
-                                        this.resourceSelector.setAttribute(
-                                            'resource-path',
-                                            '/authorization/groups?getChildGroupCandidatesForGroupIdentifier=' +
-                                                this.targetGroup['identifier'],
-                                        );
-                                        // this.resourceSelector.updateResources();
-                                        this.resourceSelector._updateAll();
-
-                                        this.personSelector.setAttribute('hidden', '');
-                                    }}">
-                                    <svg
-                                        version="1.1"
-                                        id="Layer_2_1_"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        xmlns:xlink="http://www.w3.org/1999/xlink"
-                                        x="0px"
-                                        y="0px"
-                                        viewBox="0 0 100 100"
-                                        xml:space="preserve">
-                                        <path
-                                            d="M92.6,15.4H55.3l-2.9-5.3l-0.1-0.2c-1.1-1.7-3.1-2.7-5-2.7H7.4c-3.2,0-5.8,2.6-5.8,5.8v74.1c0,3.2,2.6,5.8,5.8,5.8h85.1
-                                            c3.2,0,5.8-2.6,5.8-5.8V43.9v-3V21.1C98.3,18,95.7,15.4,92.6,15.4z M92.6,20.9c0.2,0,0.3,0.2,0.3,0.3v14.1c-0.1,0-0.2,0-0.3,0H66.3
-                                            c-0.1,0-0.2,0-0.4-0.2l-7.7-14.1H92.6z M92.8,87.1c0,0.1-0.1,0.3-0.3,0.3H7.4c-0.1,0-0.3-0.1-0.3-0.3V12.9c0-0.1,0.1-0.3,0.3-0.3
-                                            l39.8,0c0.1,0,0.3,0.1,0.4,0.2l13.6,24.8l0.1,0.2c1.2,1.8,2.9,2.7,5,2.7h26.2c0.1,0,0.3,0.1,0.3,0.3v3V87.1z" />
-                                    </svg>
-                                    ${i18n.t('group-manage.select-group-selector-button-text')}
-                                </button>
                             </div>
 
                             <dbp-person-select
@@ -1211,17 +1163,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                                 lang="${this.lang}"
                                 @change="${(event) =>
                                     this.onSourceSelectorChange(event)}"></dbp-person-select>
-
-                            <dbp-resource-select
-                                hidden
-                                disabled
-                                use-search
-                                subscribe="lang,entry-point-url,auth"
-                                id="group-to-add-selector"
-                                lang="${this.lang}"
-                                resource-path="/authorization/groups"
-                                @change="${(event) => this.onSourceSelectorChange(event)}"
-                                .formatResource="${this.formatGroupResource}"></dbp-resource-select>
                         </div>
                     </div>
                     <footer>
@@ -1256,7 +1197,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         this.addToGroupButton.stop();
         // Reset button state.
         this._('#select-user-button').classList.remove('selected');
-        this._('#select-group-button').classList.remove('selected');
         // Reset selectors states.
         this.resetSelectors();
     }
@@ -1412,9 +1352,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     resetSelectors() {
         this.personSelector.setAttribute('hidden', '');
         this.personSelector.clear();
-
-        this.resourceSelector.setAttribute('hidden', '');
-        this.resourceSelector.setAttribute('value', '');
     }
 
     collapseAllGroups() {
