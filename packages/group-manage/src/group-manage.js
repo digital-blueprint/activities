@@ -1,6 +1,6 @@
 import {html} from 'lit';
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
-import {ScopedElementsMixin} from '@dbp-toolkit/common';
+import {ScopedElementsMixin, LangMixin} from '@dbp-toolkit/common';
 import {classMap} from 'lit/directives/class-map.js';
 import {createInstance} from './i18n.js';
 import {Icon, Button, IconButton, LoadingButton, InlineNotification} from '@dbp-toolkit/common';
@@ -17,13 +17,11 @@ import {computePosition, autoPlacement, offset} from '@floating-ui/dom';
  * @class
  * @augments {DBPLitElement}
  */
-export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
+export class GroupManage extends LangMixin(ScopedElementsMixin(DBPLitElement), createInstance) {
     constructor() {
         super();
 
         this.auth = {};
-        this._i18n = createInstance();
-        this.lang = this._i18n.language;
         this._api = new GroupManageApi(this);
         /** @type {string | null} */
         this.entryPointUrl = null;
@@ -85,7 +83,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         return {
             ...super.properties,
             auth: {type: Object},
-            lang: {type: String},
             entryPointUrl: {type: String, attribute: 'entry-point-url'},
             authGroups: {type: Array, attribute: false},
             targetGroup: {type: Object, attribute: false},
@@ -148,17 +145,12 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     update(changedProperties) {
         changedProperties.forEach((oldValue, propName) => {
             // console.log(`Property changed: ${propName}`);
-            switch (propName) {
-                case 'lang':
-                    this._i18n.changeLanguage(this.lang);
-                    break;
-                case 'auth':
-                    if (this.auth['login-status'] === 'logged-in') {
-                        if (this.isFirstUpdated && !this.listIsLoaded) {
-                            this.fetchGroups();
-                        }
+            if (propName === 'auth') {
+                if (this.auth['login-status'] === 'logged-in') {
+                    if (this.isFirstUpdated && !this.listIsLoaded) {
+                        this.fetchGroups();
                     }
-                    break;
+                }
             }
         });
         super.update(changedProperties);

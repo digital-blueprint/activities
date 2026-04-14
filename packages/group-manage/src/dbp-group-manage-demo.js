@@ -1,6 +1,6 @@
 import {createInstance} from './i18n.js';
 import {css, html} from 'lit';
-import {ScopedElementsMixin} from '@dbp-toolkit/common';
+import {ScopedElementsMixin, LangMixin} from '@dbp-toolkit/common';
 import {GroupManage} from './group-manage.js';
 // import {AuthKeycloak, LoginButton} from '@dbp-toolkit/auth';
 import * as commonUtils from '@dbp-toolkit/common/utils';
@@ -11,11 +11,9 @@ import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
  * @class
  * @augments {DBPLitElement}
  */
-export class GroupManageDemo extends ScopedElementsMixin(DBPLitElement) {
+export class GroupManageDemo extends LangMixin(ScopedElementsMixin(DBPLitElement), createInstance) {
     constructor() {
         super();
-        this._i18n = createInstance();
-        this.lang = this._i18n.language;
         this.entryPointUrl = '';
     }
 
@@ -28,7 +26,6 @@ export class GroupManageDemo extends ScopedElementsMixin(DBPLitElement) {
     static get properties() {
         return {
             ...super.properties,
-            lang: {type: String},
             entryPointUrl: {type: String, attribute: 'entry-point-url'},
         };
     }
@@ -51,13 +48,6 @@ export class GroupManageDemo extends ScopedElementsMixin(DBPLitElement) {
 
     connectedCallback() {
         super.connectedCallback();
-    }
-
-    update(changedProperties) {
-        if (changedProperties.has('lang')) {
-            this._i18n.changeLanguage(this.lang);
-        }
-        super.update(changedProperties);
     }
 
     render() {
