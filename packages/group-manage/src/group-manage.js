@@ -10,6 +10,7 @@ import {send as notify} from '@dbp-toolkit/common/notification';
 import {PersonSelect} from '@dbp-toolkit/person-select';
 import {ResourceSelect} from '@dbp-toolkit/resource-select';
 import {getPersonFullName, getIdFromIri} from './utils.js';
+import {GroupManageApi, ApiError} from './api.js';
 import {computePosition, autoPlacement, offset} from '@floating-ui/dom';
 
 /**
@@ -23,6 +24,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         this.auth = {};
         this._i18n = createInstance();
         this.lang = this._i18n.language;
+        this._api = new GroupManageApi(this);
         /** @type {string | null} */
         this.entryPointUrl = null;
         /** @type {boolean} */
@@ -570,45 +572,32 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         this.userNameCache = new Map();
         this.listGroupButton.start();
         try {
-            const response = await fetch(
-                this.entryPointUrl + '/authorization/groups?perPage=9999',
-                {
-                    headers: {
-                        'Content-Type': 'application/ld+json',
-                        Authorization: 'Bearer ' + this.auth.token,
-                    },
-                },
-            );
-
-            if (!response.ok) {
-                console.log('Error: ', response);
+            const response = await this._api.getGroups();
+            const groups = response['hydra:member'];
+            if (Array.isArray(groups) && groups.length > 0) {
+                this.authGroups = await this.processAuthGroups(groups);
+                const groupListContainer = this._('.group-list-container');
+                groupListContainer.classList.add('visible');
+                this.listIsLoaded = true;
+            } else {
+                notify({
+                    summary: 'Warning!',
+                    body: `No groups found in response.`,
+                    type: 'danger',
+                    timeout: 10,
+                });
+            }
+        } catch (e) {
+            if (e instanceof ApiError) {
+                console.log('Error: ', e);
                 notify({
                     summary: 'Error!',
-                    body: `Could not fetch resource. Status: ${response.status}`,
+                    body: `Could not fetch resource. Status: ${e.status}`,
                     type: 'danger',
                     timeout: 30,
                 });
             } else {
-                const authGroupsResponse = await response.json();
-                if (
-                    Array.isArray(authGroupsResponse['hydra:member']) &&
-                    authGroupsResponse['hydra:member'].length > 0
-                ) {
-                    this.authGroups = await this.processAuthGroups(
-                        authGroupsResponse['hydra:member'],
-                    );
-                    const groupListContainer = this._('.group-list-container');
-                    groupListContainer.classList.add('visible');
-                    this.listIsLoaded = true;
-                    return;
-                } else {
-                    notify({
-                        summary: 'Warning!',
-                        body: `No groups found in response.`,
-                        type: 'danger',
-                        timeout: 10,
-                    });
-                }
+                throw e;
             }
         } finally {
             this.listGroupButton.stop();
@@ -623,26 +612,24 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         // Store the promise immediately (before any await) so concurrent callers
         // for the same userIdentifier share the same in-flight request.
         const promise = (async () => {
-            const response = await fetch(this.entryPointUrl + `/base/people/${userIdentifier}`, {
-                headers: {
-                    'Content-Type': 'application/ld+json',
-                    Authorization: 'Bearer ' + this.auth.token,
-                },
-            });
-            if (!response.ok) {
-                if (response.status === 404) {
-                    return userIdentifier;
-                }
-                console.log('Error: ', response);
-                notify({
-                    summary: 'Error!',
-                    body: `Could not fetch user details. Status: ${response.status}`,
-                    type: 'danger',
-                    timeout: 30,
-                });
-            } else {
-                const data = await response.json();
+            try {
+                const data = await this._api.getPerson(userIdentifier);
                 return getPersonFullName(data);
+            } catch (e) {
+                if (e instanceof ApiError) {
+                    if (e.status === 404) {
+                        return userIdentifier;
+                    }
+                    console.log('Error: ', e);
+                    notify({
+                        summary: 'Error!',
+                        body: `Could not fetch user details. Status: ${e.status}`,
+                        type: 'danger',
+                        timeout: 30,
+                    });
+                } else {
+                    throw e;
+                }
             }
         })();
         this.userNameCache.set(userIdentifier, promise);
@@ -665,41 +652,31 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
             });
             return;
         }
-        const data = {
-            name: groupName,
-        };
         try {
-            const response = await fetch(this.entryPointUrl + '/authorization/groups', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/ld+json',
-                    Authorization: 'Bearer ' + this.auth.token,
-                },
-                body: JSON.stringify(data),
+            const data = await this._api.createGroup(groupName);
+            // Reset input field.
+            if (groupNameInput instanceof HTMLInputElement) {
+                groupNameInput.value = '';
+            }
+            // Re-fetch group list.
+            this.fetchGroups();
+            notify({
+                summary: 'Success!',
+                body: `Group "${data.name}" created successfully`,
+                type: 'info',
+                timeout: 5,
             });
-
-            if (!response.ok) {
-                console.log('Error: ', response);
+        } catch (e) {
+            if (e instanceof ApiError) {
+                console.log('Error: ', e);
                 notify({
                     summary: 'Error!',
-                    body: `Could not create group. Status: ${response.status}`,
+                    body: `Could not create group. Status: ${e.status}`,
                     type: 'danger',
                     timeout: 30,
                 });
             } else {
-                const data = await response.json();
-                // Reset input field.
-                if (groupNameInput instanceof HTMLInputElement) {
-                    groupNameInput.value = '';
-                }
-                // Re-fetch group list.
-                this.fetchGroups();
-                notify({
-                    summary: 'Success!',
-                    body: `Group "${data.name}" created successfully`,
-                    type: 'info',
-                    timeout: 5,
-                });
+                throw e;
             }
         } finally {
             this.closeCreateGroupPopover();
@@ -722,32 +699,24 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         const groupIdentifier = this.groupIdentifier;
 
         try {
-            const response = await fetch(
-                this.entryPointUrl + `/authorization/groups/${groupIdentifier}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/ld+json',
-                        Authorization: 'Bearer ' + this.auth.token,
-                    },
-                },
-            );
-
-            if (response.status !== 204) {
-                console.log('Error: ', response);
+            await this._api.deleteGroup(groupIdentifier);
+            notify({
+                summary: 'Success!',
+                body: 'The group has been deleted successfully',
+                type: 'info',
+                timeout: 5,
+            });
+        } catch (e) {
+            if (e instanceof ApiError) {
+                console.log('Error: ', e);
                 notify({
                     summary: 'Error!',
-                    body: `Could not delete group. Status: ${response.status}`,
+                    body: `Could not delete group. Status: ${e.status}`,
                     type: 'danger',
                     timeout: 30,
                 });
             } else {
-                notify({
-                    summary: 'Success!',
-                    body: 'The group has been deleted successfully',
-                    type: 'info',
-                    timeout: 5,
-                });
+                throw e;
             }
         } finally {
             this.fetchGroups();
@@ -773,32 +742,24 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         const groupIdentifier = this.groupIdentifier;
 
         try {
-            const response = await fetch(
-                this.entryPointUrl + `/authorization/group-members/${groupIdentifier}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/ld+json',
-                        Authorization: 'Bearer ' + this.auth.token,
-                    },
-                },
-            );
-
-            if (response.status !== 204) {
-                console.log('Error: ', response);
+            await this._api.deleteGroupMember(groupIdentifier);
+            notify({
+                summary: 'Success!',
+                body: 'Group member has been deleted successfully',
+                type: 'info',
+                timeout: 5,
+            });
+        } catch (e) {
+            if (e instanceof ApiError) {
+                console.log('Error: ', e);
                 notify({
                     summary: 'Error!',
-                    body: `Could not delete group member. Status: ${response.status}`,
+                    body: `Could not delete group member. Status: ${e.status}`,
                     type: 'danger',
                     timeout: 30,
                 });
             } else {
-                notify({
-                    summary: 'Success!',
-                    body: 'Group member has been deleted successfully',
-                    type: 'info',
-                    timeout: 5,
-                });
+                throw e;
             }
         } finally {
             // Re-render the group list.
@@ -858,38 +819,31 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         }
 
         try {
-            const response = await fetch(this.entryPointUrl + '/authorization/group-members', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/ld+json',
-                    Authorization: 'Bearer ' + this.auth.token,
-                },
-                body: JSON.stringify(data),
+            await this._api.addGroupMember(data);
+            this.fetchGroups();
+            this.closeAddGroupMemberPopover();
+            this.groupMember = null;
+            this.targetGroup = null;
+            // if (this.searchIsActive) {
+            //     this.searchGroups();
+            // }
+            notify({
+                summary: 'Success!',
+                body: `"${groupMemberName}" added to the group  ${groupName} successfully`,
+                type: 'info',
+                timeout: 5,
             });
-
-            if (!response.ok) {
-                console.log('Error: ', response);
+        } catch (e) {
+            if (e instanceof ApiError) {
+                console.log('Error: ', e);
                 notify({
                     summary: 'Error!',
-                    body: `Could not add to group. Status: ${response.status}`,
+                    body: `Could not add to group. Status: ${e.status}`,
                     type: 'danger',
                     timeout: 30,
                 });
             } else {
-                await response.json();
-                this.fetchGroups();
-                this.closeAddGroupMemberPopover();
-                this.groupMember = null;
-                this.targetGroup = null;
-                // if (this.searchIsActive) {
-                //     this.searchGroups();
-                // }
-                notify({
-                    summary: 'Success!',
-                    body: `"${groupMemberName}" added to the group  ${groupName} successfully`,
-                    type: 'info',
-                    timeout: 5,
-                });
+                throw e;
             }
         } finally {
             this.resetSelectors();
