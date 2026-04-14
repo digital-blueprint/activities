@@ -366,6 +366,7 @@ export function getGroupManageCSS() {
             display: grid;
             grid-template-rows: 3em auto 4em;
             grid-template-columns: 1fr;
+            height: 100%;
         }
         ::backdrop {
             background: rgba(36, 32, 20, 0.5);
