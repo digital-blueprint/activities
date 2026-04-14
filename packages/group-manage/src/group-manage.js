@@ -35,9 +35,8 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         this.groupMember = null;
         /** @type {string | null} */
         this.groupIdentifier = null;
-        /** @type {Map<string, string>} */
+        /** @type {Map<string, Promise<string>>} */
         this.userNameCache = new Map();
-
         /** @type {boolean} */
         this.listIsLoaded = false;
         /** @type {HTMLElement | null} */
@@ -568,6 +567,7 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async fetchGroups() {
+        this.userNameCache = new Map();
         this.listGroupButton.start();
         try {
             const response = await fetch(
@@ -615,41 +615,38 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
-    async fetchFullnameFromUserid(userIdentifier) {
+    fetchFullnameFromUserid(userIdentifier) {
         if (this.userNameCache.has(userIdentifier)) {
             return this.userNameCache.get(userIdentifier);
-        } else {
-            try {
-                const response = await fetch(
-                    this.entryPointUrl + `/base/people/${userIdentifier}`,
-                    {
-                        headers: {
-                            'Content-Type': 'application/ld+json',
-                            Authorization: 'Bearer ' + this.auth.token,
-                        },
-                    },
-                );
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        return userIdentifier;
-                    }
-                    console.log('Error: ', response);
-                    notify({
-                        summary: 'Error!',
-                        body: `Could not fetch user details. Status: ${response.status}`,
-                        type: 'danger',
-                        timeout: 30,
-                    });
-                } else {
-                    const data = await response.json();
-                    const fullName = getPersonFullName(data);
-                    this.userNameCache.set(userIdentifier, fullName);
-                    return fullName;
-                }
-            } finally {
-                // console.log('End fetchFullnameFromUserid');
-            }
         }
+
+        // Store the promise immediately (before any await) so concurrent callers
+        // for the same userIdentifier share the same in-flight request.
+        const promise = (async () => {
+            const response = await fetch(this.entryPointUrl + `/base/people/${userIdentifier}`, {
+                headers: {
+                    'Content-Type': 'application/ld+json',
+                    Authorization: 'Bearer ' + this.auth.token,
+                },
+            });
+            if (!response.ok) {
+                if (response.status === 404) {
+                    return userIdentifier;
+                }
+                console.log('Error: ', response);
+                notify({
+                    summary: 'Error!',
+                    body: `Could not fetch user details. Status: ${response.status}`,
+                    type: 'danger',
+                    timeout: 30,
+                });
+            } else {
+                const data = await response.json();
+                return getPersonFullName(data);
+            }
+        })();
+        this.userNameCache.set(userIdentifier, promise);
+        return promise;
     }
 
     async createGroup() {
