@@ -121,6 +121,10 @@ export class GroupManage extends AuthMixin(
             'beforetoggle',
             this.positionPopover.bind(this),
         );
+
+        if (!this.listIsLoaded && this.isLoggedIn()) {
+            this.fetchGroups();
+        }
     }
 
     disconnectedCallback() {
