@@ -1,6 +1,6 @@
 import {html} from 'lit';
 import DBPLitElement from '@dbp-toolkit/common/dbp-lit-element';
-import {ScopedElementsMixin, LangMixin} from '@dbp-toolkit/common';
+import {ScopedElementsMixin, LangMixin, AuthMixin} from '@dbp-toolkit/common';
 import {classMap} from 'lit/directives/class-map.js';
 import {createInstance} from './i18n.js';
 import {Icon, Button, IconButton, LoadingButton, InlineNotification} from '@dbp-toolkit/common';
@@ -17,11 +17,12 @@ import {computePosition, autoPlacement, offset} from '@floating-ui/dom';
  * @class
  * @augments {DBPLitElement}
  */
-export class GroupManage extends LangMixin(ScopedElementsMixin(DBPLitElement), createInstance) {
+export class GroupManage extends AuthMixin(
+    LangMixin(ScopedElementsMixin(DBPLitElement), createInstance),
+) {
     constructor() {
         super();
 
-        this.auth = {};
         this._api = new GroupManageApi(this);
         /** @type {string | null} */
         this.entryPointUrl = null;
@@ -82,7 +83,6 @@ export class GroupManage extends LangMixin(ScopedElementsMixin(DBPLitElement), c
     static get properties() {
         return {
             ...super.properties,
-            auth: {type: Object},
             entryPointUrl: {type: String, attribute: 'entry-point-url'},
             authGroups: {type: Array, attribute: false},
             targetGroup: {type: Object, attribute: false},
@@ -121,12 +121,6 @@ export class GroupManage extends LangMixin(ScopedElementsMixin(DBPLitElement), c
             'beforetoggle',
             this.positionPopover.bind(this),
         );
-
-        if (this.auth['login-status'] === 'logged-in') {
-            if (this.isFirstUpdated && !this.listIsLoaded) {
-                this.fetchGroups();
-            }
-        }
     }
 
     disconnectedCallback() {
@@ -138,22 +132,15 @@ export class GroupManage extends LangMixin(ScopedElementsMixin(DBPLitElement), c
         this.addGroupMemberPopover.removeEventListener('beforetoggle', this.positionPopover);
     }
 
-    authenticated() {
-        return (this.auth.token || '') !== '';
+    loginCallback() {
+        if (this.isFirstUpdated && !this.listIsLoaded) {
+            this.fetchGroups();
+        }
     }
 
-    update(changedProperties) {
-        changedProperties.forEach((oldValue, propName) => {
-            // console.log(`Property changed: ${propName}`);
-            if (propName === 'auth') {
-                if (this.auth['login-status'] === 'logged-in') {
-                    if (this.isFirstUpdated && !this.listIsLoaded) {
-                        this.fetchGroups();
-                    }
-                }
-            }
-        });
-        super.update(changedProperties);
+    logoutCallback() {
+        this.authGroups = [];
+        this.listIsLoaded = false;
     }
 
     // MARK: PROCESS
@@ -1354,7 +1341,7 @@ export class GroupManage extends LangMixin(ScopedElementsMixin(DBPLitElement), c
 
     render() {
         const i18n = this._i18n;
-        const showComponent = this.authenticated();
+        const showComponent = this.isLoggedIn();
 
         return html`
             <div class="group-manager">
