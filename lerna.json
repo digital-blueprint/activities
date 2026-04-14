@@ -1,8 +1,5 @@
 {
-  "packages": [
-    "packages/*",
-    "activity-showcase"
-  ],
+  "packages": ["packages/*", "activity-showcase"],
   "npmClient": "npm",
   "version": "independent"
 }

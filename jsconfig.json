@@ -1,15 +1,12 @@
-
 {
-    "compilerOptions": {
-        "maxNodeModuleJsDepth": 0,
-        "checkJs": true,
-        "resolveJsonModule": true,
-        "module": "esnext",
-        "moduleResolution": "bundler",
-        "target": "esnext",
-        "preserveSymlinks": true
-    },
-    "exclude": [
-        "node_modules",
-    ]
+  "compilerOptions": {
+    "maxNodeModuleJsDepth": 0,
+    "checkJs": true,
+    "resolveJsonModule": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "preserveSymlinks": true
+  },
+  "exclude": ["node_modules"]
 }

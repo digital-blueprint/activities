@@ -17,8 +17,8 @@
   "minimumReleaseAge": "5 days",
   "packageRules": [
     {
-        "matchUpdateTypes": ["lockFileMaintenance"],
-        "minimumReleaseAge": null
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "minimumReleaseAge": null
     }
   ],
   "cloneSubmodules": true

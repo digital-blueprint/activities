@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 24
           check-latest: true
-          cache: 'npm'
+          cache: "npm"
 
       - name: Restore playwright cache
         uses: actions/cache@v5
@@ -60,15 +60,15 @@ jobs:
         with:
           node-version: 24
           check-latest: true
-          cache: 'npm'
+          cache: "npm"
 
       - name: Deploy and wait for completion
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/demo'
         uses: digital-blueprint/gitlab-pipeline-trigger-action@v1
         with:
-          host: 'gitlab.tugraz.at'
+          host: "gitlab.tugraz.at"
           trigger_token: ${{ secrets.DEPLOY_TRIGGER_TOKEN }}
           access_token: ${{ secrets.DEPLOY_ACCESS_TOKEN }}
-          id: '21238'
-          ref: 'main'
+          id: "21238"
+          ref: "main"
           variables: '{"UPSTREAM_PROJECT_PATH":"dbp/topics/common","UPSTREAM_COMMIT_BRANCH":"${{ github.ref_name }}","UPSTREAM_COMMIT_SHA":"${{ github.ref_name }}"}'

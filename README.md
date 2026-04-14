@@ -18,7 +18,7 @@ git submodule update --init
 # install dependencies
 npm install
 
-# constantly build activity-showcase and run a local web-server on port 8001 
+# constantly build activity-showcase and run a local web-server on port 8001
 cd ./activity-showcase && npm run watch
 
 # run tests
@@ -34,5 +34,5 @@ Jump to <https://localhost:8001>, and you should get the Activity Showcase page.
 
 ## Other commands
 
-* `npm run test` -  Run test for all packages
-* `npm run clean` - Removes all `node_modules` directories.
+- `npm run test` - Run test for all packages
+- `npm run clean` - Removes all `node_modules` directories.
