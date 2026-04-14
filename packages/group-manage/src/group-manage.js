@@ -899,31 +899,35 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
 
     // MARK: SOURCE CHANGE
     /**
-     * Set groupMember object on person or group-selector changes.
+     * Set groupMember from the User ID text input.
+     * Clears the person selector to keep the two inputs mutually exclusive.
+     * @param {Event} event
+     */
+    onUserIdInput(event) {
+        const value = /** @type {HTMLInputElement} */ (event.target).value.trim();
+        this.personSelector.clear();
+        if (value) {
+            this.groupMember = {type: 'person', identifier: value, name: value};
+        } else {
+            this.groupMember = null;
+        }
+    }
+
+    /**
+     * Set groupMember object on person-selector change.
      * @param {CustomEvent} event
      */
     async onSourceSelectorChange(event) {
-        if (!event.target || !(event.target instanceof HTMLElement) || !event.detail.value) return;
-        const targetId = event.target.id;
-        if (targetId === 'person-to-add-selector') {
-            const personIri = event.detail.value;
-            const personIdenifier = getIdFromIri(personIri);
-            const name = await this.fetchFullnameFromUserid(personIdenifier);
-            this.groupMember = {
-                type: 'person',
-                identifier: personIdenifier,
-                name: name,
-            };
-        }
-        if (targetId === 'group-to-add-selector') {
-            const groupIri = event.detail.value;
-            const name = event.detail.object.name;
-            this.groupMember = {
-                type: 'group',
-                identifier: groupIri,
-                name: name,
-            };
-        }
+        if (!event.detail.value) return;
+        const personIri = event.detail.value;
+        const personIdentifier = getIdFromIri(personIri);
+        const name = await this.fetchFullnameFromUserid(personIdentifier);
+        this._('#user-id-input').value = '';
+        this.groupMember = {
+            type: 'person',
+            identifier: personIdentifier,
+            name: name,
+        };
     }
 
     // MARK: POPOVERS
@@ -1117,49 +1121,27 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
                     </header>
                     <div class="content">
                         <div id="add-group-member-form" class="form">
-                            <div class="button-container">
-                                <button
-                                    class="button is-secondary select-user-button"
-                                    id="select-user-button"
-                                    @click="${(event) => {
-                                        event.target.classList.add('selected');
-                                        this.personSelector.removeAttribute('hidden');
-                                        this.personSelector.removeAttribute('disabled');
-                                        this.personSelector.setAttribute('subscribe', 'auth');
-                                        this.personSelector.setAttribute(
-                                            'entry-point-url',
-                                            this.entryPointUrl,
-                                        );
-                                    }}">
-                                    <svg
-                                        version="1.1"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        xmlns:xlink="http://www.w3.org/1999/xlink"
-                                        x="0px"
-                                        y="0px"
-                                        viewBox="0 0 100 100"
-                                        xml:space="preserve">
-                                        <path class="st0" d="M8.5,87.7" />
-                                        <g>
-                                            <path
-                                                d="M50,57c13.2,0,24-10.8,24-24S63.2,9,50,9C36.8,9,26,19.7,26,33S36.8,57,50,57z M50,14.5c10.2,0,18.5,8.3,18.5,18.5
-                                            S60.2,51.5,50,51.5S31.5,43.2,31.5,33S39.8,14.5,50,14.5z" />
-                                            <path
-                                                d="M97.9,86.2C84.7,74.5,67.7,68,50,68S15.3,74.5,2.1,86.2c-1.1,1-1.2,2.7-0.2,3.9c1,1.1,2.7,1.2,3.9,0.2
-                                            C17.9,79.5,33.7,73.5,50,73.5s32.1,6,44.3,16.8c0.5,0.5,1.2,0.7,1.8,0.7c0.8,0,1.5-0.3,2.1-0.9C99.2,89,99.1,87.2,97.9,86.2z" />
-                                        </g>
-                                    </svg>
-                                    ${i18n.t('group-manage.select-person-selector-button-text')}
-                                </button>
+                            <div class="person-select-row">
+                                <label for="person-to-add-selector">
+                                    ${i18n.t('group-manage.person-label')}
+                                </label>
+                                <dbp-person-select
+                                    id="person-to-add-selector"
+                                    subscribe="auth"
+                                    entry-point-url="${this.entryPointUrl}"
+                                    lang="${this.lang}"
+                                    @change="${(event) =>
+                                        this.onSourceSelectorChange(event)}"></dbp-person-select>
                             </div>
-
-                            <dbp-person-select
-                                hidden
-                                disabled
-                                id="person-to-add-selector"
-                                lang="${this.lang}"
-                                @change="${(event) =>
-                                    this.onSourceSelectorChange(event)}"></dbp-person-select>
+                            <div class="user-id-row">
+                                <label for="user-id-input">
+                                    ${i18n.t('group-manage.user-id-label')}
+                                </label>
+                                <input
+                                    type="text"
+                                    id="user-id-input"
+                                    @input="${(event) => this.onUserIdInput(event)}" />
+                            </div>
                         </div>
                     </div>
                     <footer>
@@ -1192,8 +1174,6 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
          * @type {Button}
          */
         this.addToGroupButton.stop();
-        // Reset button state.
-        this._('#select-user-button').classList.remove('selected');
         // Reset selectors states.
         this.resetSelectors();
     }
@@ -1347,8 +1327,8 @@ export class GroupManage extends ScopedElementsMixin(DBPLitElement) {
     }
 
     resetSelectors() {
-        this.personSelector.setAttribute('hidden', '');
         this.personSelector.clear();
+        this._('#user-id-input').value = '';
     }
 
     collapseAllGroups() {

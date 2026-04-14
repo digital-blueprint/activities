@@ -13,7 +13,8 @@
         "group-name-label": "Group name",
         "list-groups-button-text": "List groups",
         "login-required": "You need to login to use this application",
-        "select-person-selector-button-text": "Select user",
+        "person-label": "Person:",
+        "user-id-label": "User ID:",
         "yes-delete": "Yes, delete"
     }
 }

@@ -391,12 +391,40 @@ export function getGroupManageCSS() {
         }
 
         .add-group-member-popover {
-            height: 340px;
+            height: 200px;
         }
 
         .add-group-member-popover .button-container {
             display: flex;
             gap: 2em;
+        }
+
+        .person-select-row,
+        .user-id-row {
+            display: grid;
+            grid-template-columns: subgrid;
+            grid-column: 1 / -1;
+            align-items: center;
+        }
+
+        #add-group-member-form.form {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: 0.75em 1em;
+        }
+
+        #add-group-member-form.form label {
+            white-space: nowrap;
+        }
+
+        #add-group-member-form.form dbp-person-select {
+            display: block;
+            min-width: 0;
+        }
+
+        #add-group-member-form.form input[type='text'] {
+            box-sizing: border-box;
+            width: 100%;
         }
 
         .add-group-member-popover footer {
