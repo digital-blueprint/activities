@@ -7,7 +7,6 @@ import emitEJS from 'rollup-plugin-emit-ejs';
 import {getBabelOutputPlugin} from '@rollup/plugin-babel';
 import appConfig from './app.config.js';
 import {
-    generateTLSConfig,
     getBuildInfo,
     getPackagePath,
     getDistPath,
@@ -23,7 +22,6 @@ const watch = process.env.ROLLUP_WATCH === 'true';
 const buildFull = (!watch && appEnv !== 'test') || process.env.FORCE_FULL !== undefined;
 let useBabel = buildFull;
 let checkLicenses = buildFull;
-let useHTTPS = true;
 
 console.log('APP_ENV: ' + appEnv);
 
@@ -232,7 +230,6 @@ Dependencies:
                       host: '127.0.0.1',
                       port: 8001,
                       historyApiFallback: config.basePath + pkg.name + '.html',
-                      https: useHTTPS ? await generateTLSConfig() : false,
                       headers: {
                           'Content-Security-Policy': config.CSP,
                       },
