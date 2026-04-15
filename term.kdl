@@ -9,9 +9,9 @@ layout {
       focus true
     }
     pane split_direction="vertical" size="40%" {
-      pane cwd="activity-showcase" {
-        command "npm"
-        args "run" "watch"
+      pane {
+        command "just"
+        args "watch-activity-showcase"
       }
       pane {
         command "npm"

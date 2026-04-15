@@ -11,3 +11,8 @@ default:
 # Variables
 
 zellijSession := "activity-showcase"
+
+# Open a terminal with the activity-showcase session
+[group('dev')]
+watch-activity-showcase: kill
+    cd activity-showcase && npm run watch
