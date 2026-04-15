@@ -82,6 +82,8 @@ export class ApiError extends Error {
  * @typedef {object} PortfolioWorkflowActionResult
  * @property {string} identifier
  * @property {PortfolioWorkflowResultMessage|null} message
+ * @property {"url"|"message"} type
+ * @property {string|null} url
  */
 
 /**

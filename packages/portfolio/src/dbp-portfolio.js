@@ -95,6 +95,9 @@ export class DbpPortfolio extends AuthMixin(
     async _triggerAction(workflowId, actionId) {
         try {
             let response = await this._api().triggerWorkflowAction(workflowId, actionId);
+            if (response.type === 'url') {
+                window.open(response.url, '_blank', 'noopener,noreferrer');
+            }
             if (response.message !== null) {
                 notify({
                     summary: response.message.title,
