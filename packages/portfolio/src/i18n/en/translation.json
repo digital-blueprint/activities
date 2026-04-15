@@ -1,10 +1,4 @@
 {
     "no-actions-available": "No actions available",
-    "reload": "Reload",
-    "workflow-state": {
-        "active": "Active",
-        "archived": "Archived",
-        "cancelled": "Cancelled",
-        "done": "Completed"
-    }
+    "reload": "Reload"
 }

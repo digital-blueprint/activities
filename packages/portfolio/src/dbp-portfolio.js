@@ -165,9 +165,9 @@ export class DbpPortfolio extends AuthMixin(
     _renderDetail(workflow) {
         return html`
             <div class="workflow-detail">
-                <p class="state-display">
-                    <strong>${workflow.currentStateDisplay.label}</strong>
-                    &mdash; ${workflow.currentStateDisplay.description}
+                <p class="status-display">
+                    <strong>${workflow.statusDisplay.label}</strong>
+                    &mdash; ${workflow.statusDisplay.description}
                 </p>
                 ${this._renderActions(workflow)}
             </div>
@@ -190,8 +190,11 @@ export class DbpPortfolio extends AuthMixin(
                                 class="workflow-row"
                                 @click=${() => this._selectWorkflow(workflow)}>
                                 <span class="workflow-name">${workflow.name}</span>
-                                <span class="workflow-state state-${workflow.state}">
-                                    ${this._getWorkflowStateText(workflow.state)}
+                                <span
+                                    class="workflow-state state-${workflow.active
+                                        ? 'active'
+                                        : 'done'}">
+                                    ${workflow.statusDisplay.label}
                                 </span>
                             </button>
                             ${isSelected ? this._renderDetail(workflow) : ''}
@@ -223,25 +226,6 @@ export class DbpPortfolio extends AuthMixin(
                       `}
             </div>
         `;
-    }
-
-    /**
-     * @param {string} state
-     * @returns {string}
-     */
-    _getWorkflowStateText(state) {
-        switch (state) {
-            case 'active':
-                return this._i18n.t('workflow-state.active');
-            case 'done':
-                return this._i18n.t('workflow-state.done');
-            case 'cancelled':
-                return this._i18n.t('workflow-state.cancelled');
-            case 'archived':
-                return this._i18n.t('workflow-state.archived');
-            default:
-                return state;
-        }
     }
 
     static get styles() {
@@ -330,19 +314,13 @@ export class DbpPortfolio extends AuthMixin(
                 color: #004085;
             }
 
-            .state-cancelled,
-            .state-archived {
-                background-color: #e2e3e5;
-                color: #383d41;
-            }
-
             .workflow-detail {
                 padding: 0.75em 1em 1em 1em;
                 border-top: 1px solid var(--dbp-content-surface);
                 background-color: var(--dbp-background);
             }
 
-            .state-display {
+            .status-display {
                 margin: 0 0 0.75em 0;
                 color: var(--dbp-content);
             }

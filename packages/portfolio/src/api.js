@@ -53,7 +53,7 @@ export class ApiError extends Error {
  */
 
 /**
- * @typedef {object} PortfolioCurrentStateDisplay
+ * @typedef {object} PortfolioStatusDisplay
  * @property {string} label
  * @property {string} description
  */
@@ -62,10 +62,10 @@ export class ApiError extends Error {
  * @typedef {object} PortfolioWorkflow
  * @property {string} identifier
  * @property {string} type
- * @property {"active"|"done"|"cancelled"|"archived"} state
+ * @property {boolean} active
  * @property {string} name
  * @property {string} description
- * @property {PortfolioCurrentStateDisplay} currentStateDisplay
+ * @property {PortfolioStatusDisplay} statusDisplay
  * @property {PortfolioWorkflowAction[]} availableActions
  * @property {string} createdAt
  * @property {string} updatedAt

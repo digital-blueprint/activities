@@ -1,10 +1,4 @@
 {
     "no-actions-available": "Keine Aktionen verfügbar",
-    "reload": "Neu laden",
-    "workflow-state": {
-        "active": "Aktiv",
-        "archived": "Archiviert",
-        "cancelled": "Abgebrochen",
-        "done": "Abgeschlossen"
-    }
+    "reload": "Neu laden"
 }
