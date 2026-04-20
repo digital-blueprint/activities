@@ -261,6 +261,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
             'primary',
             'secondary',
             'muted',
+            'selected',
             'accent',
             'info',
             'success',
