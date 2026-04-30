@@ -117,12 +117,6 @@ export function getGroupManageCSS() {
             border-left: 3px solid var(--dbp-content);
         }
 
-        @container group-row (width < 600px) {
-            .group-member-list[data-level] > li > .group-member {
-                padding-left: calc(5px * (var(--data-level) - 1)) !important;
-            }
-        }
-
         .group-header {
             line-height: var(--table-line-height);
             height: var(--table-line-height);
@@ -286,7 +280,7 @@ export function getGroupManageCSS() {
             container: list-container / inline-size;
         }
 
-        @container list-container (width < 415px) {
+        @container list-container (width < 500px) {
             .button-container {
                 flex-direction: column;
                 gap: var(--space-half);
@@ -294,6 +288,18 @@ export function getGroupManageCSS() {
 
             dbp-loading-button {
                 max-width: 100%;
+            }
+
+            .group-header {
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .group-name {
+                white-space: wrap;
+                line-height: 1.5em;
+                width: 100%;
             }
         }
 
@@ -479,6 +485,16 @@ export function getGroupManageCSS() {
             left: 0;
             right: 0;
             background: transparent;
+        }
+
+        @media screen and (max-width: 650px) {
+            .add-group-member-popover {
+                min-width: unset;
+            }
+
+            .tooltip {
+                width: calc(100vw - 6rem); /* 2x1rem offset and 2x2em padding */
+            }
         }
     `;
 }

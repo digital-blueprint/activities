@@ -11,7 +11,7 @@ import {PersonSelect} from '@dbp-toolkit/person-select';
 import {ResourceSelect} from '@dbp-toolkit/resource-select';
 import {getPersonFullName, getIdFromIri} from './utils.js';
 import {GroupManageApi, ApiError} from './api.js';
-import {computePosition, autoPlacement, offset} from '@floating-ui/dom';
+import {computePosition, autoPlacement, offset, shift} from '@floating-ui/dom';
 
 /**
  * @class
@@ -535,6 +535,7 @@ export class GroupManage extends AuthMixin(
                     alignment: 'end',
                     allowedPlacements: ['top-end'],
                 }),
+                shift({padding: 16}),
             ],
         }).then(({x, y, middlewareData}) => {
             Object.assign(popover.style, {
