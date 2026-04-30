@@ -147,12 +147,6 @@ export function getGroupManageCSS() {
             display: flex;
             align-items: center;
             gap: var(--space-half);
-            opacity: 0;
-            transition: opacity var(--animation-time) linear;
-        }
-
-        .group-header:has(:focus-within) .group-controls {
-            opacity: 1;
         }
 
         .row.found > .group-header,
@@ -162,14 +156,6 @@ export function getGroupManageCSS() {
         .group-member:hover {
             filter: invert(1);
             opacity: 0.7;
-        }
-
-        .row.found > .group-header .group-controls,
-        .row.hover > .group-header .group-controls,
-        .group-header.hover .group-controls,
-        .group-header:hover .group-controls,
-        .group-member:hover .group-controls {
-            opacity: 1;
         }
 
         /* Hide all rows that don't contains found items as a direct child */
@@ -392,6 +378,7 @@ export function getGroupManageCSS() {
 
         .add-group-member-popover {
             height: 200px;
+            min-width: 500px;
         }
 
         .add-group-member-popover .button-container {
