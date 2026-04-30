@@ -886,7 +886,7 @@ export class GroupManage extends AuthMixin(
                     </header>
                     <div slot="content">
                         <div id="create-group-form" class="form">
-                            <label for="group-name" class="form-label">
+                            <label for="input-group-name" class="form-label">
                                 ${i18n.t('group-manage.group-name-label')}
                                 <input
                                     type="text"
