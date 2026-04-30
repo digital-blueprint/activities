@@ -180,7 +180,7 @@ export class GroupManageApi {
     async getPerson(userIdentifier) {
         const apiUrl = combineURLs(
             this._element.entryPointUrl,
-            `/base/people/${encodeURIComponent(userIdentifier)}`,
+            `/base/people/${encodeURIComponent(userIdentifier)}?includeLocal=email`,
         );
         const response = await fetch(apiUrl, {
             headers: {

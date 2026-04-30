@@ -257,13 +257,12 @@ export class GroupManage extends AuthMixin(
     // MARK: Render Groups
     /**
      * Render authGroups to html.
-     * @param {Array} authGroups
+     * @param {Array<object>} authGroups
      * @param {number} level
+     * @returns {import('lit').TemplateResult}
      */
     renderAuthGroups(authGroups, level = 0) {
-        // console.log('renderDirectory', authGroups);
-
-        if (!Array.isArray(authGroups)) return;
+        if (!Array.isArray(authGroups)) return html``;
 
         const firstIteration = level === 0;
         level++;
@@ -1067,6 +1066,8 @@ export class GroupManage extends AuthMixin(
                                     subscribe="auth"
                                     entry-point-url="${this.entryPointUrl}"
                                     lang="${this.lang}"
+                                    .formatPerson="${this.formatUserResource}"
+                                    .localDataAttributes="${['email']}"
                                     @change="${(event) =>
                                         this.onSourceSelectorChange(event)}"></dbp-person-select>
                             </div>
@@ -1253,6 +1254,15 @@ export class GroupManage extends AuthMixin(
 
     formatGroupResource(resource) {
         return resource['name'];
+    }
+
+    formatUserResource(select, person) {
+        let text = `${person['givenName']} ${person['familyName']}`;
+        const email = person.localData?.email;
+        if (email) {
+            text += ` (${email})`;
+        }
+        return text;
     }
 
     enableClickOverlay() {

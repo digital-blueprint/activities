@@ -24,8 +24,13 @@ export async function httpGetAsync(url, options) {
 export function getPersonFullName(person) {
     const givenName = person['givenName'];
     const familyName = person['familyName'];
+    let text = `${givenName} ${familyName}`;
+    const email = person.localData?.email;
+    if (email) {
+        text += ` (${email})`;
+    }
 
-    return `${givenName} ${familyName}`;
+    return text;
 }
 
 /**
