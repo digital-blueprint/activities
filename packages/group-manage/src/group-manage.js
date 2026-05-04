@@ -548,10 +548,14 @@ export class GroupManage extends AuthMixin(
     // MARK: API methods
 
     async fetchGroupsButtonHandler() {
-        await this.fetchGroups();
+        await this.fetchGroups(true);
     }
 
-    async fetchGroups() {
+    /**
+     * Fetches the groups from the API and processes them for rendering.
+     * @param {boolean} buttonTriggered - is the fetching triggered by the "list groups" button or not.
+     */
+    async fetchGroups(buttonTriggered = false) {
         this.userNameCache = new Map();
         this.listGroupButton.start();
         try {
@@ -563,12 +567,16 @@ export class GroupManage extends AuthMixin(
                 groupListContainer.classList.add('visible');
                 this.listIsLoaded = true;
             } else {
-                notify({
-                    summary: 'Warning!',
-                    body: `No groups found in response.`,
-                    type: 'danger',
-                    timeout: 10,
-                });
+                this.authGroups = [];
+                this.listIsLoaded = true;
+                if (buttonTriggered) {
+                    notify({
+                        summary: 'Warning!',
+                        body: `No groups found in response.`,
+                        type: 'danger',
+                        timeout: 10,
+                    });
+                }
             }
         } catch (e) {
             if (e instanceof ApiError) {
