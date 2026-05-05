@@ -78,6 +78,12 @@ export class GroupManage extends AuthMixin(
         this.allGroupsExpanded = false;
         /** @type {boolean} */
         this.groupNameInputValid = false;
+        /** @type {Set<string>} */
+        this.openGroupIds = new Set();
+        /** @type {Set<string>} */
+        this.foundRowIds = new Set();
+        /** @type {string | null} */
+        this.hoveredRowId = null;
     }
 
     static get scopedElements() {
@@ -109,6 +115,9 @@ export class GroupManage extends AuthMixin(
             clickOverlayVisible: {type: Boolean, attribute: false},
             allGroupsExpanded: {type: Boolean, attribute: false},
             groupNameInputValid: {type: Boolean, attribute: false},
+            openGroupIds: {type: Object, attribute: false},
+            foundRowIds: {type: Object, attribute: false},
+            hoveredRowId: {type: String, attribute: false},
         };
     }
 
@@ -278,25 +287,39 @@ export class GroupManage extends AuthMixin(
      * Render authGroups to html.
      * @param {Array<object>} authGroups
      * @param {number} level
+     * @param {string | null} parentId
      * @returns {import('lit').TemplateResult}
      */
-    renderAuthGroups(authGroups, level = 0) {
+    renderAuthGroups(authGroups, level = 0, parentId = null) {
         if (!Array.isArray(authGroups)) return html``;
 
         const firstIteration = level === 0;
         level++;
 
         return html`
-            <ul class="${classMap({'group-member-list': !firstIteration})}" data-level="${level}">
+            <ul
+                class="${classMap({
+                    'group-member-list': !firstIteration,
+                    open: !firstIteration && parentId !== null && this.openGroupIds.has(parentId),
+                })}"
+                data-level="${level}">
                 ${authGroups.map(
                     (item) => html`
-                        <li class="row ${level == 1 ? 'root-row' : null}">
+                        <li
+                            class="${classMap({
+                                row: true,
+                                'root-row': level == 1,
+                                found: this.foundRowIds.has(item.id),
+                                hover: this.hoveredRowId === item.id,
+                            })}"
+                            data-item-id="${item.id}">
                             ${item.type === 'AuthorizationGroup'
                                 ? html`
                                       <div
                                           class="${classMap({
                                               'group-header': firstIteration,
                                               'group-header group-member': !firstIteration,
+                                              'found-item': this.foundRowIds.has(item.id),
                                           })}"
                                           style="--data-level:${level}">
                                           <span
@@ -318,13 +341,14 @@ export class GroupManage extends AuthMixin(
                                           </span>
                                       </div>
                                       ${item.members
-                                          ? this.renderAuthGroups(item.members, level)
+                                          ? this.renderAuthGroups(item.members, level, item.id)
                                           : ''}
                                   `
                                 : html`
                                       <div
                                           class="${classMap({
                                               'group-header group-member': !firstIteration,
+                                              'found-item': this.foundRowIds.has(item.id),
                                           })}"
                                           style="--data-level:${level}">
                                           <span
@@ -354,7 +378,7 @@ export class GroupManage extends AuthMixin(
                                           </span>
                                       </div>
                                       ${item.childGroup
-                                          ? this.renderAuthGroups(item.childGroup, level)
+                                          ? this.renderAuthGroups(item.childGroup, level, item.id)
                                           : ''}
                                   `}
                         </li>
@@ -422,11 +446,15 @@ export class GroupManage extends AuthMixin(
         event.stopPropagation();
         if (event.target) {
             const target = /** @type {HTMLElement} */ (event.target);
-            const members = target.closest('.row');
-            const memberList = members.querySelector('.group-member-list');
-            if (memberList) {
-                memberList.classList.toggle('open');
+            const identifier = target.dataset.identifier;
+            if (!identifier) return;
+            const openGroupIds = new Set(this.openGroupIds);
+            if (openGroupIds.has(identifier)) {
+                openGroupIds.delete(identifier);
+            } else {
+                openGroupIds.add(identifier);
             }
+            this.openGroupIds = openGroupIds;
         }
     }
 
@@ -508,9 +536,9 @@ export class GroupManage extends AuthMixin(
             console.log('popover opening');
             this.clickOverlayVisible = true;
 
-            if (this.activeButton.closest('.row')) {
-                // this.activeButton.closest('.group-header').classList.add('hover');
-                this.activeButton.closest('.row').classList.add('hover');
+            const rowEl = this.activeButton.closest('[data-item-id]');
+            if (rowEl) {
+                this.hoveredRowId = rowEl.getAttribute('data-item-id');
             }
 
             if (Array.isArray(this.activePopover.querySelectorAll('dbp-button'))) {
@@ -525,9 +553,7 @@ export class GroupManage extends AuthMixin(
         // @ts-ignore
         if (event.newState === 'closed') {
             this.activeButton.removeAttribute('disabled');
-            if (this.activeButton.closest('.row')) {
-                this.activeButton.closest('.row').classList.remove('hover');
-            }
+            this.hoveredRowId = null;
             this.activeButton = null;
 
             this.activePopover.querySelectorAll('dbp-button').forEach((popoverButton) => {
@@ -1067,7 +1093,7 @@ export class GroupManage extends AuthMixin(
                     <header class="dialog-header">
                         <h3 id="add-group-member-dialog-title" tabindex="1">
                             ${i18n.t('group-manage.assign-to-group-modal-title')}
-                            ${this.targetGroup?.name ? this.targetGroup.name : null}
+                            ${this.targetGroup?.name ? `"${this.targetGroup.name}"` : null}
                         </h3>
                         <dbp-icon
                             name="close"
@@ -1164,109 +1190,97 @@ export class GroupManage extends AuthMixin(
         if (this.query && this.query.length >= 3) {
             this.searchIsActive = true;
 
-            const groupNames = this._a('.group-name');
+            const matchingIds = this.findMatchingIds(this.query, this.authGroups);
 
-            const matchedGroups = Array.from(groupNames).filter((groupNameElement) => {
-                const hasText = Array.from(groupNameElement.childNodes).filter((child) => {
-                    return (
-                        child.nodeType === Node.TEXT_NODE &&
-                        child.nodeValue.trim().toLowerCase().match(this.query)
-                    );
-                });
-                return hasText.length > 0;
-            });
-
-            const unmatchedGroups = Array.from(groupNames).filter(
-                (element) => !matchedGroups.includes(element),
-            );
-
-            if (matchedGroups.length > 0) {
+            if (matchingIds.length > 0) {
                 this.searchNotFound = false;
 
-                // Remove found class from every items.
-                this._a('.group-name').forEach((name) => {
-                    if (name instanceof HTMLElement) {
-                        name.closest('.row').classList.remove('found');
+                const openGroupIds = new Set();
+                for (const id of matchingIds) {
+                    const ancestors = this.findAncestors(id, this.authGroups);
+                    if (ancestors) {
+                        for (const ancestorId of ancestors) {
+                            openGroupIds.add(ancestorId);
+                        }
                     }
-                });
+                }
 
-                unmatchedGroups.forEach((groupNotFind) => {
-                    // Travers up the DOM and CLOSE all parent groups.
-                    this.traversUntilRootGroup(groupNotFind, 'remove');
-                });
-
-                matchedGroups.forEach((groupFind) => {
-                    // Highlight found rows.
-                    if (groupFind instanceof HTMLElement) {
-                        groupFind.closest('.row').classList.add('found');
-                        // Travers up the DOM and OPEN all parent groups.
-                        this.traversUntilRootGroup(groupFind, 'add');
-                    }
-                });
+                this.foundRowIds = new Set(matchingIds);
+                this.openGroupIds = openGroupIds;
             } else {
-                // No results found.
                 this.searchNotFound = true;
-
-                this._a('.group-name').forEach((name) => {
-                    if (name instanceof HTMLElement) {
-                        name.closest('.row').classList.remove('found');
-                    }
-                });
-                this.collapseAllGroups();
+                this.foundRowIds = new Set();
+                this.openGroupIds = new Set();
             }
         } else {
             this.searchIsActive = false;
             this.searchNotFound = false;
-            // Remove highlights and collapse all groups.
-            this._a('.group-name').forEach((name) => {
-                if (name instanceof HTMLElement) {
-                    name.closest('.row').classList.remove('found');
-                    this.traversUntilRootGroup(name, 'remove');
-                }
-            });
-
-            this.collapseAllGroups();
+            this.foundRowIds = new Set();
+            this.openGroupIds = new Set();
         }
-    }
-
-    /**
-     *
-     * @param {Node} startElement
-     * @param {string} action
-     * @returns {Node | null}
-     */
-    traversUntilRootGroup(startElement, action) {
-        // .group-name
-        let currentElement = /** @type {HTMLElement}*/ (startElement);
-
-        while (currentElement) {
-            // End condition.
-            if (currentElement.closest('.row').classList.contains('root-row')) {
-                return currentElement;
-            }
-
-            // Travers up the DOM, open/close all parent groups and add/remove found-item classes.
-            /** @type {HTMLElement} */
-            const parentGroup = currentElement.parentElement.closest('.group-member-list');
-
-            if (action == 'add') {
-                parentGroup.classList.add('open');
-                if (currentElement.closest('.group-header')) {
-                    currentElement.closest('.group-header').classList.add('found-item');
-                }
-            } else {
-                parentGroup.classList.remove('open');
-                if (currentElement.closest('.group-header')) {
-                    currentElement.closest('.group-header').classList.remove('found-item');
-                }
-            }
-            currentElement = parentGroup;
-        }
-
-        return null;
     }
 
     /* utils */
+
+    /**
+     * Collect IDs of all groups/members that have children.
+     * @param {Array} groups
+     * @returns {Set<string>}
+     */
+    getAllGroupIds(groups) {
+        const ids = new Set();
+        for (const item of groups) {
+            const children = item.members || item.childGroup;
+            if (children && children.length > 0) {
+                ids.add(item.id);
+                for (const id of this.getAllGroupIds(children)) {
+                    ids.add(id);
+                }
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * Find all item IDs whose names match the search query.
+     * @param {string} query
+     * @param {Array} groups
+     * @returns {Array<string>}
+     */
+    findMatchingIds(query, groups) {
+        const ids = [];
+        for (const item of groups) {
+            if (item.name && item.name.toLowerCase().match(query)) {
+                ids.push(item.id);
+            }
+            const children = item.members || item.childGroup;
+            if (children) {
+                ids.push(...this.findMatchingIds(query, children));
+            }
+        }
+        return ids;
+    }
+
+    /**
+     * Find ancestor IDs for a given item ID in the group tree.
+     * @param {string} targetId
+     * @param {Array} groups
+     * @param {Array<string>} path
+     * @returns {Array<string> | null}
+     */
+    findAncestors(targetId, groups, path = []) {
+        for (const item of groups) {
+            if (item.id === targetId) {
+                return path;
+            }
+            const children = item.members || item.childGroup;
+            if (children) {
+                const result = this.findAncestors(targetId, children, [...path, item.id]);
+                if (result !== null) return result;
+            }
+        }
+        return null;
+    }
 
     formatGroupResource(resource) {
         return resource['name'];
@@ -1287,38 +1301,17 @@ export class GroupManage extends AuthMixin(
     }
 
     collapseAllGroups() {
-        this._a('.group-member-list').forEach((groupMember) => {
-            if (groupMember instanceof HTMLElement) {
-                groupMember.classList.remove('open');
-            }
-        });
+        this.openGroupIds = new Set();
     }
-
-    // expandAllGroups(event) {
-    //     this._a('.group-member-list').forEach((groupMember) => {
-    //         groupMember.classList.add('open');
-    //     });
-    // }
 
     /**
      * Toggle expand/collapse state for all groups.
      */
     expandCollapseAllGroups() {
         this.allGroupsExpanded = !this.allGroupsExpanded;
-
-        if (this.allGroupsExpanded) {
-            this._a('.group-member-list').forEach((groupMember) => {
-                if (groupMember instanceof HTMLElement) {
-                    groupMember.classList.add('open');
-                }
-            });
-        } else {
-            this._a('.group-member-list').forEach((groupMember) => {
-                if (groupMember instanceof HTMLElement) {
-                    groupMember.classList.remove('open');
-                }
-            });
-        }
+        this.openGroupIds = this.allGroupsExpanded
+            ? this.getAllGroupIds(this.authGroups)
+            : new Set();
     }
 
     /**
