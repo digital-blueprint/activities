@@ -255,11 +255,11 @@ export function getGroupManageCSS() {
 
         /* BUTTONS */
 
-        #list-group-button {
+        .list-group-button {
             --icon-transform: rotate(180deg);
         }
 
-        #open-create-group-button {
+        .open-create-group-button {
             --icon-transform: scale(1.3);
         }
 
@@ -349,6 +349,7 @@ export function getGroupManageCSS() {
             min-width: 500px;
             min-height: 300px;
         }
+
         dialog {
             background: var(--dbp-background);
             color: var(--dbp-content);
@@ -360,6 +361,7 @@ export function getGroupManageCSS() {
             grid-template-columns: 1fr;
             height: 100%;
         }
+
         ::backdrop {
             background: rgba(36, 32, 20, 0.5);
             backdrop-filter: blur(0.25rem);
@@ -371,10 +373,12 @@ export function getGroupManageCSS() {
             justify-content: space-between;
             padding: 0 0 16px 0;
         }
+
         dialog footer {
             display: flex;
             justify-content: flex-end;
         }
+
         dialog form {
             display: grid;
             grid-template-columns: 1fr;
@@ -400,22 +404,22 @@ export function getGroupManageCSS() {
             align-items: center;
         }
 
-        #add-group-member-form.form {
+        .add-group-member-form.form {
             display: grid;
             grid-template-columns: max-content 1fr;
             gap: 0.75em 1em;
         }
 
-        #add-group-member-form.form label {
+        .add-group-member-form.form label {
             white-space: nowrap;
         }
 
-        #add-group-member-form.form dbp-person-select {
+        .add-group-member-form.form dbp-person-select {
             display: block;
             min-width: 0;
         }
 
-        #add-group-member-form.form input[type='text'] {
+        .add-group-member-form.form input[type='text'] {
             box-sizing: border-box;
             width: 100%;
         }
@@ -477,7 +481,7 @@ export function getGroupManageCSS() {
             background: var(--dbp-background);
         }
 
-        #prevent-click-overlay {
+        .prevent-click-overlay {
             display: none;
             position: absolute;
             top: 0;
@@ -487,7 +491,7 @@ export function getGroupManageCSS() {
             background: transparent;
         }
 
-        #prevent-click-overlay.visible {
+        .prevent-click-overlay.visible {
             display: block;
         }
 

@@ -1076,7 +1076,7 @@ export class GroupManage extends AuthMixin(
                             }}"></dbp-icon>
                     </header>
                     <div class="content">
-                        <div id="add-group-member-form" class="form">
+                        <div id="add-group-member-form" class="add-group-member-form form">
                             <div class="person-select-row">
                                 <label for="person-to-add-selector">
                                     ${i18n.t('group-manage.person-label')}
@@ -1366,6 +1366,7 @@ export class GroupManage extends AuthMixin(
                         <div class="button-container">
                             <dbp-loading-button
                                 id="list-group-button"
+                                class="list-group-button"
                                 @click="${() => this.fetchGroupsButtonHandler()}"
                                 type="is-primary">
                                 <dbp-icon name="reload" aria-hidden="true"></dbp-icon>
@@ -1373,6 +1374,7 @@ export class GroupManage extends AuthMixin(
                             </dbp-loading-button>
                             <dbp-loading-button
                                 id="open-create-group-button"
+                                class="open-create-group-button"
                                 popovertarget="create-group-popover"
                                 @click="${(event) => this.openCreateGroupPopover(event)}"
                                 type="is-primary">
@@ -1431,7 +1433,9 @@ export class GroupManage extends AuthMixin(
                         </div>
                         <div
                             id="prevent-click-overlay"
-                            class="${classMap({visible: this.clickOverlayVisible})}"></div>
+                            class="prevent-click-overlay ${classMap({
+                                visible: this.clickOverlayVisible,
+                            })}"></div>
                     </div>
                     <p class="login-required ${classMap({hidden: showComponent})}">
                         ${i18n.t('group-manage.login-required')}
