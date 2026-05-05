@@ -975,6 +975,7 @@ export class GroupManage extends AuthMixin(
                                 class="create-group-button"
                                 @click="${this.createGroup}"
                                 type="is-primary">
+                                <dbp-icon name="plus" aria-hidden="true"></dbp-icon>
                                 ${i18n.t('group-manage.create-groups-button-text')}
                             </dbp-loading-button>
                         </div>
@@ -1028,13 +1029,17 @@ export class GroupManage extends AuthMixin(
                     <dbp-button
                         type="is-danger"
                         id="confirm-delete-button"
+                        class="confirm-delete-button"
                         @click="${() => this.deleteGroup()}">
+                        <dbp-icon name="trash" aria-hidden="true"></dbp-icon>
                         ${i18n.t('group-manage.yes-delete')}
                     </dbp-button>
                     <dbp-button
                         type="is-secondary"
                         id="cancel-delete-button"
+                        class="cancel-delete-button"
                         @click="${() => this.closeDeleteGroup()}">
+                        <dbp-icon name="close" aria-hidden="true"></dbp-icon>
                         ${i18n.t('group-manage.cancel')}
                     </dbp-button>
                 </div>
@@ -1061,13 +1066,17 @@ export class GroupManage extends AuthMixin(
                     <dbp-button
                         type="is-danger"
                         id="confirm-delete-member-button"
+                        class="confirm-delete-member-button"
                         @click="${(event) => this.deleteGroupMember(event)}">
+                        <dbp-icon name="trash" aria-hidden="true"></dbp-icon>
                         ${i18n.t('group-manage.yes-delete')}
                     </dbp-button>
                     <dbp-button
                         type="is-secondary"
                         id="cancel-delete-member-button"
+                        class="cancel-delete-member-button"
                         @click="${() => this.closeDeleteGroupMember()}">
+                        <dbp-icon name="close" aria-hidden="true"></dbp-icon>
                         ${i18n.t('group-manage.cancel')}
                     </dbp-button>
                 </div>
@@ -1131,10 +1140,20 @@ export class GroupManage extends AuthMixin(
                     <footer>
                         <dbp-loading-button
                             id="add-to-group-button"
+                            class="add-to-group-button"
                             @click="${(event) => this.addGroupMemberButtonHandler(event)}"
                             type="is-primary">
+                            <dbp-icon name="users" aria-hidden="true"></dbp-icon>
                             ${i18n.t('group-manage.add-to-groups-button-text')}
                         </dbp-loading-button>
+                        <dbp-button
+                            type="is-secondary"
+                            id="cancel-add-to-group-button"
+                            class="cancel-add-to-group-button"
+                            @click="${() => this.closeAddGroupMemberPopover()}">
+                            <dbp-icon name="close" aria-hidden="true"></dbp-icon>
+                            ${i18n.t('group-manage.cancel')}
+                        </dbp-button>
                     </footer>
                     <dbp-inline-notification
                         id="notification-no-source-error"

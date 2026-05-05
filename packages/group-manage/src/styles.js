@@ -255,19 +255,31 @@ export function getGroupManageCSS() {
 
         /* BUTTONS */
 
+        dbp-button,
+        dbp-loading-button {
+            --dbp-button-icon-margin-right: 0.5em;
+        }
+
+        .cancel-add-to-group-button,
+        .cancel-delete-button,
+        .cancel-delete-member-button,
         .list-group-button {
             --icon-transform: rotate(180deg);
         }
 
+        .create-group-button,
         .open-create-group-button {
             --icon-transform: scale(1.3);
         }
 
+        .confirm-delete-button,
+        .confirm-delete-member-button,
+        .add-to-group-button,
         .delete-group-member-button,
         .add-group-member-button,
         .delete-group-button {
             --icon-transform: scale(1.4);
-            --display-button-lable: none;
+            --display-button-label: none;
         }
 
         .button-container {
@@ -427,6 +439,7 @@ export function getGroupManageCSS() {
         .add-group-member-popover footer {
             display: flex;
             justify-content: flex-end;
+            gap: var(--space-half);
             padding-top: 2em;
         }
 
@@ -465,7 +478,7 @@ export function getGroupManageCSS() {
             display: flex;
             gap: var(--space);
             justify-content: center;
-            align-items: center;
+            align-items: flex-end;
         }
 
         .arrow {
