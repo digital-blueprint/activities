@@ -487,6 +487,10 @@ export function getGroupManageCSS() {
             background: transparent;
         }
 
+        #prevent-click-overlay.visible {
+            display: block;
+        }
+
         @media screen and (max-width: 650px) {
             .add-group-member-popover {
                 min-width: unset;

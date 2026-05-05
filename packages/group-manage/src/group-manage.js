@@ -66,6 +66,18 @@ export class GroupManage extends AuthMixin(
         this.query = null;
         /** @type {boolean} */
         this.searchIsActive = false;
+        /** @type {boolean} */
+        this.searchNotFound = false;
+        /** @type {boolean} */
+        this.showNoSourceError = false;
+        /** @type {boolean} */
+        this.showNoTargetError = false;
+        /** @type {boolean} */
+        this.clickOverlayVisible = false;
+        /** @type {boolean} */
+        this.allGroupsExpanded = false;
+        /** @type {boolean} */
+        this.groupNameInputValid = false;
     }
 
     static get scopedElements() {
@@ -90,6 +102,13 @@ export class GroupManage extends AuthMixin(
             activeItemName: {type: Array, attribute: false},
             query: {type: String, attribute: false},
             searchIsActive: {type: Boolean, attribute: false},
+            listIsLoaded: {type: Boolean, attribute: false},
+            searchNotFound: {type: Boolean, attribute: false},
+            showNoSourceError: {type: Boolean, attribute: false},
+            showNoTargetError: {type: Boolean, attribute: false},
+            clickOverlayVisible: {type: Boolean, attribute: false},
+            allGroupsExpanded: {type: Boolean, attribute: false},
+            groupNameInputValid: {type: Boolean, attribute: false},
         };
     }
 
@@ -487,7 +506,7 @@ export class GroupManage extends AuthMixin(
         // @ts-ignore
         if (event.newState === 'open') {
             console.log('popover opening');
-            this.enableClickOverlay();
+            this.clickOverlayVisible = true;
 
             if (this.activeButton.closest('.row')) {
                 // this.activeButton.closest('.group-header').classList.add('hover');
@@ -516,7 +535,7 @@ export class GroupManage extends AuthMixin(
             });
             this.activePopover = null;
 
-            this.disableClickOverlay();
+            this.clickOverlayVisible = false;
         }
     }
 
@@ -563,8 +582,6 @@ export class GroupManage extends AuthMixin(
             const groups = response['hydra:member'];
             if (Array.isArray(groups) && groups.length > 0) {
                 this.authGroups = await this.processAuthGroups(groups);
-                const groupListContainer = this._('.group-list-container');
-                groupListContainer.classList.add('visible');
                 this.listIsLoaded = true;
             } else {
                 this.authGroups = [];
@@ -775,9 +792,9 @@ export class GroupManage extends AuthMixin(
     // MARK: ADD GROUP MEMBER
     async addGroupMember() {
         if (!this.groupMember) {
-            this._('#notification-no-source-error').classList.add('show');
+            this.showNoSourceError = true;
             setTimeout(() => {
-                this._('#notification-no-source-error').classList.remove('show');
+                this.showNoSourceError = false;
             }, 3000);
             /**
              * @type {Button}
@@ -788,9 +805,9 @@ export class GroupManage extends AuthMixin(
         }
         if (!this.targetGroup) {
             // Never in use in normal case.
-            this._('#notification-no-target-error').classList.add('show');
+            this.showNoTargetError = true;
             setTimeout(() => {
-                this._('#notification-no-target-error').classList.remove('show');
+                this.showNoTargetError = false;
             }, 3000);
             return;
         }
@@ -913,9 +930,6 @@ export class GroupManage extends AuthMixin(
                                             event.code === 'NumpadEnter'
                                         ) {
                                             if (groupNameField.validity.valid) {
-                                                this._('#create-group-button').removeAttribute(
-                                                    'disabled',
-                                                );
                                                 this.createGroup();
                                             } else {
                                                 groupNameField.blur();
@@ -923,19 +937,14 @@ export class GroupManage extends AuthMixin(
                                         }
                                     }}"
                                     @input="${(event) => {
-                                        const groupNameField = event.target;
-                                        if (groupNameField.validity.valid) {
-                                            this._('#create-group-button').removeAttribute(
-                                                'disabled',
-                                            );
-                                        }
+                                        this.groupNameInputValid = event.target.validity.valid;
                                     }}" />
                                 <span class="form-error">
                                     ${i18n.t('group-manage.field-is-required')}
                                 </span>
                             </label>
                             <dbp-loading-button
-                                disabled
+                                ?disabled="${!this.groupNameInputValid}"
                                 id="create-group-button"
                                 class="create-group-button"
                                 @click="${this.createGroup}"
@@ -956,6 +965,8 @@ export class GroupManage extends AuthMixin(
      */
     openCreateGroupPopover(event) {
         if (!(event.target instanceof HTMLElement)) return;
+
+        this.groupNameInputValid = false;
 
         if (event.target.tagName === 'DBP-ICON') {
             this.activeButton = event.target.parentElement;
@@ -1101,11 +1112,13 @@ export class GroupManage extends AuthMixin(
                     </footer>
                     <dbp-inline-notification
                         id="notification-no-source-error"
+                        class="${classMap({show: this.showNoSourceError})}"
                         summary="Error"
                         body="You must select a source first."
                         type="danger"></dbp-inline-notification>
                     <dbp-inline-notification
                         id="notification-no-target-error"
+                        class="${classMap({show: this.showNoTargetError})}"
                         summary="Error"
                         body="You must select a target."
                         type="danger"></dbp-inline-notification>
@@ -1150,7 +1163,6 @@ export class GroupManage extends AuthMixin(
     searchGroups() {
         if (this.query && this.query.length >= 3) {
             this.searchIsActive = true;
-            this._('.search-container').classList.add('active');
 
             const groupNames = this._a('.group-name');
 
@@ -1169,7 +1181,7 @@ export class GroupManage extends AuthMixin(
             );
 
             if (matchedGroups.length > 0) {
-                this._('#group-search').classList.remove('not-found');
+                this.searchNotFound = false;
 
                 // Remove found class from every items.
                 this._a('.group-name').forEach((name) => {
@@ -1193,7 +1205,7 @@ export class GroupManage extends AuthMixin(
                 });
             } else {
                 // No results found.
-                this._('#group-search').classList.add('not-found');
+                this.searchNotFound = true;
 
                 this._a('.group-name').forEach((name) => {
                     if (name instanceof HTMLElement) {
@@ -1204,12 +1216,7 @@ export class GroupManage extends AuthMixin(
             }
         } else {
             this.searchIsActive = false;
-            if (this.query && this.query.length >= 3) {
-                this._('#group-search').classList.add('not-found');
-            } else {
-                this._('#group-search').classList.remove('not-found');
-                this._('.search-container').classList.remove('active');
-            }
+            this.searchNotFound = false;
             // Remove highlights and collapse all groups.
             this._a('.group-name').forEach((name) => {
                 if (name instanceof HTMLElement) {
@@ -1274,14 +1281,6 @@ export class GroupManage extends AuthMixin(
         return text;
     }
 
-    enableClickOverlay() {
-        this._('#prevent-click-overlay').style.display = 'block';
-    }
-
-    disableClickOverlay() {
-        this._('#prevent-click-overlay').style.display = 'none';
-    }
-
     resetSelectors() {
         this.personSelector.clear();
         this._('#user-id-input').value = '';
@@ -1302,31 +1301,24 @@ export class GroupManage extends AuthMixin(
     // }
 
     /**
-     *
-     * @param {Event} event
+     * Toggle expand/collapse state for all groups.
      */
-    expandCollapseAllGroups(event) {
-        const button = /** @type {HTMLElement} */ (event.target);
+    expandCollapseAllGroups() {
+        this.allGroupsExpanded = !this.allGroupsExpanded;
 
-        if (button.classList.contains('expanded')) {
-            button.setAttribute('aria-label', 'Expand all groups');
-            button.setAttribute('title', 'Expand all groups');
-            this._a('.group-member-list').forEach((groupMember) => {
-                if (groupMember instanceof HTMLElement) {
-                    groupMember.classList.remove('open');
-                }
-            });
-        } else {
-            button.setAttribute('aria-label', 'Collapse all groups');
-            button.setAttribute('title', 'Collapse all groups');
+        if (this.allGroupsExpanded) {
             this._a('.group-member-list').forEach((groupMember) => {
                 if (groupMember instanceof HTMLElement) {
                     groupMember.classList.add('open');
                 }
             });
+        } else {
+            this._a('.group-member-list').forEach((groupMember) => {
+                if (groupMember instanceof HTMLElement) {
+                    groupMember.classList.remove('open');
+                }
+            });
         }
-
-        button.classList.toggle('expanded');
     }
 
     /**
@@ -1388,12 +1380,21 @@ export class GroupManage extends AuthMixin(
                                 ${i18n.t('group-manage.create-groups-button-text')}
                             </dbp-loading-button>
                         </div>
-                        <div class="group-list-container">
+                        <div
+                            class="${classMap({
+                                'group-list-container': true,
+                                visible: this.listIsLoaded,
+                            })}">
                             <div class="list-header">
-                                <div class="search-container">
+                                <div
+                                    class="${classMap({
+                                        'search-container': true,
+                                        active: this.searchIsActive,
+                                    })}">
                                     <input
                                         type="text"
                                         id="group-search"
+                                        class="${classMap({'not-found': this.searchNotFound})}"
                                         placeholder="Search by name"
                                         autocomplete="off"
                                         spellcheck="false"
@@ -1405,10 +1406,14 @@ export class GroupManage extends AuthMixin(
                                     id="expand-collapse-all"
                                     class="expand-collapse-button"
                                     icon-name="chevron-down"
-                                    title="Expand All"
-                                    aria-label="Expand All"
-                                    @click="${(event) =>
-                                        this.expandCollapseAllGroups(event)}"></dbp-icon-button>
+                                    title="${this.allGroupsExpanded
+                                        ? 'Collapse All'
+                                        : 'Expand All'}"
+                                    aria-label="${this.allGroupsExpanded
+                                        ? 'Collapse all groups'
+                                        : 'Expand all groups'}"
+                                    @click="${() =>
+                                        this.expandCollapseAllGroups()}"></dbp-icon-button>
                             </div>
                             <div
                                 class="group-list ${classMap({
@@ -1424,7 +1429,9 @@ export class GroupManage extends AuthMixin(
                             ${this.renderGroupMemberDeleteConfirmationPopover()}
                             ${this.renderCreateGroupPopover()} ${this.renderAddGroupMemberPopover()}
                         </div>
-                        <div id="prevent-click-overlay"></div>
+                        <div
+                            id="prevent-click-overlay"
+                            class="${classMap({visible: this.clickOverlayVisible})}"></div>
                     </div>
                     <p class="login-required ${classMap({hidden: showComponent})}">
                         ${i18n.t('group-manage.login-required')}
