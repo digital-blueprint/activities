@@ -3,12 +3,12 @@
     "module_src": "dbp-prepare-media-transparency-report.js",
     "routing_name": "prepare-media-transparency-report",
     "name": {
-        "de": "Prepare Media Transparency Report",
-        "en": "Medientransparenzmeldung Vorbereiten"
+        "de": "Medientransparenzmeldung Vorbereiten",
+        "en": "Prepare Media Transparency Report"
     },
     "short_name": {
-        "de": "Prepare Media Transparency Report",
-        "en": "Medientransparenzmeldung Vorbereiten"
+        "de": "Medientransparenzmeldung Vorbereiten",
+        "en": "Prepare Media Transparency Report"
     },
     "description": {
         "de": "",
