@@ -3,8 +3,6 @@ import {css, html} from 'lit';
 import {ScopedElementsMixin} from '@dbp-toolkit/common';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {Icon} from '@dbp-toolkit/common';
-import metadata from './dbp-clipboard-management.metadata.json';
-import {Activity} from './activity.js';
 import {Clipboard} from '@dbp-toolkit/file-handling/src/clipboard';
 import {AdapterLitElement} from '@dbp-toolkit/common';
 
@@ -106,11 +104,8 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
     }
 
     render() {
-        const activity = new Activity(metadata);
         const i18n = this._i18n;
         return html`
-            <h2>${activity.getName(this.lang)}</h2>
-            <p class="subheadline">${activity.getDescription(this.lang)}</p>
             <p>
                 ${i18n.t('clipboard-manual')}
                 <br />

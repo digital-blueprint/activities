@@ -1,6 +1,6 @@
 import {css, html} from 'lit';
 import {ScopedElementsMixin} from '@dbp-toolkit/common';
-import {GroupManageDemo} from '../../packages/group-manage/src/dbp-group-manage-demo.js';
+import {GroupManage} from '../../packages/group-manage/src/index.js';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import * as demoStyles from './styles';
@@ -15,7 +15,7 @@ export class DbpGroupManagementDemoActivity extends ScopedElementsMixin(AdapterL
 
     static get scopedElements() {
         return {
-            'dbp-group-manage-demo': GroupManageDemo,
+            'dbp-group-manage': GroupManage,
         };
     }
 
@@ -56,10 +56,11 @@ export class DbpGroupManagementDemoActivity extends ScopedElementsMixin(AdapterL
 
     render() {
         return html`
-            <dbp-group-manage-demo
+            <dbp-group-manage
                 id="group-manage-demo"
                 lang="${this.lang}"
-                entry-point-url="${this.entryPointUrl}"></dbp-group-manage-demo>
+                subscribe="auth"
+                entry-point-url="${this.entryPointUrl}"></dbp-group-manage>
         `;
     }
 }

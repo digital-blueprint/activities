@@ -3,12 +3,12 @@
     "module_src": "dbp-group-manage-demo-activity.js",
     "routing_name": "group-manage",
     "name": {
-        "de": "Gruppe verwalten",
-        "en": "Group manage"
+        "de": "Gruppen verwalten",
+        "en": "Manage groups"
     },
     "short_name": {
-        "de": "Gruppe verwalten",
-        "en": "Group manage"
+        "de": "Gruppen verwalten",
+        "en": "Manage groups"
     },
     "description": {
         "de": "Frontend zur Erstellung und Verwaltung von Benutzergruppen für das Dbp Relay Authorization Bundle.",
