@@ -7,7 +7,6 @@ import {Icon, Button, IconButton, LoadingButton, InlineNotification} from '@dbp-
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {getGroupManageCSS} from './styles.js';
 import {send as notify} from '@dbp-toolkit/common/notification';
-import {PersonSelect} from '@dbp-toolkit/person-select';
 import {ResourceSelect} from '@dbp-toolkit/resource-select';
 import {getPersonFullName, getIdFromIri} from './utils.js';
 import {GroupManageApi, ApiError} from './api.js';
@@ -49,7 +48,7 @@ export class GroupManage extends AuthMixin(
         /** @type {HTMLElement | null} */
         this.addGroupMemberPopover = null;
 
-        /** @type {PersonSelect} */
+        /** @type {ResourceSelect} */
         this.personSelector = null;
         /** @type {Button | null} */
         this.addToGroupButton = null;
@@ -92,7 +91,6 @@ export class GroupManage extends AuthMixin(
             'dbp-button': Button,
             'dbp-icon-button': IconButton,
             'dbp-loading-button': LoadingButton,
-            'dbp-person-select': PersonSelect,
             'dbp-resource-select': ResourceSelect,
             'dbp-inline-notification': InlineNotification,
         };
@@ -893,7 +891,7 @@ export class GroupManage extends AuthMixin(
      */
     onUserIdInput(event) {
         const value = /** @type {HTMLInputElement} */ (event.target).value.trim();
-        this.personSelector.clear();
+        this.personSelector.reset();
         if (value) {
             this.groupMember = {type: 'person', identifier: value, name: value};
         } else {
@@ -902,7 +900,7 @@ export class GroupManage extends AuthMixin(
     }
 
     /**
-     * Set groupMember object on person-selector change.
+     * Set groupMember object on person selector change.
      * @param {CustomEvent} event
      */
     async onSourceSelectorChange(event) {
@@ -1112,19 +1110,22 @@ export class GroupManage extends AuthMixin(
                     </header>
                     <div class="content">
                         <div id="add-group-member-form" class="add-group-member-form form">
-                            <div class="person-select-row">
+                            <div class="person-resource-select-row">
                                 <label for="person-to-add-selector">
                                     ${i18n.t('group-manage.person-label')}
                                 </label>
-                                <dbp-person-select
+                                <dbp-resource-select
                                     id="person-to-add-selector"
                                     subscribe="auth"
                                     entry-point-url="${this.entryPointUrl}"
+                                    resource-path="/base/people"
+                                    fetch-mode="search"
                                     lang="${this.lang}"
-                                    .formatPerson="${this.formatUserResource}"
-                                    .localDataAttributes="${['email']}"
+                                    .formatResource="${this.formatUserResource}"
+                                    .getSearchQueryParameters="${this.getUserSearchQueryParameters}"
+                                    .getItemQueryParameters="${this.getUserItemQueryParameters}"
                                     @change="${(event) =>
-                                        this.onSourceSelectorChange(event)}"></dbp-person-select>
+                                        this.onSourceSelectorChange(event)}"></dbp-resource-select>
                             </div>
                             <div class="user-id-row">
                                 <label for="user-id-input">
@@ -1314,8 +1315,28 @@ export class GroupManage extends AuthMixin(
         return text;
     }
 
+    /**
+     * @param {object} select
+     * @param {string} searchTerm
+     * @returns {object}
+     */
+    getUserSearchQueryParameters(select, searchTerm) {
+        return {
+            includeLocal: 'email',
+            search: searchTerm.trim(),
+            sort: 'familyName',
+        };
+    }
+
+    /**
+     * @returns {object}
+     */
+    getUserItemQueryParameters() {
+        return {includeLocal: 'email'};
+    }
+
     resetSelectors() {
-        this.personSelector.clear();
+        this.personSelector.reset();
         this._('#user-id-input').value = '';
     }
 

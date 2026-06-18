@@ -408,7 +408,7 @@ export function getGroupManageCSS() {
             gap: 2em;
         }
 
-        .person-select-row,
+        .person-resource-select-row,
         .user-id-row {
             display: grid;
             grid-template-columns: subgrid;
@@ -426,7 +426,7 @@ export function getGroupManageCSS() {
             white-space: nowrap;
         }
 
-        .add-group-member-form.form dbp-person-select {
+        .add-group-member-form.form dbp-resource-select {
             display: block;
             min-width: 0;
         }
