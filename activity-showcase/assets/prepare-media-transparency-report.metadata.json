@@ -4,15 +4,15 @@
     "routing_name": "prepare-media-transparency-report",
     "name": {
         "de": "Medientransparenzmeldung Vorbereiten",
-        "en": "Prepare Media Transparency Report"
+        "en": "Prepare media transparency report"
     },
     "short_name": {
         "de": "Medientransparenzmeldung Vorbereiten",
-        "en": "Prepare Media Transparency Report"
+        "en": "Prepare media transparency report"
     },
     "description": {
-        "de": "",
-        "en": ""
+        "de": "CSV-Bericht für das RTR-Portal generieren",
+        "en": "Generate CSV report for RTR portal"
     },
     "subscribe": "lang,auth,entry-point-url"
 }

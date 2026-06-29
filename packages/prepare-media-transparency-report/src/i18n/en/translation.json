@@ -1,1 +1,52 @@
-{}
+{
+    "prepare-media-transparency-report": {
+        "buttons": {
+            "button-text-download-csv": "Download CSV",
+            "button-text-download-sujet-files": "Download sujets",
+            "button-text-import-csv": "Upload RTR CSV"
+        },
+        "dropdowns": {
+            "category-name-all": "All",
+            "category-name-online": "Online",
+            "category-name-out-of-home": "Out of home",
+            "category-name-print": "Print",
+            "category-name-radio": "Radio",
+            "category-name-tv": "TV",
+            "label-category": "Category",
+            "label-deadline-period": "Period"
+        },
+        "error-login-link": "Login",
+        "error-login-message": "Please log in to use this functionality.",
+        "notifications": {
+            "description-api-error": "Failed to fetch the submissions from the API.",
+            "description-csv-header-error": "The CSV file doesn't have the all required fields.",
+            "description-csv-parse-error": "The uploaded file doesn't appear to be a valid CSV file. Please check the file and try again.",
+            "description-export-partial-success": "Exported {{filteredSubmissionCount}} submissions, but {{missingSujetLinksCount}} are missing a sujet link.",
+            "description-export-success": "Successfully exported {{filteredSubmissionCount}} submissions with sujet links.",
+            "description-no-csv-to-export-error": "No CSV file to export. You have to upload the CSV file from RTR.",
+            "description-no-files-error": "There are no files for the period \"{{period}}\" in category \"{{category}}\".",
+            "description-no-submissions-error": "There are no submissions returned.",
+            "title-error": "Error",
+            "title-success": "Success",
+            "title-warning": "Warning"
+        },
+        "report-status": {
+            "loaded-file": "Loaded RTR file: {{fileName}}",
+            "missing-links_one": "{{count}} submission is missing a sujet link",
+            "missing-links_other": "{{count}} submissions are missing a sujet link",
+            "ready": "The report is ready to download.",
+            "rows-found_one": "Found {{count}} row in the RTR CSV file",
+            "rows-found_other": "Found {{count}} rows in the RTR CSV file",
+            "submissions-found_one": "{{count}} submission matches the category \"{{category}}\" and period \"{{period}}\"",
+            "submissions-found_other": "{{count}} submissions match the category \"{{category}}\" and period \"{{period}}\""
+        },
+        "section-title": {
+            "download-sujet": "Downloading the sujets",
+            "generate-report": "Generate Media transparency report"
+        },
+        "sujet-status": {
+            "files-exported_one": "{{count}} file exported.",
+            "files-exported_other": "{{count}} files exported."
+        }
+    }
+}

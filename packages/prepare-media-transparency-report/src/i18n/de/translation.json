@@ -1,1 +1,52 @@
-{}
+{
+    "prepare-media-transparency-report": {
+        "buttons": {
+            "button-text-download-csv": "CSV herunterladen",
+            "button-text-download-sujet-files": "Sujets herunterladen",
+            "button-text-import-csv": "RTR CSV hochladen"
+        },
+        "dropdowns": {
+            "category-name-all": "Alle",
+            "category-name-online": "Online",
+            "category-name-out-of-home": "Out of Home",
+            "category-name-print": "Print",
+            "category-name-radio": "Hörfunk",
+            "category-name-tv": "Fernsehen",
+            "label-category": "Kategorie",
+            "label-deadline-period": "Zeitraum"
+        },
+        "error-login-link": "Anmelden",
+        "error-login-message": "Bitte melden Sie sich an, um diese Funktion nutzen zu können.",
+        "notifications": {
+            "description-api-error": "Die Einreichungen konnten nicht von der API abgerufen werden.",
+            "description-csv-header-error": "Die CSV-Datei enthält nicht alle erforderlichen Felder.",
+            "description-csv-parse-error": "Die hochgeladene CSV-Datei konnte nicht analysiert werden.",
+            "description-export-partial-success": "{{filteredSubmissionCount}} Einreichungen exportiert, aber bei {{missingSujetLinksCount}} fehlt ein Sujet-Link.",
+            "description-export-success": "{{filteredSubmissionCount}} Einreichungen mit Sujet-Links erfolgreich exportiert.",
+            "description-no-csv-to-export-error": "Keine CSV-Datei zum Exportieren vorhanden. Sie müssen zuerst die CSV-Datei von der RTR hochladen.",
+            "description-no-files-error": "Es gibt keine Dateien für den Zeitraum \"{{period}}\" in der Kategorie \"{{category}}\".",
+            "description-no-submissions-error": "Es wurden keine Einreichungen zurückgegeben.",
+            "title-error": "Fehler",
+            "title-success": "Erfolg",
+            "title-warning": "Warnung"
+        },
+        "report-status": {
+            "loaded-file": "Geladene RTR-Datei: {{fileName}}",
+            "missing-links_one": "Bei {{count}} Einreichung fehlt ein Sujet-Link",
+            "missing-links_other": "Bei {{count}} Einreichungen fehlt ein Sujet-Link",
+            "ready": "Der Bericht steht zum Herunterladen bereit.",
+            "rows-found_one": "{{count}} Zeile in der RTR-CSV-Datei gefunden",
+            "rows-found_other": "{{count}} Zeilen in der RTR-CSV-Datei gefunden",
+            "submissions-found_one": "{{count}} Einreichung entspricht der Kategorie \"{{category}}\" und dem Zeitraum \"{{period}}\"",
+            "submissions-found_other": "{{count}} Einreichungen entsprechen der Kategorie \"{{category}}\" und dem Zeitraum \"{{period}}\""
+        },
+        "section-title": {
+            "download-sujet": "Sujets herunterladen",
+            "generate-report": "Medientransparenzbericht erstellen"
+        },
+        "sujet-status": {
+            "files-exported_one": "{{count}} Datei exportiert.",
+            "files-exported_other": "{{count}} Dateien exportiert."
+        }
+    }
+}
