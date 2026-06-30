@@ -28,6 +28,8 @@ export function getMtReportCSS() {
 
         .report-period-section {
             margin-bottom: 1em;
+            background: var(--dbp-selected);
+            padding: 1em;
         }
 
         label {
@@ -96,7 +98,7 @@ export function getMtReportCSS() {
 
         select.category-selector {
             background-size: 0.75em;
-            background: none;
+            background: var(--dbp-background);
             height: 2em;
             width: 7em;
             padding: 0 1.5em 0 0.5em;
@@ -122,6 +124,11 @@ export function getMtReportCSS() {
         select option {
             background: var(--dbp-background);
             color: var(--dbp-content);
+        }
+
+        .selected-submission-count {
+            line-height: 2em;
+            display: inline-block;
         }
 
         .button-container {
@@ -195,6 +202,11 @@ export function getMtReportCSS() {
         @media screen and (max-width: 480px) {
             .selector-container-wrapper {
                 flex-wrap: wrap;
+            }
+
+            .button-container.button-container--export-csv {
+                flex-direction: column;
+                align-items: flex-start;
             }
 
             .selector-container label {

@@ -43,8 +43,6 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         this.reportCategory = '_all';
         /** @type {string} */
         this.reportPeriod = initialSelectedPeriod();
-        /** @type {Array<Submission>} */
-        this.submissions = [];
         /** @type {Array<DownloadableFile>} */
         this.sujetFilesToDownload = [];
         /** @type {boolean} */
@@ -62,7 +60,9 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         /** @type {number} */
         this.parsedCSVRowCount = 0;
         /** @type {number} */
-        this.filteredSubmissionCount = 0;
+        this.sujetSubmissionCount = 0;
+        /** @type {number} */
+        this.reportSubmissionCount = 0;
         /** @type {boolean} */
         this.reportIsComplete = false;
         /** @type {File|null} */
@@ -92,7 +92,8 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
             sujetStatusIsWarning: {type: Boolean, attribute: false},
             hasReportToExport: {type: Boolean, attribute: false},
             parsedCSVRowCount: {type: Number, attribute: false},
-            filteredSubmissionCount: {type: Number, attribute: false},
+            sujetSubmissionCount: {type: Number, attribute: false},
+            reportSubmissionCount: {type: Number, attribute: false},
             reportIsComplete: {type: Boolean, attribute: false},
             missingSujetLinksCount: {type: Number, attribute: false},
             importedRTRCSVFile: {type: Object, attribute: false},
@@ -109,7 +110,75 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         };
     }
 
+    async updated(changedProperties) {
+        super.updated(changedProperties);
+
+        if (!this.isLoggedIn()) {
+            return;
+        }
+
+        // Recompute the sujet section count when auth becomes available or the
+        // sujet selection changes.
+        if (
+            changedProperties.has('auth') ||
+            changedProperties.has('sujetCategory') ||
+            changedProperties.has('sujetPeriod')
+        ) {
+            this.updateSubmissionCount('download');
+        }
+
+        // Recompute the report section count when auth becomes available or the
+        // report selection changes. When a CSV has been imported the count is
+        // (re)computed by enrichReportWithSujetLinks instead, so skip it here.
+        if (
+            (changedProperties.has('auth') ||
+                changedProperties.has('reportCategory') ||
+                changedProperties.has('reportPeriod')) &&
+            !this.importedRTRCSVFile
+        ) {
+            this.updateSubmissionCount('report');
+        }
+    }
+
     /* 1. DOWNLOAD SUJET FILES */
+
+    /**
+     * Fetch submissions and update the filtered submission count for the given
+     * section, keyed on that section's own category/period selection.
+     * @param {'download'|'report'} section
+     */
+    async updateSubmissionCount(section) {
+        // Get submissions from the API.
+        /** @type {Array<Submission>} */
+        let submissions;
+        try {
+            submissions = await this.getSubmissions();
+        } catch (error) {
+            console.error('Error fetching submissions:', error);
+            sendNotification({
+                summary: this._i18n.t(
+                    'prepare-media-transparency-report.notifications.title-error',
+                ),
+                body: this._i18n.t(
+                    'prepare-media-transparency-report.notifications.description-api-error',
+                ),
+                type: 'danger',
+                timeout: 0,
+            });
+            return;
+        }
+
+        const category = section === 'report' ? this.reportCategory : this.sujetCategory;
+        const period = section === 'report' ? this.reportPeriod : this.sujetPeriod;
+
+        const filteredSubmissions = filterSubmissions(submissions, category, period);
+
+        if (section === 'report') {
+            this.reportSubmissionCount = filteredSubmissions.length;
+        } else {
+            this.sujetSubmissionCount = filteredSubmissions.length;
+        }
+    }
 
     /**
      * Handle the download of sujet files for the selected category and reporting period.
@@ -163,8 +232,10 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         );
 
         // Get submissions from the API
+        /** @type {Array<Submission>} */
+        let submissions;
         try {
-            this.submissions = await this.getSubmissions();
+            submissions = await this.getSubmissions();
         } catch (error) {
             console.error('Error fetching submissions:', error);
             // Reflect the failure inline (consistent with the no-submissions /
@@ -185,7 +256,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
             });
             return [];
         }
-        if (this.submissions.length === 0) {
+        if (submissions.length === 0) {
             this.sujetStatusIsWarning = true;
             this.sujetStatusMessage = this._i18n.t(
                 'prepare-media-transparency-report.notifications.description-no-submissions-error',
@@ -194,7 +265,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         }
 
         const filteredSubmissions = filterSubmissions(
-            this.submissions,
+            submissions,
             this.sujetCategory,
             this.sujetPeriod,
         );
@@ -353,7 +424,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         this.hasReportToExport = false;
         this.reportIsComplete = false;
         this.parsedCSVRowCount = 0;
-        this.filteredSubmissionCount = 0;
+        this.reportSubmissionCount = 0;
         this.missingSujetLinksCount = 0;
     }
 
@@ -409,9 +480,10 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         const rtrUrlBySubmissionId = buildSujetLinkLookup(parsedRTRCSV);
 
         // Get submissions from the API.
-        this.submissions = [];
+        /** @type {Array<Submission>} */
+        let submissions;
         try {
-            this.submissions = await this.getSubmissions();
+            submissions = await this.getSubmissions();
         } catch (error) {
             console.error('Error fetching submissions:', error);
             sendNotification({
@@ -429,13 +501,13 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
 
         // Filter submissions by the report section's category and period.
         const filteredSubmissions = filterSubmissions(
-            this.submissions,
+            submissions,
             this.reportCategory,
             this.reportPeriod,
         );
-        this.filteredSubmissionCount = filteredSubmissions.length;
+        this.reportSubmissionCount = filteredSubmissions.length;
 
-        if (this.filteredSubmissionCount === 0) {
+        if (this.reportSubmissionCount === 0) {
             // No submissions for the current selection. Reflect this in the inline
             // report status only (no toast) and disable the export.
             this.csvFilesToExport = [];
@@ -554,7 +626,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                 body: this._i18n.t(
                     'prepare-media-transparency-report.notifications.description-export-success',
                     {
-                        filteredSubmissionCount: this.filteredSubmissionCount,
+                        filteredSubmissionCount: this.reportSubmissionCount,
                         interpolation: {escapeValue: false},
                     },
                 ),
@@ -569,7 +641,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                 body: this._i18n.t(
                     'prepare-media-transparency-report.notifications.description-export-partial-success',
                     {
-                        filteredSubmissionCount: this.filteredSubmissionCount,
+                        filteredSubmissionCount: this.reportSubmissionCount,
                         missingSujetLinksCount: this.missingSujetLinksCount,
                         interpolation: {escapeValue: false},
                     },
@@ -619,6 +691,8 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
             if (this.importedRTRCSVFile) {
                 await this.enrichReportWithSujetLinks(this.importedRTRCSVFile);
             }
+            // Otherwise the count is refreshed by updated() reacting to the
+            // reportCategory change.
         } else {
             this.sujetCategory = value;
         }
@@ -651,6 +725,9 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         const i18n = this._i18n;
         const selectedCategory = section === 'report' ? this.reportCategory : this.sujetCategory;
         const selectedPeriod = section === 'report' ? this.reportPeriod : this.sujetPeriod;
+
+        const submissionCount =
+            section === 'report' ? this.reportSubmissionCount : this.sujetSubmissionCount;
 
         return html`
             <section class="report-period-section">
@@ -708,6 +785,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                             })}
                         </select>
                     </div>
+                    <span class="selected-submission-count">${submissionCount} submissions</span>
                 </div>
             </section>
         `;
@@ -805,9 +883,9 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                     }),
                 )}
                 ${this.renderStatusLine(
-                    this.filteredSubmissionCount > 0,
+                    this.reportSubmissionCount > 0,
                     i18n.t('prepare-media-transparency-report.report-status.submissions-found', {
-                        count: this.filteredSubmissionCount,
+                        count: this.reportSubmissionCount,
                         category: categoryLabel,
                         period: this.reportPeriod,
                         interpolation: {escapeValue: false},
@@ -913,6 +991,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                             </div>
                         </dbp-translated>
                     </div>
+
                     <div class="button-container button-container--download-sujet">
                         <dbp-button
                             ${ref(this.downloadSujetButtonRef)}
@@ -925,8 +1004,9 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                                 'prepare-media-transparency-report.buttons.button-text-download-sujet-files',
                             )}
                         </dbp-button>
-                        ${this.renderSujetStatus()}
                     </div>
+
+                    ${this.renderSujetStatus()}
 
                     <dbp-file-sink
                         ${ref(this.sujetExportFileSinkRef)}
@@ -995,35 +1075,33 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                         </dbp-translated>
                     </div>
                     <div class="button-container button-container--export-csv">
-                        <div>
-                            <dbp-button
-                                ${ref(this.importCSVButtonRef)}
-                                id="import-csv-button"
-                                class="import-csv-button"
-                                @click="${() => this.openFileSourceToImportCSV()}"
-                                type="is-primary">
-                                <dbp-icon name="exit-up" aria-hidden="true"></dbp-icon>
-                                ${i18n.t(
-                                    'prepare-media-transparency-report.buttons.button-text-import-csv',
-                                )}
-                            </dbp-button>
+                        <dbp-button
+                            ${ref(this.importCSVButtonRef)}
+                            id="import-csv-button"
+                            class="import-csv-button"
+                            @click="${() => this.openFileSourceToImportCSV()}"
+                            type="is-primary">
+                            <dbp-icon name="exit-up" aria-hidden="true"></dbp-icon>
+                            ${i18n.t(
+                                'prepare-media-transparency-report.buttons.button-text-import-csv',
+                            )}
+                        </dbp-button>
 
-                            <dbp-button
-                                ${ref(this.exportCSVButtonRef)}
-                                id="export-csv-button"
-                                class="export-csv-button"
-                                ?disabled=${!this.hasReportToExport}
-                                @click="${() => this.handleExportReportAsCSV()}"
-                                type="is-secondary">
-                                <dbp-icon name="download" aria-hidden="true"></dbp-icon>
-                                ${i18n.t(
-                                    'prepare-media-transparency-report.buttons.button-text-download-csv',
-                                )}
-                            </dbp-button>
-                        </div>
-
-                        ${this.renderReportStatus()}
+                        <dbp-button
+                            ${ref(this.exportCSVButtonRef)}
+                            id="export-csv-button"
+                            class="export-csv-button"
+                            ?disabled=${!this.hasReportToExport}
+                            @click="${() => this.handleExportReportAsCSV()}"
+                            type="is-secondary">
+                            <dbp-icon name="download" aria-hidden="true"></dbp-icon>
+                            ${i18n.t(
+                                'prepare-media-transparency-report.buttons.button-text-download-csv',
+                            )}
+                        </dbp-button>
                     </div>
+
+                    ${this.renderReportStatus()}
 
                     <dbp-file-source
                         ${ref(this.csvImportFileSourceRef)}
