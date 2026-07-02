@@ -1,9 +1,9 @@
 {
     "prepare-media-transparency-report": {
         "buttons": {
-            "button-text-download-csv": "Download CSV",
+            "button-text-download-csv": "Download report",
             "button-text-download-sujet-files": "Download sujets",
-            "button-text-import-csv": "Upload RTR CSV"
+            "button-text-import-csv": "Upload subject links CSV"
         },
         "dropdowns": {
             "category-name-all": "All",
@@ -31,6 +31,8 @@
             "title-warning": "Warning"
         },
         "report-status": {
+            "entries-found_one": "{{count}} entry found",
+            "entries-found_other": "{{count}} entries found",
             "loaded-file": "Loaded RTR file: {{fileName}}",
             "missing-links_one": "{{count}} submission is missing a sujet link",
             "missing-links_other": "{{count}} submissions are missing a sujet link",
@@ -41,8 +43,8 @@
             "submissions-found_other": "{{count}} submissions match the category \"{{category}}\" and period \"{{period}}\""
         },
         "section-title": {
-            "download-sujet": "Downloading the sujets",
-            "generate-report": "Generate Media transparency report"
+            "download-sujet": "Download the sujets",
+            "generate-report": "Create the media transparency report"
         },
         "sujet-status": {
             "files-exported_one": "{{count}} file exported.",

@@ -77,7 +77,7 @@ export function getMtReportCSS() {
             margin-bottom: 1.5em;
         }
 
-        ul.instructions-list {
+        .instructions-list {
             margin: 1.5em 0;
             line-height: 1.5em;
         }
@@ -134,9 +134,6 @@ export function getMtReportCSS() {
         .button-container {
             display: flex;
             gap: 1em;
-        }
-
-        .button-container--download-sujet {
         }
 
         .export-sujet-status {
@@ -213,7 +210,7 @@ export function getMtReportCSS() {
                 width: 4em;
             }
 
-            ul.instructions-list {
+            .instructions-list {
                 padding-left: 1.25em;
             }
         }

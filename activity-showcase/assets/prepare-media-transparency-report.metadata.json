@@ -3,12 +3,12 @@
     "module_src": "dbp-prepare-media-transparency-report.js",
     "routing_name": "prepare-media-transparency-report",
     "name": {
-        "de": "Medientransparenzmeldung Vorbereiten",
-        "en": "Prepare media transparency report"
+        "de": "Medientransparenzmeldung vorbereiten",
+        "en": "Prepare the media transparency report"
     },
     "short_name": {
-        "de": "Medientransparenzmeldung Vorbereiten",
-        "en": "Prepare media transparency report"
+        "de": "Medientransparenzmeldung vorbereiten",
+        "en": "Prepare the media transparency report"
     },
     "description": {
         "de": "CSV-Bericht für das RTR-Portal generieren",

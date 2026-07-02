@@ -737,7 +737,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                             <p>Please select the category and period you would like to report.</p>
                         </div>
                         <div slot="de">
-                            <p>Bitte wählen Sie die Kategorie und den Zeitraum aus.</p>
+                            <p>Bitte wählen Sie die Kategorie und den Meldeperiode aus.</p>
                         </div>
                     </dbp-translated>
                 </div>
@@ -785,7 +785,11 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                             })}
                         </select>
                     </div>
-                    <span class="selected-submission-count">${submissionCount} submissions</span>
+                    <span class="selected-submission-count">
+                        ${i18n.t('prepare-media-transparency-report.report-status.entries-found', {
+                            count: submissionCount,
+                        })}
+                    </span>
                 </div>
             </section>
         `;
@@ -955,13 +959,13 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                     <div class="section-description">
                         <dbp-translated subscribe="lang">
                             <div slot="en">
-                                <ul class="instructions-list">
+                                <ol class="instructions-list">
                                     <li>
-                                        <b>Download the sujet files</b>
-                                        of the selected category and reporting period
+                                        Download the sujet files of the selected category and
+                                        reporting period.
                                     </li>
                                     <li>
-                                        proceed to the
+                                        Proceed to the
                                         <a
                                             href="https://egov.rtr.gv.at/auth/realms/RTR/protocol/openid-connect/auth?state=%2Fertr%2Fmedien%2Frtr_5%2FMediendienste.de.html&redirect_uri=https%3A%2F%2Fegov.rtr.gv.at%2Fportalauth%2Fcallback&scope=openid&response_type=code&client_id=mesh-portal"
                                             target="_blank">
@@ -969,25 +973,24 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                                         </a>
                                         to upload those files.
                                     </li>
-                                </ul>
+                                </ol>
                             </div>
                             <div slot="de">
-                                <ul class="instructions-list">
+                                <ol class="instructions-list">
                                     <li>
-                                        <b>Herunterladen der sujet-Dateien</b>
-                                        der ausgewählten Kategorie und des ausgewählten
-                                        Berichtszeitraums
+                                        Laden Sie die Sujet-Dateien der ausgewählten Kategorie und
+                                        Meldeperiode herunter.
                                     </li>
                                     <li>
-                                        anschließendes Hochladen in die
+                                        Laden Sie diese Dateien in die
                                         <a
                                             href="https://egov.rtr.gv.at/auth/realms/RTR/protocol/openid-connect/auth?state=%2Fertr%2Fmedien%2Frtr_5%2FMediendienste.de.html&redirect_uri=https%3A%2F%2Fegov.rtr.gv.at%2Fportalauth%2Fcallback&scope=openid&response_type=code&client_id=mesh-portal"
                                             target="_blank">
                                             RTR-Datenbank
                                         </a>
-                                        .
+                                        hoch.
                                     </li>
-                                </ul>
+                                </ol>
                             </div>
                         </dbp-translated>
                     </div>
@@ -1036,41 +1039,47 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                     <div class="section-description">
                         <dbp-translated subscribe="lang">
                             <div slot="en">
-                                <ul class="instructions-list">
+                                <ol class="instructions-list">
                                     <li>
-                                        After uploading the files to the RTR database, please
-                                        download the CSV file with the sujet links from there.
+                                        After you have uploaded the sujet files to the RTR database,
+                                        download the CSV file containing the sujet links from there.
                                     </li>
                                     <li>
-                                        <b>Upload that CSV file here</b>
-                                        to enrich your media transparency report with the sujet
-                                        links.
+                                        Upload this CSV file here to enrich your media transparency
+                                        report for the selected category and reporting period with
+                                        the sujet links.
                                     </li>
                                     <li>
-                                        The completed report will be exported for the selected
-                                        category and period as a CSV file.
+                                        Export the completed report for the selected category and
+                                        reporting period as a CSV file.
                                     </li>
-                                    <li>You can import it in RTR.</li>
-                                </ul>
+                                    <li>
+                                        Import this CSV file into the RTR database to complete the
+                                        report.
+                                    </li>
+                                </ol>
                             </div>
                             <div slot="de">
-                                <ul class="instructions-list">
+                                <ol class="instructions-list">
                                     <li>
-                                        Nachdem Sie die Dateien in die RTR-Datenbank hochgeladen
-                                        haben, laden Sie bitte die CSV-Datei mit den sujet-Links von
-                                        dort herunter.
+                                        Nach dem Hochladen der Sujet-Dateien in die RTR-Datenbank,
+                                        laden Sie die CSV-Datei mit den Sujet-Links von dort
+                                        herunter.
                                     </li>
                                     <li>
-                                        <b>Verwenden Sie diese CSV-Datei hier</b>
-                                        , um Ihren Bericht.
+                                        Laden Sie diese CSV-Datei hier hoch, um Ihren
+                                        Medientransparenzbericht für die ausgewählte Kategorie und
+                                        Meldeperiode mit den Sujet-Links anzureichern.
                                     </li>
                                     <li>
-                                        Sie können nun den abgeschlossenen Bericht für die
-                                        ausgewählte Kategorie und den Berichtszeitraum als CSV-Datei
-                                        exportieren
+                                        Exportieren Sie anschließend den abgeschlossenen Bericht für
+                                        die ausgewählte Kategorie und Meldeperiode als CSV-Datei.
                                     </li>
-                                    <li>Sie können in die RTR-Datenbank importieren.</li>
-                                </ul>
+                                    <li>
+                                        Importieren Sie diese CSV-Datei in die RTR-Datenbank, um die
+                                        Meldung abzuschließen.
+                                    </li>
+                                </ol>
                             </div>
                         </dbp-translated>
                     </div>
