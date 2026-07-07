@@ -73,12 +73,10 @@ export function parseCsvContent(csvContent) {
     // Check if the parsed CSV headers match the expected headers
     const parsedHeaders = parsedData.meta.fields || [];
 
-    if (
-        !(
-            parsedHeaders.length === EXPECTED_CSV_HEADERS.length &&
-            parsedHeaders.every((val, i) => val === EXPECTED_CSV_HEADERS[i])
-        )
-    ) {
+    if (!(
+        parsedHeaders.length === EXPECTED_CSV_HEADERS.length &&
+        parsedHeaders.every((val, i) => val === EXPECTED_CSV_HEADERS[i])
+    )) {
         throw new Error('description-csv-header-error');
     }
 

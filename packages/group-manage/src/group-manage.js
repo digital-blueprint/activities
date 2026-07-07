@@ -311,74 +311,94 @@ export class GroupManage extends AuthMixin(
                                 hover: this.hoveredRowId === item.id,
                             })}"
                             data-item-id="${item.id}">
-                            ${item.type === 'AuthorizationGroup'
-                                ? html`
-                                      <div
-                                          class="${classMap({
-                                              'group-header': firstIteration,
-                                              'group-header group-member': !firstIteration,
-                                              'found-item': this.foundRowIds.has(item.id),
-                                          })}"
-                                          style="--data-level:${level}">
-                                          <span
-                                              class="group-name ${item.cssClass}"
-                                              data-identifier=${item.id}
-                                              @click="${this.toggleGroupHeader}">
-                                              ${item.name}
-                                              ${item.memberCount
-                                                  ? html`
-                                                        <span class="member-count-badge">
-                                                            ${item.memberCount}
-                                                        </span>
-                                                    `
-                                                  : null}
-                                          </span>
-                                          <span class="group-controls">
-                                              ${this.renderDeleteGroupButton(item.id, item.name)}
-                                              ${this.renderAddGroupMemberButton(item.id, item.name)}
-                                          </span>
-                                      </div>
-                                      ${item.members
-                                          ? this.renderAuthGroups(item.members, level, item.id)
-                                          : ''}
-                                  `
-                                : html`
-                                      <div
-                                          class="${classMap({
-                                              'group-header group-member': !firstIteration,
-                                              'found-item': this.foundRowIds.has(item.id),
-                                          })}"
-                                          style="--data-level:${level}">
-                                          <span
-                                              class="group-name ${item.cssClass}"
-                                              data-identifier=${item.id}
-                                              @click="${this.toggleGroupHeader}">
-                                              ${item.name}
-                                              ${item.memberCount
-                                                  ? html`
-                                                        <span class="member-count-badge">
-                                                            ${item.memberCount}
-                                                        </span>
-                                                    `
-                                                  : null}
-                                          </span>
-                                          <span class="group-controls">
-                                              ${this.renderDeleteGroupMemberButton(
-                                                  item.id,
-                                                  item.name,
-                                              )}
-                                              ${item.itemType === 'groupMember'
-                                                  ? this.renderAddGroupMemberButton(
-                                                        item.rootId,
-                                                        item.name,
+                            ${
+                                item.type === 'AuthorizationGroup'
+                                    ? html`
+                                          <div
+                                              class="${classMap({
+                                                  'group-header': firstIteration,
+                                                  'group-header group-member': !firstIteration,
+                                                  'found-item': this.foundRowIds.has(item.id),
+                                              })}"
+                                              style="--data-level:${level}">
+                                              <span
+                                                  class="group-name ${item.cssClass}"
+                                                  data-identifier=${item.id}
+                                                  @click="${this.toggleGroupHeader}">
+                                                  ${item.name}
+                                                  ${
+                                                      item.memberCount
+                                                          ? html`
+                                                                <span class="member-count-badge">
+                                                                    ${item.memberCount}
+                                                                </span>
+                                                            `
+                                                          : null
+                                                  }
+                                              </span>
+                                              <span class="group-controls">
+                                                  ${this.renderDeleteGroupButton(item.id, item.name)}
+                                                  ${this.renderAddGroupMemberButton(item.id, item.name)}
+                                              </span>
+                                          </div>
+                                          ${
+                                              item.members
+                                                  ? this.renderAuthGroups(
+                                                        item.members,
+                                                        level,
+                                                        item.id,
                                                     )
-                                                  : ''}
-                                          </span>
-                                      </div>
-                                      ${item.childGroup
-                                          ? this.renderAuthGroups(item.childGroup, level, item.id)
-                                          : ''}
-                                  `}
+                                                  : ''
+                                          }
+                                      `
+                                    : html`
+                                          <div
+                                              class="${classMap({
+                                                  'group-header group-member': !firstIteration,
+                                                  'found-item': this.foundRowIds.has(item.id),
+                                              })}"
+                                              style="--data-level:${level}">
+                                              <span
+                                                  class="group-name ${item.cssClass}"
+                                                  data-identifier=${item.id}
+                                                  @click="${this.toggleGroupHeader}">
+                                                  ${item.name}
+                                                  ${
+                                                      item.memberCount
+                                                          ? html`
+                                                                <span class="member-count-badge">
+                                                                    ${item.memberCount}
+                                                                </span>
+                                                            `
+                                                          : null
+                                                  }
+                                              </span>
+                                              <span class="group-controls">
+                                                  ${this.renderDeleteGroupMemberButton(
+                                                      item.id,
+                                                      item.name,
+                                                  )}
+                                                  ${
+                                                      item.itemType === 'groupMember'
+                                                          ? this.renderAddGroupMemberButton(
+                                                                item.rootId,
+                                                                item.name,
+                                                            )
+                                                          : ''
+                                                  }
+                                              </span>
+                                          </div>
+                                          ${
+                                              item.childGroup
+                                                  ? this.renderAuthGroups(
+                                                        item.childGroup,
+                                                        level,
+                                                        item.id,
+                                                    )
+                                                  : ''
+                                          }
+                                      `
+                            }
                         </li>
                     `,
                 )}
@@ -1441,12 +1461,14 @@ export class GroupManage extends AuthMixin(
                                     id="expand-collapse-all"
                                     class="expand-collapse-button"
                                     icon-name="chevron-down"
-                                    title="${this.allGroupsExpanded
-                                        ? 'Collapse All'
-                                        : 'Expand All'}"
-                                    aria-label="${this.allGroupsExpanded
-                                        ? 'Collapse all groups'
-                                        : 'Expand all groups'}"
+                                    title="${
+                                        this.allGroupsExpanded ? 'Collapse All' : 'Expand All'
+                                    }"
+                                    aria-label="${
+                                        this.allGroupsExpanded
+                                            ? 'Collapse all groups'
+                                            : 'Expand all groups'
+                                    }"
                                     @click="${() =>
                                         this.expandCollapseAllGroups()}"></dbp-icon-button>
                             </div>
