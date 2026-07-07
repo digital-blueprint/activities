@@ -191,9 +191,9 @@ export class DbpPortfolio extends AuthMixin(
                                 @click=${() => this._selectWorkflow(workflow)}>
                                 <span class="workflow-name">${workflow.name}</span>
                                 <span
-                                    class="workflow-state state-${workflow.active
-                                        ? 'active'
-                                        : 'done'}">
+                                    class="workflow-state state-${
+                                        workflow.active ? 'active' : 'done'
+                                    }">
                                     ${workflow.statusDisplay.label}
                                 </span>
                             </button>
@@ -210,20 +210,22 @@ export class DbpPortfolio extends AuthMixin(
 
         return html`
             <div class="portfolio">
-                ${!authenticated
-                    ? html`
-                          <p class="login-required">Please log in to view your workflows.</p>
-                      `
-                    : html`
-                          <div class="toolbar">
-                              <dbp-loading-button
-                                  class="reload-button"
-                                  @click=${this._fetchWorkflows}>
-                                  ${this._i18n.t('reload')}
-                              </dbp-loading-button>
-                          </div>
-                          ${this._renderWorkflows()}
-                      `}
+                ${
+                    !authenticated
+                        ? html`
+                              <p class="login-required">Please log in to view your workflows.</p>
+                          `
+                        : html`
+                              <div class="toolbar">
+                                  <dbp-loading-button
+                                      class="reload-button"
+                                      @click=${this._fetchWorkflows}>
+                                      ${this._i18n.t('reload')}
+                                  </dbp-loading-button>
+                              </div>
+                              ${this._renderWorkflows()}
+                          `
+                }
             </div>
         `;
     }

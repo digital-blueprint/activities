@@ -28,7 +28,7 @@ You can then open <http://127.0.0.1:8001/>.
 - Add the line `import {ExportclassName} from 'path-to-activity/src/activity-name';`
     - example: `import {PersonSelectDemo} from e.g. '@dbp-topics/clipboard/src/dbp-clipboard';`
 - Add the class to scopedElements - example ` static get scopedElements() {
-    return {
-      ''dbp-clipboard-management': DbpClipboardManagement,
-    };
+return {
+''dbp-clipboard-management': DbpClipboardManagement,
+};
 }'`
