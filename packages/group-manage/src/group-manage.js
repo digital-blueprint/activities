@@ -391,7 +391,7 @@ export class GroupManage extends AuthMixin(
      *
      * @param {Event} event
      */
-    groupListButtonEventHandler(event) {
+    async groupListButtonEventHandler(event) {
         /** @type {HTMLElement} */
         let button;
 
@@ -421,7 +421,7 @@ export class GroupManage extends AuthMixin(
             }
 
             if (button.classList.contains('add-group-member-button')) {
-                this.resetSelectors();
+                await this.resetSelectors();
 
                 this.targetGroup = {};
                 this.targetGroup.identifier = button.getAttribute('data-group-id');
@@ -429,9 +429,12 @@ export class GroupManage extends AuthMixin(
 
                 this.activePopover = this.addGroupMemberPopover;
                 this.activePopover.showPopover();
-                // Give focus to the popover to keyboard accessibility.
-                // :( Not working.
-                this._('#add-group-member-dialog-title').focus();
+
+                requestAnimationFrame(() => {
+                    // Select2 only creates its search input after the dropdown opens.
+                    this.personSelector._getSelect2().select2('open');
+                    this.personSelector.shadowRoot.querySelector('.select2-search__field')?.focus();
+                });
             }
         }
     }
@@ -1336,8 +1339,8 @@ export class GroupManage extends AuthMixin(
     }
 
     resetSelectors() {
-        this.personSelector.reset();
         this._('#user-id-input').value = '';
+        return this.personSelector.reset();
     }
 
     collapseAllGroups() {
