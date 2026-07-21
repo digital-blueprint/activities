@@ -895,20 +895,27 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                         interpolation: {escapeValue: false},
                     }),
                 )}
-                ${this.missingSujetLinksCount > 0
-                    ? this.renderStatusLine(
-                          false,
-                          i18n.t('prepare-media-transparency-report.report-status.missing-links', {
-                              count: this.missingSujetLinksCount,
-                          }),
-                      )
-                    : ''}
-                ${this.hasReportToExport
-                    ? this.renderStatusLine(
-                          isSuccess,
-                          i18n.t('prepare-media-transparency-report.report-status.ready'),
-                      )
-                    : ''}
+                ${
+                    this.missingSujetLinksCount > 0
+                        ? this.renderStatusLine(
+                              false,
+                              i18n.t(
+                                  'prepare-media-transparency-report.report-status.missing-links',
+                                  {
+                                      count: this.missingSujetLinksCount,
+                                  },
+                              ),
+                          )
+                        : ''
+                }
+                ${
+                    this.hasReportToExport
+                        ? this.renderStatusLine(
+                              isSuccess,
+                              i18n.t('prepare-media-transparency-report.report-status.ready'),
+                          )
+                        : ''
+                }
             </div>
         `;
     }
@@ -1132,9 +1139,9 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                         class="file-sink"
                         lang="${this.lang}"
                         enabled-targets="local,clipboard,nextcloud"
-                        filename="${reportExportBaseName}.${this.csvFilesToExport.length > 1
-                            ? 'zip'
-                            : 'csv'}"
+                        filename="${reportExportBaseName}.${
+                            this.csvFilesToExport.length > 1 ? 'zip' : 'csv'
+                        }"
                         @dbp-file-sink-download-started="${() =>
                             this.handleExportDownloadStarted()}"
                         subscribe="nextcloud-auth-url,nextcloud-web-dav-url,nextcloud-name,nextcloud-file-url"></dbp-file-sink>
