@@ -1,6 +1,6 @@
 import {globSync} from 'node:fs';
 import serve from 'rollup-plugin-serve';
-import {assetPlugin, getPort} from '@dbp-toolkit/dev-utils';
+import {assetPlugin, getPort, getResolveModules} from '@dbp-toolkit/dev-utils';
 import process from 'node:process';
 import {createRequire} from 'node:module';
 const require = createRequire(import.meta.url);
@@ -23,6 +23,9 @@ export default (async () => {
             sourcemap: true,
             cleanDir: true,
             minify: build !== 'local' && build !== 'test',
+        },
+        resolve: {
+            modules: getResolveModules(),
         },
         moduleTypes: {
             '.css': 'js', // work around rolldown handling the CSS import before the URL plugin can

@@ -12,6 +12,7 @@ import {
     getDistPath,
     assetPlugin,
     getPort,
+    getResolveModules,
 } from '@dbp-toolkit/dev-utils';
 import {createRequire} from 'node:module';
 import process from 'node:process';
@@ -80,6 +81,9 @@ export default (async () => {
             sourcemap: true,
             minify: buildFull,
             cleanDir: true,
+        },
+        resolve: {
+            modules: getResolveModules(),
         },
         preserveEntrySignatures: false,
         // external: ['zlib', 'http', 'fs', 'https', 'url'],
