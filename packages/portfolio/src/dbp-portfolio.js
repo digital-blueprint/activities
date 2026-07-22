@@ -128,7 +128,8 @@ export class DbpPortfolio extends AuthMixin(
         }
     }
 
-    async _triggerAction(workflowId, actionId, actionLabel = '') {
+    async _triggerAction(workflowId, actionId, actionLabel = '', button = null) {
+        button?.start();
         try {
             let response = await this._api().triggerWorkflowAction(workflowId, actionId);
             if (response.type === 'url') {
@@ -166,6 +167,8 @@ export class DbpPortfolio extends AuthMixin(
                 type: 'danger',
                 timeout: 30,
             });
+        } finally {
+            button?.stop();
         }
     }
 
@@ -195,12 +198,18 @@ export class DbpPortfolio extends AuthMixin(
                         `;
                     }
                     return html`
-                        <button
+                        <dbp-loading-button
                             class="action-button"
-                            @click=${() =>
-                                this._triggerAction(workflow.identifier, action.id, action.label)}>
+                            type="is-primary"
+                            @click=${(e) =>
+                                this._triggerAction(
+                                    workflow.identifier,
+                                    action.id,
+                                    action.label,
+                                    e.currentTarget,
+                                )}>
                             ${action.label}
-                        </button>
+                        </dbp-loading-button>
                     `;
                 })}
             </div>
@@ -398,16 +407,7 @@ export class DbpPortfolio extends AuthMixin(
             }
 
             .action-button {
-                padding: 0.4em 1em;
-                background-color: var(--dbp-primary-surface, #007bff);
-                color: var(--dbp-on-primary-surface, #fff);
-                border: none;
-                cursor: pointer;
                 font: inherit;
-            }
-
-            .action-button:hover {
-                opacity: 0.85;
             }
 
             .action-link {
