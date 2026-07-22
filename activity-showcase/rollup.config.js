@@ -6,7 +6,13 @@ import md from './rollup-plugin-md.js';
 import emitEJS from 'rollup-plugin-emit-ejs';
 import {getBabelOutputPlugin} from '@rollup/plugin-babel';
 import appConfig from './app.config.js';
-import {getBuildInfo, getPackagePath, getDistPath, assetPlugin} from '@dbp-toolkit/dev-utils';
+import {
+    getBuildInfo,
+    getPackagePath,
+    getDistPath,
+    assetPlugin,
+    getPort,
+} from '@dbp-toolkit/dev-utils';
 import {createRequire} from 'node:module';
 import process from 'node:process';
 
@@ -221,7 +227,7 @@ Dependencies:
                 ? serve({
                       contentBase: '.',
                       host: '127.0.0.1',
-                      port: 8001,
+                      port: await getPort('127.0.0.1', [8001, 8004]),
                       historyApiFallback: config.basePath + pkg.name + '.html',
                       headers: {
                           'Content-Security-Policy': config.CSP,
