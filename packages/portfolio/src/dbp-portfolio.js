@@ -1,7 +1,7 @@
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import {createInstance} from './i18n.js';
 import {css, html} from 'lit';
-import {ScopedElementsMixin, LoadingButton} from '@dbp-toolkit/common';
+import {ScopedElementsMixin, LoadingButton, Modal} from '@dbp-toolkit/common';
 import * as commonStyles from '@dbp-toolkit/common/styles';
 import {AdapterLitElement, LangMixin, AuthMixin} from '@dbp-toolkit/common';
 import {send as notify} from '@dbp-toolkit/common/notification';
@@ -16,11 +16,14 @@ export class DbpPortfolio extends AuthMixin(
         this._workflows = [];
         this._selectedWorkflow = null;
         this._isLoading = false;
+        this._iframeUrl = '';
+        this._iframeTitle = '';
     }
 
     static get scopedElements() {
         return {
             'dbp-loading-button': LoadingButton,
+            'dbp-modal': Modal,
         };
     }
 
@@ -31,6 +34,8 @@ export class DbpPortfolio extends AuthMixin(
             _workflows: {type: Array, state: true},
             _selectedWorkflow: {type: Object, state: true},
             _isLoading: {type: Boolean, state: true},
+            _iframeUrl: {type: String, state: true},
+            _iframeTitle: {type: String, state: true},
         };
     }
 
@@ -59,6 +64,37 @@ export class DbpPortfolio extends AuthMixin(
 
     _api() {
         return new PortfolioApi(this);
+    }
+
+    get _iframeModal() {
+        return this.shadowRoot?.querySelector('.iframe-modal');
+    }
+
+    /**
+     * Returns true if the given URL has the same origin as the API server.
+     *
+     * @param {string} url
+     * @returns {boolean}
+     */
+    _isSameOrigin(url) {
+        try {
+            const target = new URL(url, this.entryPointUrl);
+            const api = new URL(this.entryPointUrl);
+            return target.origin === api.origin;
+        } catch {
+            return false;
+        }
+    }
+
+    _openInIframe(url, title = '') {
+        this._iframeUrl = url;
+        this._iframeTitle = title;
+        this._iframeModal?.open();
+    }
+
+    _onIframeModalClosed() {
+        this._iframeUrl = '';
+        this._iframeTitle = '';
     }
 
     get _loadingButton() {
@@ -92,11 +128,19 @@ export class DbpPortfolio extends AuthMixin(
         }
     }
 
-    async _triggerAction(workflowId, actionId) {
+    async _triggerAction(workflowId, actionId, actionLabel = '') {
         try {
             let response = await this._api().triggerWorkflowAction(workflowId, actionId);
             if (response.type === 'url') {
-                window.open(response.url, '_blank', 'noopener,noreferrer');
+                // NOTE: This is a bit of a hack for now. We decide how to present
+                // the URL based on whether it is same-origin as the API server.
+                // Ideally the response itself would tell us what to do with the
+                // result (e.g. open in an iframe/modal vs. a new tab).
+                if (this._isSameOrigin(response.url)) {
+                    this._openInIframe(response.url, actionLabel);
+                } else {
+                    window.open(response.url, '_blank', 'noopener,noreferrer');
+                }
             }
             if (response.message !== null) {
                 notify({
@@ -153,7 +197,8 @@ export class DbpPortfolio extends AuthMixin(
                     return html`
                         <button
                             class="action-button"
-                            @click=${() => this._triggerAction(workflow.identifier, action.id)}>
+                            @click=${() =>
+                                this._triggerAction(workflow.identifier, action.id, action.label)}>
                             ${action.label}
                         </button>
                     `;
@@ -227,6 +272,25 @@ export class DbpPortfolio extends AuthMixin(
                           `
                 }
             </div>
+            <dbp-modal
+                class="iframe-modal"
+                modal-id="portfolio-iframe-modal"
+                title="${this._iframeTitle}"
+                subscribe="lang"
+                @dbp-modal-closed=${this._onIframeModalClosed}>
+                <div slot="content" class="iframe-modal-content">
+                    ${
+                        this._iframeUrl
+                            ? html`
+                                  <iframe
+                                      class="action-iframe"
+                                      src="${this._iframeUrl}"
+                                      title="${this._iframeTitle}"></iframe>
+                              `
+                            : ''
+                    }
+                </div>
+            </dbp-modal>
         `;
     }
 
@@ -365,6 +429,18 @@ export class DbpPortfolio extends AuthMixin(
             .empty {
                 color: var(--dbp-muted);
                 margin: 0;
+            }
+
+            .iframe-modal-content {
+                width: 100%;
+                height: 100%;
+            }
+
+            .action-iframe {
+                width: 80vw;
+                height: 70vh;
+                max-width: 100%;
+                border: none;
             }
         `;
     }
