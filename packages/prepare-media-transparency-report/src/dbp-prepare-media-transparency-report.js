@@ -737,7 +737,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                             <p>Please select the category and period you would like to report.</p>
                         </div>
                         <div slot="de">
-                            <p>Bitte wählen Sie die Kategorie und den Meldeperiode aus.</p>
+                            <p>Bitte wählen Sie die Kategorie und die Meldeperiode aus.</p>
                         </div>
                     </dbp-translated>
                 </div>

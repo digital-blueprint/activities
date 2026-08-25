@@ -24,7 +24,7 @@
             "description-export-partial-success": "{{filteredSubmissionCount}} Einreichungen exportiert, aber bei {{missingSujetLinksCount}} fehlt ein Sujet-Link.",
             "description-export-success": "{{filteredSubmissionCount}} Einreichungen mit Sujet-Links erfolgreich exportiert.",
             "description-no-csv-to-export-error": "Keine CSV-Datei zum Exportieren vorhanden. Sie müssen zuerst die CSV-Datei von der RTR hochladen.",
-            "description-no-files-error": "Es gibt keine Dateien für den Meldeperiode \"{{period}}\" in der Kategorie \"{{category}}\".",
+            "description-no-files-error": "Es gibt keine Dateien für die Meldeperiode \"{{period}}\" in der Kategorie \"{{category}}\".",
             "description-no-submissions-error": "Es wurden keine Einreichungen zurückgegeben.",
             "title-error": "Fehler",
             "title-success": "Erfolg",
@@ -39,8 +39,8 @@
             "ready": "Der Bericht steht zum Herunterladen bereit.",
             "rows-found_one": "{{count}} Zeile in der RTR-CSV-Datei gefunden",
             "rows-found_other": "{{count}} Zeilen in der RTR-CSV-Datei gefunden",
-            "submissions-found_one": "{{count}} Einreichung entspricht der Kategorie \"{{category}}\" und dem Meldeperiode \"{{period}}\"",
-            "submissions-found_other": "{{count}} Einreichungen entsprechen der Kategorie \"{{category}}\" und dem Meldeperiode \"{{period}}\""
+            "submissions-found_one": "{{count}} Einreichung entspricht der Kategorie \"{{category}}\" und der Meldeperiode \"{{period}}\"",
+            "submissions-found_other": "{{count}} Einreichungen entsprechen der Kategorie \"{{category}}\" und der Meldeperiode \"{{period}}\""
         },
         "section-title": {
             "download-sujet": "Sujets herunterladen",
