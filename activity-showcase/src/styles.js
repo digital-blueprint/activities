@@ -1,8 +1,13 @@
-import {css, CSSResult, html} from 'lit';
+import {css, html} from 'lit';
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import * as commonUtils from '@dbp-toolkit/common/utils';
 import highlightCSSPath from 'highlight.js/styles/github.css';
 
+/** @typedef {import('lit').CSSResult} CSSResult */
+
+/**
+ * @param {string} mdContent
+ */
 export function renderMarkdown(mdContent) {
     return html`
         <link rel="stylesheet" href="${commonUtils.getAbsoluteURL(highlightCSSPath)}" />

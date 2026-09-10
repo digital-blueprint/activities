@@ -1,5 +1,7 @@
 import {combineURLs} from '@dbp-toolkit/common';
 
+/** @typedef {import('./group-manage.js').GroupManage} GroupManage */
+
 export class ApiError extends Error {
     /**
      * @param {number} status
@@ -65,7 +67,7 @@ export class ApiError extends Error {
 
 export class GroupManageApi {
     /**
-     * @param {import('./group-manage.js').GroupManage} element
+     * @param {GroupManage} element
      */
     constructor(element) {
         this._element = element;

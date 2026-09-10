@@ -1,3 +1,5 @@
+/** @typedef {import('i18next').i18n} I18n */
+
 /**
  * Get the available reporting periods.
  * @returns {Record<string, string>} - Object containing the reporting periods as keys and their display names as values.
@@ -32,7 +34,7 @@ export function initialSelectedPeriod() {
 
 /**
  * Get the available reporting categories.
- * @param {import('i18next').i18n} i18n - The i18next instance used to translate the category labels.
+ * @param {I18n} i18n - The i18next instance used to translate the category labels.
  * @returns {Record<string, string>} - Object containing the categories as keys and their display names as values.
  */
 export function getReportingCategoryItems(i18n) {

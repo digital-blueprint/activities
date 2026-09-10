@@ -12,6 +12,8 @@ import {getPersonFullName, getIdFromIri} from './utils.js';
 import {GroupManageApi, ApiError} from './api.js';
 import {computePosition, autoPlacement, offset, shift} from '@floating-ui/dom';
 
+/** @typedef {import('lit').TemplateResult} TemplateResult */
+
 /**
  * @class
  * @augments {DBPLitElement}
@@ -286,7 +288,7 @@ export class GroupManage extends AuthMixin(
      * @param {Array<object>} authGroups
      * @param {number} level
      * @param {string | null} parentId
-     * @returns {import('lit').TemplateResult}
+     * @returns {TemplateResult}
      */
     renderAuthGroups(authGroups, level = 0, parentId = null) {
         if (!Array.isArray(authGroups)) return html``;

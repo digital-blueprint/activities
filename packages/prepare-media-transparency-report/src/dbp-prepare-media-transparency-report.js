@@ -23,6 +23,9 @@ import {getMtReportCSS} from './styles.js';
 /** @typedef {import('./types.js').SubmittedFile} SubmittedFile */
 /** @typedef {import('./types.js').DownloadableFile} DownloadableFile */
 /** @typedef {import('./types.js').DataFeedElement} DataFeedElement */
+/** @typedef {import('lit').TemplateResult} TemplateResult */
+/** @typedef {import('lit/directives/ref.js').Ref<FileSource>} FileSourceRef */
+/** @typedef {import('lit/directives/ref.js').Ref<FileSink>} FileSinkRef */
 
 export class DbpPrepareMediaTransparencyReport extends AuthMixin(
     LangMixin(ScopedElementsMixin(AdapterLitElement), createInstance),
@@ -70,11 +73,11 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         this.downloadSujetButtonRef = createRef();
         this.exportCSVButtonRef = createRef();
         this.importCSVButtonRef = createRef();
-        /** @type {import('lit/directives/ref.js').Ref<import('@dbp-toolkit/file-handling').FileSource>} */
+        /** @type {FileSourceRef} */
         this.csvImportFileSourceRef = createRef();
-        /** @type {import('lit/directives/ref.js').Ref<import('@dbp-toolkit/file-handling').FileSink>} */
+        /** @type {FileSinkRef} */
         this.sujetExportFileSinkRef = createRef();
-        /** @type {import('lit/directives/ref.js').Ref<import('@dbp-toolkit/file-handling').FileSink>} */
+        /** @type {FileSinkRef} */
         this.csvExportSinkRef = createRef();
     }
 
@@ -719,7 +722,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
      * section keeps its own selected category/period, so changing one section's
      * selectors does not affect the other.
      * @param {'download'|'report'} section - The section the selectors belong to.
-     * @returns {import('lit').TemplateResult} - The rendered HTML template for the category and period selectors.
+     * @returns {TemplateResult} - The rendered HTML template for the category and period selectors.
      */
     renderCategoryAndPeriodSelectors(section) {
         const i18n = this._i18n;
@@ -799,7 +802,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
      * Render a single line of the report status block with a leading status icon.
      * @param {boolean} ok - whether this line represents a positive (checkmark) or negative (cross) state
      * @param {string} text - the line text
-     * @returns {import('lit').TemplateResult}
+     * @returns {TemplateResult}
      */
     renderStatusLine(ok, text) {
         return html`
@@ -816,7 +819,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
      * Render the sujet download status block. Shows a warning message when there
      * are no files for the current selection, or a success message once the user
      * starts the download from the file-sink modal.
-     * @returns {import('lit').TemplateResult|string}
+     * @returns {TemplateResult|string}
      */
     renderSujetStatus() {
         // Warning: no sujet files for the current category/period selection.
@@ -850,7 +853,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
      * Render the merged report status block. It reflects the current report
      * readiness for the selected category and period and updates whenever the
      * imported CSV, category or period change.
-     * @returns {import('lit').TemplateResult|string}
+     * @returns {TemplateResult|string}
      */
     renderReportStatus() {
         const i18n = this._i18n;
