@@ -113,7 +113,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         };
     }
 
-    async updated(changedProperties) {
+    updated(changedProperties) {
         super.updated(changedProperties);
 
         if (!this.isLoggedIn()) {
@@ -127,7 +127,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
             changedProperties.has('sujetCategory') ||
             changedProperties.has('sujetPeriod')
         ) {
-            this.updateSubmissionCount('download');
+            void this.updateSubmissionCount('download');
         }
 
         // Recompute the report section count when auth becomes available or the
@@ -139,7 +139,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                 changedProperties.has('reportPeriod')) &&
             !this.importedRTRCSVFile
         ) {
-            this.updateSubmissionCount('report');
+            void this.updateSubmissionCount('report');
         }
     }
 
@@ -354,6 +354,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
     /**
      * Open the file source dialog to allow the user to select a CSV file for import.
      */
+    // oxlint-disable-next-line typescript/require-await -- Event handlers expect an async method.
     async openFileSourceToImportCSV() {
         const importButton = this.importCSVButtonRef.value;
         if (importButton) {

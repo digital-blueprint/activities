@@ -15,6 +15,8 @@
     "build": "lerna run --no-sort --no-bail build",
     "check": "lerna --no-sort run --no-bail check",
     "fix": "lerna --no-sort run --no-bail fix",
+    "oxlint": "lerna --no-sort run --no-bail oxlint",
+    "tsc": "lerna --no-sort run --no-bail tsc",
     "version-patch": "lerna version patch",
     "version-minor": "lerna version minor",
     "version": "lerna version",

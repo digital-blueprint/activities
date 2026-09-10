@@ -32,7 +32,7 @@ export default function md(options = {}) {
             handler: function (md, id) {
                 if (!ext.test(id)) return null;
 
-                const data = marked.parse(md);
+                const data = /** @type {string} */ (marked.parse(md));
                 return {
                     code: `export default ${JSON.stringify(data.toString())};`,
                     map: {mappings: ''},

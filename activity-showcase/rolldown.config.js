@@ -42,7 +42,9 @@ if (appEnv in appConfig) {
         nextcloudName: '',
     };
 } else {
-    console.error(`Unknown build environment: '${appEnv}', use one of '${Object.keys(appConfig)}'`);
+    console.error(
+        `Unknown build environment: '${appEnv}', use one of '${Object.keys(appConfig).join(',')}'`,
+    );
     process.exit(1);
 }
 

@@ -151,7 +151,7 @@ export class GroupManage extends AuthMixin(
         );
 
         if (!this.listIsLoaded && this.isLoggedIn()) {
-            this.fetchGroups();
+            void this.fetchGroups();
         }
     }
 
@@ -166,7 +166,7 @@ export class GroupManage extends AuthMixin(
 
     loginCallback() {
         if (this.isFirstUpdated && !this.listIsLoaded) {
-            this.fetchGroups();
+            void this.fetchGroups();
         }
     }
 
@@ -596,7 +596,7 @@ export class GroupManage extends AuthMixin(
         const invoker = this.activeButton;
         if (!popover || !invoker) return;
 
-        computePosition(invoker, popover, {
+        void computePosition(invoker, popover, {
             middleware: [
                 offset(16),
                 autoPlacement({
@@ -716,7 +716,7 @@ export class GroupManage extends AuthMixin(
                 groupNameInput.value = '';
             }
             // Re-fetch group list.
-            this.fetchGroups();
+            void this.fetchGroups();
             notify({
                 summary: 'Success!',
                 body: `Group "${data.name}" created successfully`,
@@ -776,7 +776,7 @@ export class GroupManage extends AuthMixin(
                 throw e;
             }
         } finally {
-            this.fetchGroups();
+            void this.fetchGroups();
             // if (this.searchIsActive) {
             //     this.searchGroups();
             // }
@@ -820,7 +820,7 @@ export class GroupManage extends AuthMixin(
             }
         } finally {
             // Re-render the group list.
-            this.fetchGroups();
+            void this.fetchGroups();
             // if (this.searchIsActive) {
             //     this.searchGroups();
             // }
@@ -877,7 +877,7 @@ export class GroupManage extends AuthMixin(
 
         try {
             await this._api.addGroupMember(data);
-            this.fetchGroups();
+            void this.fetchGroups();
             this.closeAddGroupMemberPopover();
             this.groupMember = null;
             this.targetGroup = null;
@@ -903,7 +903,7 @@ export class GroupManage extends AuthMixin(
                 throw e;
             }
         } finally {
-            this.resetSelectors();
+            void this.resetSelectors();
             // this.closeAddGroupMemberPopover();
         }
     }
@@ -916,7 +916,7 @@ export class GroupManage extends AuthMixin(
      */
     onUserIdInput(event) {
         const value = /** @type {HTMLInputElement} */ (event.target).value.trim();
-        this.personSelector.reset();
+        void this.personSelector.reset();
         if (value) {
             this.groupMember = {type: 'person', identifier: value, name: value};
         } else {
@@ -979,7 +979,7 @@ export class GroupManage extends AuthMixin(
                                             event.code === 'NumpadEnter'
                                         ) {
                                             if (groupNameField.validity.valid) {
-                                                this.createGroup();
+                                                void this.createGroup();
                                             } else {
                                                 groupNameField.blur();
                                             }
@@ -1206,7 +1206,7 @@ export class GroupManage extends AuthMixin(
          */
         this.addToGroupButton.stop();
         // Reset selectors states.
-        this.resetSelectors();
+        void this.resetSelectors();
     }
 
     // MARK: SEARCH

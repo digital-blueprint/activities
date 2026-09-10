@@ -7,6 +7,7 @@
 export async function httpGetAsync(url, options) {
     let response = await fetch(url, options)
         .then((result) => {
+            // oxlint-disable-next-line typescript/only-throw-error -- Callers inspect the response.
             if (!result.ok) throw result;
             return result;
         })

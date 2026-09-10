@@ -22,11 +22,13 @@
         "marked-highlight": "^2.2.3",
         "mocha": "^12.0.0",
         "oxlint": "^1.81.0",
+        "oxlint-tsgolint": "^7.0.2001",
         "prettier": "^3.0.0",
         "rolldown": "^1.0.0-rc.5",
         "rollup-plugin-emit-ejs": "^3.1.0",
         "rollup-plugin-license": "^3.0.0",
-        "rollup-plugin-serve": "^3.0.0"
+        "rollup-plugin-serve": "^3.0.0",
+        "typescript": "^7.0.0"
     },
     "dependencies": {
         "@dbp-toolkit/app-shell": "^0.3.0",
@@ -65,6 +67,7 @@
         "watch-full": "rolldown -c rolldown.config.js --watch --environment FORCE_FULL",
         "watch-bs": "rolldown -c rolldown.config.js --watch --environment APP_ENV:bs",
         "build:test": "rolldown -c rolldown.config.js --environment APP_ENV:test",
-        "test": "npm run build:test && web-test-runner"
+        "test": "npm run build:test && web-test-runner",
+        "tsc": "tsc -p jsconfig.json"
     }
 }

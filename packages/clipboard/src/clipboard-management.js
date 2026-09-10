@@ -47,7 +47,7 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
         changedProperties.forEach((oldValue, propName) => {
             switch (propName) {
                 case 'lang':
-                    this._i18n.changeLanguage(this.lang);
+                    void this._i18n.changeLanguage(this.lang);
                     break;
             }
         });

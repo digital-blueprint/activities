@@ -74,8 +74,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     connectedCallback() {
         super.connectedCallback();
 
-        this.updateComplete.then(() => {
-            this.setOptions();
+        void this.updateComplete.then(() => {
+            void this.setOptions();
         });
 
         this._loginStatus = '';
@@ -146,7 +146,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         });
 
         if (toGetFiles) {
-            this.getFiles();
+            void this.getFiles();
         }
 
         super.update(changedProperties);
@@ -292,7 +292,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         formDataAsJson = JSON.stringify(formDataAsJson);
 
         params = {
-            ucs: await this.createSha256HexForString('/blob/files?' + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString(
+                '/blob/files?' + new URLSearchParams(params).toString(),
+            ),
             bcs: await this.createSha256HexForString(formDataAsJson),
         };
 
@@ -322,7 +324,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'POST',
             body: formData,
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + urlParams, options);
+        return await this.httpGetAsync(
+            this.entryPointUrl + '/blob/files?' + urlParams.toString(),
+            options,
+        );
     }
 
     async getFiles() {
@@ -364,7 +369,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
 
         params = {
-            ucs: await this.createSha256HexForString('/blob/files?' + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString(
+                '/blob/files?' + new URLSearchParams(params).toString(),
+            ),
         };
 
         const sig = this.createSignature(params);
@@ -394,7 +401,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 'Content-Type': 'application/ld+json',
             },
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + urlParams, options);
+        return await this.httpGetAsync(
+            this.entryPointUrl + '/blob/files?' + urlParams.toString(),
+            options,
+        );
     }
 
     async sendPutFile() {
@@ -468,7 +478,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             ucs: await this.createSha256HexForString(
-                '/blob/files/' + this.activeFileId + '?' + new URLSearchParams(params),
+                '/blob/files/' + this.activeFileId + '?' + new URLSearchParams(params).toString(),
             ),
             bcs: await this.createSha256HexForString(body),
         };
@@ -494,7 +504,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             body: body,
         };
         return await this.httpGetAsync(
-            this.entryPointUrl + '/blob/files/' + this.activeFileId + '?' + urlParams,
+            this.entryPointUrl + '/blob/files/' + this.activeFileId + '?' + urlParams.toString(),
             options,
         );
     }
@@ -588,7 +598,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             ucs: await this.createSha256HexForString(
-                '/blob/files/' + id + '?' + new URLSearchParams(params),
+                '/blob/files/' + id + '?' + new URLSearchParams(params).toString(),
             ),
         };
 
@@ -623,10 +633,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             },
         };
         if (returnAsString == 1) {
-            return this.entryPointUrl + '/blob/files/' + id + '?' + urlParams;
+            return this.entryPointUrl + '/blob/files/' + id + '?' + urlParams.toString();
         } else {
             return await this.httpGetAsync(
-                this.entryPointUrl + '/blob/files/' + id + '?' + urlParams,
+                this.entryPointUrl + '/blob/files/' + id + '?' + urlParams.toString(),
                 options,
             );
         }
@@ -701,7 +711,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             ucs: await this.createSha256HexForString(
-                '/blob/files/' + id + '/download?' + new URLSearchParams(params),
+                '/blob/files/' + id + '/download?' + new URLSearchParams(params).toString(),
             ),
         };
 
@@ -724,7 +734,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         };
 
         return await this.httpGetAsync(
-            this.entryPointUrl + '/blob/files/' + id + '/download?' + urlParams,
+            this.entryPointUrl + '/blob/files/' + id + '/download?' + urlParams.toString(),
             options,
         );
     }
@@ -825,7 +835,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             ucs: await this.createSha256HexForString(
-                '/blob/files/' + id + '?' + new URLSearchParams(params),
+                '/blob/files/' + id + '?' + new URLSearchParams(params).toString(),
             ),
         };
 
@@ -845,7 +855,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             method: 'DELETE',
         };
         return await this.httpGetAsync(
-            this.entryPointUrl + '/blob/files/' + id + '?' + urlParams,
+            this.entryPointUrl + '/blob/files/' + id + '?' + urlParams.toString(),
             options,
         );
     }
@@ -869,7 +879,9 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
 
         params = {
-            ucs: await this.createSha256HexForString('/blob/files?' + new URLSearchParams(params)),
+            ucs: await this.createSha256HexForString(
+                '/blob/files?' + new URLSearchParams(params).toString(),
+            ),
         };
 
         const sig = this.createSignature(params);
@@ -895,18 +907,22 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         const options = {
             method: 'DELETE',
         };
-        return await this.httpGetAsync(this.entryPointUrl + '/blob/files?' + urlParams, options);
+        return await this.httpGetAsync(
+            this.entryPointUrl + '/blob/files?' + urlParams.toString(),
+            options,
+        );
     }
 
     /**
      * Send a fetch to given url with given options
      * @param {string} url
      * @param {object} options
-     * @returns {object} response (error or result)
+     * @returns {Promise<object>} response (error or result)
      */
     async httpGetAsync(url, options) {
         return await fetch(url, options)
             .then((result) => {
+                // oxlint-disable-next-line typescript/only-throw-error -- Callers inspect the response.
                 if (!result.ok) throw result;
                 return result;
             })
@@ -915,6 +931,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             });
     }
 
+    // oxlint-disable-next-line typescript/require-await -- Keep the existing asynchronous API.
     async getOptions() {
         const i18n = this._i18n;
 
@@ -934,7 +951,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             btnLink.setAttribute('title', i18n.t('open'));
             btnLink.setAttribute('target', '_blank');
             btnLink.addEventListener('click', (event) => {
-                this.sendGETFile(id, 0);
+                void this.sendGETFile(id, 0);
                 event.stopPropagation();
             });
 
@@ -942,7 +959,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             btnBinary.setAttribute('icon-name', 'download');
             btnBinary.setAttribute('title', 'Download');
             btnBinary.addEventListener('click', (event) => {
-                this.sendGETFile(id, 1).then((body) => {
+                void this.sendGETFile(id, 1).then((body) => {
                     // download file using hidden a tag
                     let hiddenA = this.createScopedElement('a');
                     hiddenA.setAttribute('href', body['contentUrl']);
@@ -957,7 +974,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             btnDownload.setAttribute('icon-name', 'exit-down');
             btnDownload.setAttribute('title', '/download');
             btnDownload.addEventListener('click', (event) => {
-                this.sendDownloadFile(id).then((response) => {
+                void this.sendDownloadFile(id).then((response) => {
                     if (response == undefined) {
                         console.error('Response is undefined');
                         return;
@@ -1040,7 +1057,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                             p.style = 'margin-left: 5px;';
                             let img = this.createScopedElement('img');
 
-                            this.sendGETFileRequest(cell.getData()['identifier'], 1, 0).then(
+                            void this.sendGETFileRequest(cell.getData()['identifier'], 1, 0).then(
                                 (response) => {
                                     response.json().then((data) => {
                                         img.src = data['contentUrl'];
@@ -1208,7 +1225,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             !this.initialRequestsLoading &&
             this.bucketId !== ''
         ) {
-            this.getFiles();
+            void this.getFiles();
         }
 
         return html`
@@ -1317,8 +1334,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                                     title="${i18n.t('delete')}"
                                     type="is-primary" 
                                     @click="${() => {
-                                        this.sendDeletePrefixRequest().then(() => {
-                                            this.getFiles();
+                                        void this.sendDeletePrefixRequest().then(() => {
+                                            void this.getFiles();
                                         });
                                     }}">
                                 ${i18n.t('delete')}
@@ -1502,7 +1519,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      * A proper implementation will create the token after checking permissions
      * server side, keeping the value of the signing key secret!
      * @param {string} payload to build the JSW with
-     * @returns {ArrayBuffer}
+     * @returns {Promise<string>}
      */
     createSha256HexForString(payload) {
         return crypto.subtle

@@ -46,7 +46,7 @@ export class DbpPortfolio extends AuthMixin(
             switch (propName) {
                 case 'lang':
                     if (this.isLoggedIn()) {
-                        this._fetchWorkflows();
+                        void this._fetchWorkflows();
                     }
                     break;
             }
@@ -54,7 +54,7 @@ export class DbpPortfolio extends AuthMixin(
     }
 
     loginCallback() {
-        this._fetchWorkflows();
+        void this._fetchWorkflows();
     }
 
     logoutCallback() {
