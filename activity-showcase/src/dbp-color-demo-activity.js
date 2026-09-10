@@ -49,8 +49,6 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
     connectedCallback() {
         super.connectedCallback();
-
-        this.updateComplete.then(() => {});
     }
 
     _(selector) {

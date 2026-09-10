@@ -30,8 +30,6 @@ class DbpClipboardDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
 
     connectedCallback() {
         super.connectedCallback();
-
-        this.updateComplete.then(() => {});
     }
 
     static get styles() {
