@@ -1,10 +1,12 @@
 import {combineURLs} from '@dbp-toolkit/common';
 
+/** @typedef {{detail: string, title?: string, 'relay:errorId'?: string, 'relay:errorDetails'?: object}} ApiErrorBody */
+
 export class ApiError extends Error {
     /**
      * @param {number} status
      * @param {string} statusText
-     * @param {object} body
+     * @param {ApiErrorBody} body
      */
     constructor(status, statusText, body) {
         super(`[${status}] ${body.title ?? statusText} - ${body.detail}`);
@@ -19,7 +21,7 @@ export class ApiError extends Error {
         // Problem Details
         /** @member {string} */
         this.detail = body.detail;
-        /** @member {string} */
+        /** @member {string|null} */
         this.title = body.title ?? null;
 
         // Relay-specific

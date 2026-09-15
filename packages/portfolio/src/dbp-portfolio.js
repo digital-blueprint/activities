@@ -7,13 +7,17 @@ import {AdapterLitElement, LangMixin, AuthMixin} from '@dbp-toolkit/common';
 import {send as notify} from '@dbp-toolkit/common/notification';
 import {PortfolioApi} from './api.js';
 
+/** @typedef {import('./api.js').PortfolioWorkflow} PortfolioWorkflow */
+
 export class DbpPortfolio extends AuthMixin(
     LangMixin(ScopedElementsMixin(AdapterLitElement), createInstance),
 ) {
     constructor() {
         super();
         this.entryPointUrl = '';
+        /** @type {PortfolioWorkflow[]} */
         this._workflows = [];
+        /** @type {PortfolioWorkflow|null} */
         this._selectedWorkflow = null;
         this._isLoading = false;
         this._iframeUrl = '';
@@ -67,7 +71,7 @@ export class DbpPortfolio extends AuthMixin(
     }
 
     get _iframeModal() {
-        return this.shadowRoot?.querySelector('.iframe-modal');
+        return /** @type {Modal|null} */ (this.renderRoot.querySelector('.iframe-modal'));
     }
 
     /**
@@ -86,6 +90,10 @@ export class DbpPortfolio extends AuthMixin(
         }
     }
 
+    /**
+     * @param {string} url
+     * @param {string} [title]
+     */
     _openInIframe(url, title = '') {
         this._iframeUrl = url;
         this._iframeTitle = title;
@@ -98,7 +106,7 @@ export class DbpPortfolio extends AuthMixin(
     }
 
     get _loadingButton() {
-        return this.shadowRoot?.querySelector('.reload-button');
+        return /** @type {LoadingButton|null} */ (this.renderRoot.querySelector('.reload-button'));
     }
 
     async _fetchWorkflows() {
@@ -110,9 +118,8 @@ export class DbpPortfolio extends AuthMixin(
             this._workflows = await this._api().getWorkflows();
             // Refresh selected workflow if one is open
             if (this._selectedWorkflow) {
-                const updated = this._workflows.find(
-                    (w) => w.identifier === this._selectedWorkflow.identifier,
-                );
+                const selectedIdentifier = this._selectedWorkflow.identifier;
+                const updated = this._workflows.find((w) => w.identifier === selectedIdentifier);
                 this._selectedWorkflow = updated ?? null;
             }
         } catch (e) {
@@ -128,11 +135,17 @@ export class DbpPortfolio extends AuthMixin(
         }
     }
 
+    /**
+     * @param {string} workflowId
+     * @param {string} actionId
+     * @param {string} [actionLabel]
+     * @param {LoadingButton|null} [button]
+     */
     async _triggerAction(workflowId, actionId, actionLabel = '', button = null) {
         button?.start();
         try {
             let response = await this._api().triggerWorkflowAction(workflowId, actionId);
-            if (response.type === 'url') {
+            if (response.type === 'url' && response.url !== null) {
                 // NOTE: This is a bit of a hack for now. We decide how to present
                 // the URL based on whether it is same-origin as the API server.
                 // Ideally the response itself would tell us what to do with the
@@ -172,11 +185,13 @@ export class DbpPortfolio extends AuthMixin(
         }
     }
 
+    /** @param {PortfolioWorkflow} workflow */
     _selectWorkflow(workflow) {
         this._selectedWorkflow =
             this._selectedWorkflow?.identifier === workflow.identifier ? null : workflow;
     }
 
+    /** @param {PortfolioWorkflow} workflow */
     _renderActions(workflow) {
         if (!workflow.availableActions?.length) {
             return html`
@@ -206,7 +221,7 @@ export class DbpPortfolio extends AuthMixin(
                                     workflow.identifier,
                                     action.id,
                                     action.label,
-                                    e.currentTarget,
+                                    /** @type {LoadingButton} */ (e.currentTarget),
                                 )}>
                             ${action.label}
                         </dbp-loading-button>
@@ -216,6 +231,7 @@ export class DbpPortfolio extends AuthMixin(
         `;
     }
 
+    /** @param {PortfolioWorkflow} workflow */
     _renderDetail(workflow) {
         return html`
             <div class="workflow-detail">
