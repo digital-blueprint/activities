@@ -52,9 +52,7 @@ class DbpColorDemoActivity extends ScopedElementsMixin(AdapterLitElement) {
     }
 
     _(selector) {
-        return this.shadowRoot === null
-            ? this.querySelector(selector)
-            : this.shadowRoot.querySelector(selector);
+        return this.renderRoot.querySelector(selector);
     }
 
     hexToRgb(hex) {

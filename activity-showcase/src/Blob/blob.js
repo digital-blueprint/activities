@@ -18,7 +18,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         this.lang = this._i18n.language;
         this.entryPointUrl = '';
         this.isFileSelected = false;
-        this.fileToUpload = {};
+        /** @type {File | null} */
+        this.fileToUpload = null;
         this.auth = {};
         this._initialFetchDone = false;
         this.loading = false;
@@ -34,8 +35,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         this.tableInit = false;
 
-        this.startsWith = false;
-        this.noPrefix = false;
+        this.startsWith = '';
+        this.noPrefix = '';
     }
 
     static get scopedElements() {
@@ -89,7 +90,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         this._loginStatus = this.auth['login-status'];
 
         let newLoginState = [this.isLoggedIn(), this.isLoading()];
-        if (this._loginState.toString() !== newLoginState.toString()) {
+        if (this._loginState?.toString() !== newLoginState.toString()) {
             this.requestUpdate();
         }
         this._loginState = newLoginState;
@@ -176,11 +177,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     removeFileToUpload() {
-        this.fileToUpload = {};
+        this.fileToUpload = null;
         this.isFileSelected = false;
     }
 
     getFileToUploadName() {
+        if (!this.fileToUpload) {
+            return '';
+        }
         if (typeof this.fileToUpload.type === 'undefined') {
             return this.fileToUpload.name;
         }
@@ -247,16 +251,22 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendUploadFileRequest() {
+        const fileToUpload = this.fileToUpload;
+        if (!fileToUpload) {
+            throw new Error('No file selected for upload.');
+        }
+
+        /** @type {Record<string, string>} */
         let params = {
             bucketID: this.bucketId,
-            creationTime: Math.floor(new Date().valueOf() / 1000),
+            creationTime: String(Math.floor(new Date().valueOf() / 1000)),
             prefix: this.prefix,
             method: 'POST',
         };
 
         let name = this.activeFileName;
-        let retentionDuration = false;
-        let additionalMetadata = false;
+        let retentionDuration = '';
+        let additionalMetadata = '';
         if (this._('#to-upload-file-name-input')) {
             name = this._('#to-upload-file-name-input').value;
         }
@@ -269,7 +279,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         name = encodeURIComponent(name);
         retentionDuration = encodeURIComponent(retentionDuration);
         additionalMetadata = encodeURIComponent(additionalMetadata);
-        let fileHash = await this.sha256(await this.fileToUpload.arrayBuffer());
+        let fileHash = await this.sha256(await fileToUpload.arrayBuffer());
         params.fileName = name;
         params.fileHash = fileHash;
         if (retentionDuration) {
@@ -277,19 +287,19 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
 
         let formData = new FormData();
-        formData.append('file', this.fileToUpload);
+        formData.append('file', fileToUpload);
         if (additionalMetadata) {
             params.additionalMetadata = additionalMetadata;
             formData.append('additionalMetadata', additionalMetadata);
         }
 
-        let formDataAsJson = {};
+        let formDataAsObject = {};
         formData.forEach((value, key) => {
             if (key != 'file') {
-                formDataAsJson[key] = value;
+                formDataAsObject[key] = value;
             }
         });
-        formDataAsJson = JSON.stringify(formDataAsJson);
+        const formDataAsJson = JSON.stringify(formDataAsObject);
 
         params = {
             ucs: await this.createSha256HexForString(
@@ -302,7 +312,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             bucketID: this.bucketId,
-            creationTime: Math.floor(new Date().valueOf() / 1000),
+            creationTime: String(Math.floor(new Date().valueOf() / 1000)),
             prefix: this.prefix,
             method: 'POST',
             fileName: name,
@@ -343,7 +353,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                 this.uploadedFilesNumber = this.uploadedFiles.length;
             }
         } finally {
-            this.fileToUpload = {};
+            this.fileToUpload = null;
             this.isFileSelected = false;
             this.initialRequestsLoading = false;
             this._initialFetchDone = true;
@@ -353,16 +363,17 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
     }
 
     async sendGetFilesRequest() {
+        /** @type {Record<string, string>} */
         let params = {
             bucketID: this.bucketId,
-            creationTime: Math.floor(new Date().valueOf() / 1000),
+            creationTime: String(Math.floor(new Date().valueOf() / 1000)),
             prefix: this.prefix,
-            includeData: 1,
+            includeData: '1',
             method: 'GET',
         };
 
         if (this.startsWith == 'true') {
-            params['startsWith'] = 1;
+            params['startsWith'] = '1';
         }
         if (this.noPrefix == 'true') {
             params['prefix'] = '';
@@ -378,14 +389,14 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             bucketID: this.bucketId,
-            creationTime: Math.floor(new Date().valueOf() / 1000),
+            creationTime: String(Math.floor(new Date().valueOf() / 1000)),
             prefix: this.prefix,
-            includeData: 1,
+            includeData: '1',
             method: 'GET',
         };
 
         if (this.startsWith == 'true') {
-            params['startsWith'] = 1;
+            params['startsWith'] = '1';
         }
         if (this.noPrefix == 'true') {
             params['prefix'] = '';
@@ -458,9 +469,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async sendPutFileRequest() {
         let now = Math.floor(new Date().valueOf() / 1000);
+        /** @type {Record<string, string>} */
         let params = {
             bucketID: this.bucketId,
-            creationTime: now,
+            creationTime: String(now),
             prefix: this.prefix,
             method: 'PUT',
         };
@@ -487,7 +499,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             bucketID: this.bucketId,
-            creationTime: now,
+            creationTime: String(now),
             prefix: this.prefix,
             method: 'PUT',
             fileName: name,
@@ -574,16 +586,31 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         }
     }
 
+    /**
+     * @overload
+     * @param {string} id
+     * @param {number} includeData
+     * @param {1} returnAsString
+     * @returns {Promise<string>}
+     */
+    /**
+     * @overload
+     * @param {string} id
+     * @param {number} [includeData]
+     * @param {0} [returnAsString]
+     * @returns {Promise<Response>}
+     */
     async sendGETFileRequest(id, includeData = 0, returnAsString = 0) {
         let now = Math.floor(new Date().valueOf() / 1000);
+        /** @type {Record<string, string>} */
         let params;
 
         // if includeData == 1, request base64 encoded file immediately
         if (includeData == 1) {
             params = {
                 bucketID: this.bucketId,
-                creationTime: now,
-                includeData: 1,
+                creationTime: String(now),
+                includeData: '1',
                 method: 'GET',
             };
         }
@@ -591,7 +618,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         else {
             params = {
                 bucketID: this.bucketId,
-                creationTime: now,
+                creationTime: String(now),
                 method: 'GET',
             };
         }
@@ -608,8 +635,8 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         if (includeData == 1) {
             params = {
                 bucketID: this.bucketId,
-                creationTime: now,
-                includeData: 1,
+                creationTime: String(now),
+                includeData: '1',
                 method: 'GET',
                 sig: sig,
             };
@@ -618,7 +645,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         else {
             params = {
                 bucketID: this.bucketId,
-                creationTime: now,
+                creationTime: String(now),
                 method: 'GET',
                 sig: sig,
             };
@@ -650,13 +677,6 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             let response = await this.sendDownloadFileRequest(id);
 
             if (response !== undefined && response.status === 200) {
-                send({
-                    summary: i18n.t('getone-success-title'),
-                    body: i18n.t('getone-success-body'),
-                    type: 'success',
-                    timeout: 5,
-                });
-            } else if (response == undefined && response.status === 200 && response.redirected) {
                 send({
                     summary: i18n.t('getone-success-title'),
                     body: i18n.t('getone-success-body'),
@@ -701,11 +721,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async sendDownloadFileRequest(id) {
         let now = Math.floor(new Date().valueOf() / 1000);
-        let params;
-
-        params = {
+        /** @type {Record<string, string>} */
+        let params = {
             bucketID: this.bucketId,
-            creationTime: now,
+            creationTime: String(now),
             method: 'GET',
         };
 
@@ -719,7 +738,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             bucketID: this.bucketId,
-            creationTime: now,
+            creationTime: String(now),
             method: 'GET',
             sig: sig,
         };
@@ -826,9 +845,10 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
     async sendDeleteFileRequest(id) {
         let creationtime = Math.floor(new Date().valueOf() / 1000);
+        /** @type {Record<string, string>} */
         let params = {
             bucketID: this.bucketId,
-            creationTime: creationtime,
+            creationTime: String(creationtime),
             prefix: this.prefix,
             method: 'DELETE',
         };
@@ -843,7 +863,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             bucketID: this.bucketId,
-            creationTime: creationtime,
+            creationTime: String(creationtime),
             prefix: this.prefix,
             method: 'DELETE',
             sig: sig,
@@ -864,15 +884,16 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         let creationtime = Math.floor(new Date().valueOf() / 1000);
 
         this.closeDeleteAllDialogue();
+        /** @type {Record<string, string>} */
         let params = {
             bucketID: this.bucketId,
-            creationTime: creationtime,
+            creationTime: String(creationtime),
             prefix: this.prefix,
             method: 'DELETE',
         };
 
         if (this.startsWith == 'true') {
-            params['startsWith'] = 1;
+            params['startsWith'] = '1';
         }
         if (this.noPrefix == 'true') {
             params['prefix'] = '';
@@ -888,13 +909,13 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
         params = {
             bucketID: this.bucketId,
-            creationTime: creationtime,
+            creationTime: String(creationtime),
             prefix: this.prefix,
             method: 'DELETE',
         };
 
         if (this.startsWith == 'true') {
-            params['startsWith'] = 1;
+            params['startsWith'] = '1';
         }
         if (this.noPrefix == 'true') {
             params['prefix'] = '';
@@ -917,7 +938,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
      * Send a fetch to given url with given options
      * @param {string} url
      * @param {object} options
-     * @returns {Promise<object>} response (error or result)
+     * @returns {Promise<Response>} response (error or result)
      */
     async httpGetAsync(url, options) {
         return await fetch(url, options)
@@ -960,6 +981,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
             btnBinary.setAttribute('title', 'Download');
             btnBinary.addEventListener('click', (event) => {
                 void this.sendGETFile(id, 1).then((body) => {
+                    if (body === undefined) return;
                     // download file using hidden a tag
                     let hiddenA = this.createScopedElement('a');
                     hiddenA.setAttribute('href', body['contentUrl']);
@@ -979,7 +1001,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                         console.error('Response is undefined');
                         return;
                     }
-                    response.blob().then((blob) => {
+                    void response.blob().then((blob) => {
                         const objUrl = URL.createObjectURL(blob);
                         // download file using hidden a tag
                         let hiddenA = this.createScopedElement('a');
@@ -1055,18 +1077,20 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
 
                         if (cell.getData()['extension'] == 'png') {
                             p.style = 'margin-left: 5px;';
-                            let img = this.createScopedElement('img');
+                            let img = /** @type {HTMLImageElement} */ (
+                                this.createScopedElement('img')
+                            );
 
                             void this.sendGETFileRequest(cell.getData()['identifier'], 1, 0).then(
                                 (response) => {
-                                    response.json().then((data) => {
+                                    void response.json().then((data) => {
                                         img.src = data['contentUrl'];
                                     });
                                 },
                             );
 
-                            img.width = '40';
-                            img.height = '40';
+                            img.width = 40;
+                            img.height = 40;
 
                             div.style = 'display: flex; align-items: center;';
 
@@ -1358,7 +1382,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
                             ${i18n.t('select-file')} ...
                         </dbp-button> 
                         <span class="ml-1">
-                            ${this.fileToUpload.name}
+                            ${this.fileToUpload?.name}
                         </span>
                         <div class="button-group ${classMap({hidden: !this.isFileSelected})}">
                             <dbp-icon-button
@@ -1488,7 +1512,7 @@ export class Blob extends ScopedElementsMixin(DBPLitElement) {
         // not for production use!
         let apiKey = '08d848fd868d83646778b87dd0695b10f59c78e23b286e9884504d1bb43cce93';
 
-        if (this.bucketId == 4321) {
+        if (this.bucketId === '4321') {
             apiKey = '427bb401c7e4ed7bc6d450cd8d3e7a601a50e64f7ebe59011faff77551809011';
         }
 
