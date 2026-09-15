@@ -18,7 +18,7 @@ export class DbpClipboardManagement extends ScopedElementsMixin(AdapterLitElemen
         this.nextcloudStoreSession = false;
         this.fileHandlingEnabledTargets = 'local';
         this.allowNesting = false;
-        this.authInfo = '';
+        this.nextcloudAuthInfo = '';
     }
 
     static get scopedElements() {
