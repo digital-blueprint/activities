@@ -1,4 +1,11 @@
 /**
+ * @typedef {object} Person
+ * @property {string} givenName
+ * @property {string} familyName
+ * @property {{email?: string}} [localData]
+ */
+
+/**
  * Send a fetch to given url with given options
  * @param {string} url
  * @param {object} options
@@ -19,7 +26,7 @@ export async function httpGetAsync(url, options) {
 }
 /**
  * Return a person full name from a person object
- * @param {object} person
+ * @param {Person} person
  * @returns {string} person full name
  */
 export function getPersonFullName(person) {

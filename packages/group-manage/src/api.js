@@ -2,11 +2,13 @@ import {combineURLs} from '@dbp-toolkit/common';
 
 /** @typedef {import('./group-manage.js').GroupManage} GroupManage */
 
+/** @typedef {{detail: string, title?: string, 'relay:errorId'?: string, 'relay:errorDetails'?: object}} ApiErrorBody */
+
 export class ApiError extends Error {
     /**
      * @param {number} status
      * @param {string} statusText
-     * @param {Record<string, any>} body
+     * @param {ApiErrorBody} body
      */
     constructor(status, statusText, body) {
         super(`[${status}] ${body.title ?? statusText} - ${body.detail}`);
@@ -41,22 +43,13 @@ export class ApiError extends Error {
     }
 }
 
-/**
- * @typedef {object} AuthorizationGroup
- * @property {string} identifier
- * @property {string} name
- * @property {AuthorizationGroupMember[]} members
- */
+/** @typedef {{'@type': 'AuthorizationGroup', identifier: string, name: string, members: AuthorizationGroupMember[]}} AuthorizationGroup */
 
 /**
  * @typedef {object & {'hydra:member': AuthorizationGroup[]}} AuthorizationGroups
  */
 
-/**
- * @typedef {object} AuthorizationGroupMember
- * @property {string} userIdentifier
- * @property {string|null} childGroup
- */
+/** @typedef {{'@type': 'AuthorizationGroupMember', identifier: string, userIdentifier: string | null, childGroup: AuthorizationGroup | null}} AuthorizationGroupMember */
 
 /**
  * @typedef {object} BasePerson
@@ -73,18 +66,29 @@ export class GroupManageApi {
         this._element = element;
     }
 
+    get #entryPointUrl() {
+        if (this._element.entryPointUrl === null) {
+            throw new Error('The entry point URL is not configured.');
+        }
+        return this._element.entryPointUrl;
+    }
+
+    get #auth() {
+        if (this._element.auth === null) {
+            throw new Error('Authentication is not available.');
+        }
+        return this._element.auth;
+    }
+
     /**
      * @returns {Promise<AuthorizationGroups>}
      */
     async getGroups() {
-        const apiUrl = combineURLs(
-            this._element.entryPointUrl,
-            '/authorization/groups?perPage=9999',
-        );
+        const apiUrl = combineURLs(this.#entryPointUrl, '/authorization/groups?perPage=9999');
         const response = await fetch(apiUrl, {
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: 'Bearer ' + this._element.auth.token,
+                Authorization: 'Bearer ' + this.#auth.token,
             },
         });
         if (!response.ok) {
@@ -98,12 +102,12 @@ export class GroupManageApi {
      * @returns {Promise<AuthorizationGroup>}
      */
     async createGroup(name) {
-        const apiUrl = combineURLs(this._element.entryPointUrl, '/authorization/groups');
+        const apiUrl = combineURLs(this.#entryPointUrl, '/authorization/groups');
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: 'Bearer ' + this._element.auth.token,
+                Authorization: 'Bearer ' + this.#auth.token,
             },
             body: JSON.stringify({name}),
         });
@@ -119,14 +123,14 @@ export class GroupManageApi {
      */
     async deleteGroup(groupIdentifier) {
         const apiUrl = combineURLs(
-            this._element.entryPointUrl,
+            this.#entryPointUrl,
             `/authorization/groups/${encodeURIComponent(groupIdentifier)}`,
         );
         const response = await fetch(apiUrl, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: 'Bearer ' + this._element.auth.token,
+                Authorization: 'Bearer ' + this.#auth.token,
             },
         });
         if (response.status !== 204) {
@@ -140,14 +144,14 @@ export class GroupManageApi {
      */
     async deleteGroupMember(groupMemberIdentifier) {
         const apiUrl = combineURLs(
-            this._element.entryPointUrl,
+            this.#entryPointUrl,
             `/authorization/group-members/${encodeURIComponent(groupMemberIdentifier)}`,
         );
         const response = await fetch(apiUrl, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: 'Bearer ' + this._element.auth.token,
+                Authorization: 'Bearer ' + this.#auth.token,
             },
         });
         if (response.status !== 204) {
@@ -156,16 +160,16 @@ export class GroupManageApi {
     }
 
     /**
-     * @param {{group: string, userIdentifier: string, childGroup?: string}} data
+     * @param {{group: string, userIdentifier?: string, childGroup?: string}} data
      * @returns {Promise<AuthorizationGroupMember>}
      */
     async addGroupMember(data) {
-        const apiUrl = combineURLs(this._element.entryPointUrl, '/authorization/group-members');
+        const apiUrl = combineURLs(this.#entryPointUrl, '/authorization/group-members');
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: 'Bearer ' + this._element.auth.token,
+                Authorization: 'Bearer ' + this.#auth.token,
             },
             body: JSON.stringify(data),
         });
@@ -181,13 +185,13 @@ export class GroupManageApi {
      */
     async getPerson(userIdentifier) {
         const apiUrl = combineURLs(
-            this._element.entryPointUrl,
+            this.#entryPointUrl,
             `/base/people/${encodeURIComponent(userIdentifier)}?includeLocal=email`,
         );
         const response = await fetch(apiUrl, {
             headers: {
                 'Content-Type': 'application/ld+json',
-                Authorization: 'Bearer ' + this._element.auth.token,
+                Authorization: 'Bearer ' + this.#auth.token,
             },
         });
         if (!response.ok) {

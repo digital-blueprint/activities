@@ -13,6 +13,36 @@ import {GroupManageApi, ApiError} from './api.js';
 import {computePosition, autoPlacement, offset, shift} from '@floating-ui/dom';
 
 /** @typedef {import('lit').TemplateResult} TemplateResult */
+/** @typedef {import('@dbp-toolkit/resource-select').ResourceSelect} ResourceSelectElement */
+/** @typedef {import('@dbp-toolkit/common').Button} ButtonElement */
+/** @typedef {import('./api.js').AuthorizationGroup} AuthorizationGroup */
+/** @typedef {import('./api.js').AuthorizationGroupMember} AuthorizationGroupMember */
+
+/**
+ * @typedef {object} RenderedGroup
+ * @property {string} id
+ * @property {string} name
+ * @property {'AuthorizationGroup' | 'AuthorizationGroupMember'} type
+ * @property {string} cssClass
+ * @property {number | null} memberCount
+ * @property {RenderedGroup[] | null} [members]
+ * @property {string} [rootId]
+ * @property {'user' | 'groupMember'} [itemType]
+ * @property {RenderedGroup[] | null} [childGroup]
+ */
+
+/**
+ * @typedef {object} SelectedGroupMember
+ * @property {'person' | 'group'} type
+ * @property {string} identifier
+ * @property {string} name
+ */
+
+/**
+ * @typedef {object} TargetGroup
+ * @property {string | null} identifier
+ * @property {string | null} name
+ */
 
 /**
  * @class
@@ -29,11 +59,11 @@ export class GroupManage extends AuthMixin(
         this.entryPointUrl = null;
         /** @type {boolean} */
         this.isFirstUpdated = false;
-        /** @type {Array} */
+        /** @type {RenderedGroup[]} */
         this.authGroups = [];
-        /** @type {object | null} */
+        /** @type {TargetGroup | null} */
         this.targetGroup = null;
-        /** @type {object | null} */
+        /** @type {SelectedGroupMember | null} */
         this.groupMember = null;
         /** @type {string | null} */
         this.groupIdentifier = null;
@@ -50,11 +80,11 @@ export class GroupManage extends AuthMixin(
         /** @type {HTMLElement | null} */
         this.addGroupMemberPopover = null;
 
-        /** @type {ResourceSelect} */
+        /** @type {ResourceSelectElement | null} */
         this.personSelector = null;
-        /** @type {Button | null} */
+        /** @type {ButtonElement | null} */
         this.addToGroupButton = null;
-        /** @type {Button | null} */
+        /** @type {ButtonElement | null} */
         this.listGroupButton = null;
 
         /** @type {HTMLElement | null} */
@@ -128,24 +158,28 @@ export class GroupManage extends AuthMixin(
 
     firstUpdated() {
         this.isFirstUpdated = true;
-        this.personSelector = this._('#person-to-add-selector');
-        this.addToGroupButton = this._('#add-to-group-button');
-        this.listGroupButton = this._('#list-group-button');
+        this.personSelector = /** @type {ResourceSelectElement | null} */ (
+            this._('#person-to-add-selector')
+        );
+        this.addToGroupButton = /** @type {ButtonElement | null} */ (
+            this._('#add-to-group-button')
+        );
+        this.listGroupButton = /** @type {ButtonElement | null} */ (this._('#list-group-button'));
 
         this.createGroupPopover = this._('#create-group-popover');
-        this.createGroupPopover.addEventListener('beforetoggle', this.positionPopover.bind(this));
+        this.createGroupPopover?.addEventListener('beforetoggle', this.positionPopover.bind(this));
 
         this.deleteGroupPopover = this._('#delete-group-popover');
-        this.deleteGroupPopover.addEventListener('beforetoggle', this.positionPopover.bind(this));
+        this.deleteGroupPopover?.addEventListener('beforetoggle', this.positionPopover.bind(this));
 
         this.addGroupMemberPopover = this._('#add-group-member-popover');
-        this.addGroupMemberPopover.addEventListener(
+        this.addGroupMemberPopover?.addEventListener(
             'beforetoggle',
             this.positionPopover.bind(this),
         );
 
         this.deleteGroupMemberPopover = this._('#delete-group-member-popover');
-        this.deleteGroupMemberPopover.addEventListener(
+        this.deleteGroupMemberPopover?.addEventListener(
             'beforetoggle',
             this.positionPopover.bind(this),
         );
@@ -159,9 +193,9 @@ export class GroupManage extends AuthMixin(
         super.disconnectedCallback();
         window.removeEventListener('resize', this.updatePosition);
 
-        this.deleteGroupPopover.removeEventListener('beforetoggle', this.positionPopover);
-        this.deleteGroupMemberPopover.addEventListener('beforetoggle', this.positionPopover);
-        this.addGroupMemberPopover.removeEventListener('beforetoggle', this.positionPopover);
+        this.deleteGroupPopover?.removeEventListener('beforetoggle', this.positionPopover);
+        this.deleteGroupMemberPopover?.addEventListener('beforetoggle', this.positionPopover);
+        this.addGroupMemberPopover?.removeEventListener('beforetoggle', this.positionPopover);
     }
 
     loginCallback() {
@@ -178,8 +212,8 @@ export class GroupManage extends AuthMixin(
     // MARK: PROCESS
     /**
      * Sets the needed properties for rendering. Full usernames, identifiers and css classes.
-     * @param {Array} authGroups an array of "AuthorizationGroup" objects
-     * @returns {Promise<any[]>}
+     * @param {Array<AuthorizationGroup | AuthorizationGroupMember>} authGroups
+     * @returns {Promise<RenderedGroup[]>}
      */
     async processAuthGroups(authGroups) {
         // console.log('Processing auth groups', authGroups);
@@ -201,29 +235,34 @@ export class GroupManage extends AuthMixin(
                     };
                 }
                 if (item['@type'] === 'AuthorizationGroupMember') {
-                    let name, id, cssClass, itemType, rootId;
+                    let name = '';
+                    const id = item.identifier;
+                    const childGroup = item.childGroup;
+                    let cssClass = '';
+                    /** @type {'user' | 'groupMember' | undefined} */
+                    let itemType;
+                    /** @type {string | undefined} */
+                    let rootId;
 
                     if (item.userIdentifier !== null) {
                         name = await this.fetchFullnameFromUserid(item.userIdentifier);
-                        id = item.identifier;
                         itemType = 'user';
                         // TODO: fix html class names and markup.
                         cssClass = 'user-name-icon';
                     }
-                    if (item.childGroup !== null) {
-                        name = item.childGroup.name;
-                        id = item['identifier'];
-                        rootId = item.childGroup.identifier;
+                    if (childGroup !== null) {
+                        name = childGroup.name;
+                        rootId = childGroup.identifier;
                         itemType = 'groupMember';
                         // TODO: fix html class names and markup.
                         cssClass = 'child-group-icon';
                     }
 
                     let memberCount =
-                        item.childGroup !== null &&
-                        item.childGroup.members !== null &&
-                        item.childGroup.members.length > 0
-                            ? this.getAllMembersCount(item.childGroup.members)
+                        childGroup !== null &&
+                        childGroup.members !== null &&
+                        childGroup.members.length > 0
+                            ? this.getAllMembersCount(childGroup.members)
                             : null;
 
                     return {
@@ -234,11 +273,14 @@ export class GroupManage extends AuthMixin(
                         cssClass: cssClass,
                         itemType: itemType,
                         memberCount: memberCount,
-                        childGroup: memberCount
-                            ? await this.processAuthGroups(item.childGroup.members)
-                            : null,
+                        childGroup:
+                            memberCount && childGroup
+                                ? await this.processAuthGroups(childGroup.members)
+                                : null,
                     };
                 }
+
+                throw new Error('Unsupported authorization item type.');
             }),
         );
 
@@ -247,7 +289,7 @@ export class GroupManage extends AuthMixin(
 
     /**
      * Count all members of a group recursively.
-     * @param {Array} groups
+     * @param {AuthorizationGroupMember[]} groups
      * @returns {number}
      */
     getAllMembersCount(groups) {
@@ -257,7 +299,7 @@ export class GroupManage extends AuthMixin(
 
         /**
          * Do the recursion.
-         * @param {object} group
+         * @param {AuthorizationGroupMember} group
          * @returns {number}
          */
         function countRecursive(group) {
@@ -285,7 +327,7 @@ export class GroupManage extends AuthMixin(
     // MARK: Render Groups
     /**
      * Render authGroups to html.
-     * @param {Array<object>} authGroups
+     * @param {RenderedGroup[]} authGroups
      * @param {number} level
      * @param {string | null} parentId
      * @returns {TemplateResult}
@@ -381,7 +423,7 @@ export class GroupManage extends AuthMixin(
                                                       item.name,
                                                   )}
                                                   ${
-                                                      item.itemType === 'groupMember'
+                                                      item.itemType === 'groupMember' && item.rootId
                                                           ? this.renderAddGroupMemberButton(
                                                                 item.rootId,
                                                                 item.name,
@@ -419,7 +461,9 @@ export class GroupManage extends AuthMixin(
 
         if (event.target instanceof HTMLElement) {
             if (event.target.tagName !== 'DBP-BUTTON') {
-                button = event.target.closest('dbp-button');
+                const closestButton = event.target.closest('dbp-button');
+                if (!(closestButton instanceof HTMLElement)) return;
+                button = closestButton;
             } else {
                 button = event.target;
             }
@@ -431,7 +475,7 @@ export class GroupManage extends AuthMixin(
 
                 this.activeItemName = button.getAttribute('data-group-name');
                 this.activePopover = this.deleteGroupPopover;
-                this.activePopover.showPopover();
+                this.activePopover?.showPopover();
             }
 
             if (button.classList.contains('delete-group-member-button')) {
@@ -439,23 +483,28 @@ export class GroupManage extends AuthMixin(
 
                 this.activeItemName = button.getAttribute('data-group-name');
                 this.activePopover = this.deleteGroupMemberPopover;
-                this.activePopover.togglePopover();
+                this.activePopover?.togglePopover();
             }
 
             if (button.classList.contains('add-group-member-button')) {
                 await this.resetSelectors();
 
-                this.targetGroup = {};
-                this.targetGroup.identifier = button.getAttribute('data-group-id');
-                this.targetGroup.name = button.getAttribute('data-group-name');
+                this.targetGroup = {
+                    identifier: button.getAttribute('data-group-id'),
+                    name: button.getAttribute('data-group-name'),
+                };
 
                 this.activePopover = this.addGroupMemberPopover;
-                this.activePopover.showPopover();
+                this.activePopover?.showPopover();
 
                 requestAnimationFrame(() => {
                     // Select2 only creates its search input after the dropdown opens.
-                    this.personSelector._getSelect2().select2('open');
-                    this.personSelector.shadowRoot.querySelector('.select2-search__field')?.focus();
+                    this.personSelector?._getSelect2().select2('open');
+                    const searchField = /** @type {HTMLElement | null} */ (
+                        this.personSelector?.renderRoot.querySelector('.select2-search__field') ??
+                            null
+                    );
+                    searchField?.focus();
                 });
             }
         }
@@ -559,13 +608,13 @@ export class GroupManage extends AuthMixin(
             console.log('popover opening');
             this.clickOverlayVisible = true;
 
-            const rowEl = this.activeButton.closest('[data-item-id]');
+            const rowEl = invoker.closest('[data-item-id]');
             if (rowEl) {
                 this.hoveredRowId = rowEl.getAttribute('data-item-id');
             }
 
-            if (Array.isArray(this.activePopover.querySelectorAll('dbp-button'))) {
-                this.activePopover.querySelectorAll('dbp-button').forEach((popoverButton) => {
+            if (Array.isArray(popover.querySelectorAll('dbp-button'))) {
+                popover.querySelectorAll('dbp-button').forEach((popoverButton) => {
                     popoverButton.removeAttribute('disabled');
                 });
             }
@@ -575,11 +624,11 @@ export class GroupManage extends AuthMixin(
 
         // @ts-ignore
         if (event.newState === 'closed') {
-            this.activeButton.removeAttribute('disabled');
+            invoker.removeAttribute('disabled');
             this.hoveredRowId = null;
             this.activeButton = null;
 
-            this.activePopover.querySelectorAll('dbp-button').forEach((popoverButton) => {
+            popover.querySelectorAll('dbp-button').forEach((popoverButton) => {
                 popoverButton.removeAttribute('disabled');
             });
             this.activePopover = null;
@@ -625,7 +674,7 @@ export class GroupManage extends AuthMixin(
      */
     async fetchGroups(buttonTriggered = false) {
         this.userNameCache = new Map();
-        this.listGroupButton.start();
+        this.listGroupButton?.start();
         try {
             const response = await this._api.getGroups();
             const groups = response['hydra:member'];
@@ -657,13 +706,18 @@ export class GroupManage extends AuthMixin(
                 throw e;
             }
         } finally {
-            this.listGroupButton.stop();
+            this.listGroupButton?.stop();
         }
     }
 
+    /**
+     * @param {string} userIdentifier
+     * @returns {Promise<string>}
+     */
     fetchFullnameFromUserid(userIdentifier) {
-        if (this.userNameCache.has(userIdentifier)) {
-            return this.userNameCache.get(userIdentifier);
+        const cachedName = this.userNameCache.get(userIdentifier);
+        if (cachedName) {
+            return cachedName;
         }
 
         // Store the promise immediately (before any await) so concurrent callers
@@ -684,6 +738,7 @@ export class GroupManage extends AuthMixin(
                         type: 'danger',
                         timeout: 30,
                     });
+                    return userIdentifier;
                 } else {
                     throw e;
                 }
@@ -741,7 +796,7 @@ export class GroupManage extends AuthMixin(
     }
 
     async deleteGroup() {
-        this.deleteGroupPopover.hidePopover();
+        this.deleteGroupPopover?.hidePopover();
 
         if (!this.groupIdentifier) {
             notify({
@@ -784,7 +839,7 @@ export class GroupManage extends AuthMixin(
     }
 
     async deleteGroupMember(event) {
-        this.deleteGroupMemberPopover.hidePopover();
+        this.deleteGroupMemberPopover?.hidePopover();
 
         if (!this.groupIdentifier) {
             notify({
@@ -832,8 +887,7 @@ export class GroupManage extends AuthMixin(
      * @param {Event} event
      */
     async addGroupMemberButtonHandler(event) {
-        /** @type {Button} */
-        let button = event.target;
+        const button = /** @type {ButtonElement} */ (event.target);
         button.start();
         await this.addGroupMember();
     }
@@ -846,10 +900,10 @@ export class GroupManage extends AuthMixin(
                 this.showNoSourceError = false;
             }, 3000);
             /**
-             * @type {Button}
+             * @type {ButtonElement}
              */
-            this.addToGroupButton.stop();
-            this.addToGroupButton.removeAttribute('disabled');
+            this.addToGroupButton?.stop();
+            this.addToGroupButton?.removeAttribute('disabled');
             return;
         }
         if (!this.targetGroup) {
@@ -864,6 +918,7 @@ export class GroupManage extends AuthMixin(
         const groupMemberId = this.groupMember['identifier'];
         const targetGroupId = this.targetGroup['identifier'];
         const groupName = this.targetGroup['name'];
+        /** @type {{group: string, userIdentifier?: string, childGroup?: string}} */
         const data = {
             group: `/authorization/groups/${targetGroupId}`,
         };
@@ -916,7 +971,7 @@ export class GroupManage extends AuthMixin(
      */
     onUserIdInput(event) {
         const value = /** @type {HTMLInputElement} */ (event.target).value.trim();
-        void this.personSelector.reset();
+        void this.personSelector?.reset();
         if (value) {
             this.groupMember = {type: 'person', identifier: value, name: value};
         } else {
@@ -933,7 +988,8 @@ export class GroupManage extends AuthMixin(
         const personIri = event.detail.value;
         const personIdentifier = getIdFromIri(personIri);
         const name = await this.fetchFullnameFromUserid(personIdentifier);
-        this._('#user-id-input').value = '';
+        const userIdInput = /** @type {HTMLInputElement | null} */ (this._('#user-id-input'));
+        if (userIdInput) userIdInput.value = '';
         this.groupMember = {
             type: 'person',
             identifier: personIdentifier,
@@ -1025,6 +1081,7 @@ export class GroupManage extends AuthMixin(
         }
 
         this.activePopover = this.createGroupPopover;
+        if (!this.activePopover) return;
         this.activePopover.showPopover();
 
         // Focus on the input field.
@@ -1035,7 +1092,7 @@ export class GroupManage extends AuthMixin(
     }
 
     closeCreateGroupPopover() {
-        this.activePopover.hidePopover();
+        this.activePopover?.hidePopover();
     }
 
     renderGroupDeleteConfirmationPopover() {
@@ -1072,7 +1129,7 @@ export class GroupManage extends AuthMixin(
     }
 
     closeDeleteGroup() {
-        this.activePopover.hidePopover();
+        this.activePopover?.hidePopover();
     }
 
     renderGroupMemberDeleteConfirmationPopover() {
@@ -1109,7 +1166,7 @@ export class GroupManage extends AuthMixin(
     }
 
     closeDeleteGroupMember() {
-        this.activePopover.hidePopover();
+        this.activePopover?.hidePopover();
     }
 
     renderAddGroupMemberPopover() {
@@ -1200,11 +1257,11 @@ export class GroupManage extends AuthMixin(
     }
 
     closeAddGroupMemberPopover() {
-        this.activePopover.hidePopover();
+        this.activePopover?.hidePopover();
         /**
-         * @type {Button}
+         * @type {ButtonElement}
          */
-        this.addToGroupButton.stop();
+        this.addToGroupButton?.stop();
         // Reset selectors states.
         void this.resetSelectors();
     }
@@ -1269,7 +1326,7 @@ export class GroupManage extends AuthMixin(
 
     /**
      * Collect IDs of all groups/members that have children.
-     * @param {Array} groups
+     * @param {RenderedGroup[]} groups
      * @returns {Set<string>}
      */
     getAllGroupIds(groups) {
@@ -1289,7 +1346,7 @@ export class GroupManage extends AuthMixin(
     /**
      * Find all item IDs whose names match the search query.
      * @param {string} query
-     * @param {Array} groups
+     * @param {RenderedGroup[]} groups
      * @returns {Array<string>}
      */
     findMatchingIds(query, groups) {
@@ -1309,7 +1366,7 @@ export class GroupManage extends AuthMixin(
     /**
      * Find ancestor IDs for a given item ID in the group tree.
      * @param {string} targetId
-     * @param {Array} groups
+     * @param {RenderedGroup[]} groups
      * @param {Array<string>} path
      * @returns {Array<string> | null}
      */
@@ -1361,8 +1418,9 @@ export class GroupManage extends AuthMixin(
     }
 
     resetSelectors() {
-        this._('#user-id-input').value = '';
-        return this.personSelector.reset();
+        const userIdInput = /** @type {HTMLInputElement | null} */ (this._('#user-id-input'));
+        if (userIdInput) userIdInput.value = '';
+        return this.personSelector?.reset();
     }
 
     collapseAllGroups() {
@@ -1381,25 +1439,30 @@ export class GroupManage extends AuthMixin(
 
     /**
      * Sort group members, childgroups first then users (like in a file manager).
-     * @param {Array} groupMembers
+     * @param {Array<AuthorizationGroup | AuthorizationGroupMember>} groupMembers
      */
     listByGroupFirst(groupMembers) {
         groupMembers.sort((a, b) => {
+            const aChildGroup = a['@type'] === 'AuthorizationGroupMember' && a.childGroup;
+            const bChildGroup = b['@type'] === 'AuthorizationGroupMember' && b.childGroup;
             // Sort by childGroup not null first
-            if (a.childGroup && !b.childGroup) {
+            if (aChildGroup && !bChildGroup) {
                 return -1;
             }
-            if (!a.childGroup && b.childGroup) {
+            if (!aChildGroup && bChildGroup) {
                 return 1;
             }
 
+            const aUserIdentifier = a['@type'] === 'AuthorizationGroupMember' && a.userIdentifier;
+            const bUserIdentifier = b['@type'] === 'AuthorizationGroupMember' && b.userIdentifier;
             // Sort by userIdentifier not null second
-            if (a.userIdentifier && !b.userIdentifier) {
+            if (aUserIdentifier && !bUserIdentifier) {
                 return -1;
             }
-            if (!a.userIdentifier && b.userIdentifier) {
+            if (!aUserIdentifier && bUserIdentifier) {
                 return 1;
             }
+            return 0;
         });
     }
 
