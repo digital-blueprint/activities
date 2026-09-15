@@ -24,8 +24,10 @@ import {getMtReportCSS} from './styles.js';
 /** @typedef {import('./types.js').DownloadableFile} DownloadableFile */
 /** @typedef {import('./types.js').DataFeedElement} DataFeedElement */
 /** @typedef {import('lit').TemplateResult} TemplateResult */
-/** @typedef {import('lit/directives/ref.js').Ref<FileSource>} FileSourceRef */
-/** @typedef {import('lit/directives/ref.js').Ref<FileSink>} FileSinkRef */
+/**
+ * @template T
+ * @typedef {import('lit/directives/ref.js').Ref<T>} Ref
+ */
 
 export class DbpPrepareMediaTransparencyReport extends AuthMixin(
     LangMixin(ScopedElementsMixin(AdapterLitElement), createInstance),
@@ -70,14 +72,17 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         this.reportIsComplete = false;
         /** @type {File|null} */
         this.importedRTRCSVFile = null;
+        /** @type {Ref<Button>} */
         this.downloadSujetButtonRef = createRef();
+        /** @type {Ref<Button>} */
         this.exportCSVButtonRef = createRef();
+        /** @type {Ref<Button>} */
         this.importCSVButtonRef = createRef();
-        /** @type {FileSourceRef} */
+        /** @type {Ref<FileSource>} */
         this.csvImportFileSourceRef = createRef();
-        /** @type {FileSinkRef} */
+        /** @type {Ref<FileSink>} */
         this.sujetExportFileSinkRef = createRef();
-        /** @type {FileSinkRef} */
+        /** @type {Ref<FileSink>} */
         this.csvExportSinkRef = createRef();
     }
 
@@ -313,6 +318,9 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
      * @returns {Promise<Submission[]>}
      */
     async getSubmissions() {
+        if (!this.auth) {
+            throw new Error('Cannot fetch submissions without authentication.');
+        }
         const options = {
             method: 'GET',
             headers: {
@@ -529,10 +537,13 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
             const dataFeedElement = parseSubmissionData(submission);
             // category is a required field on the submission form, so it is always present.
             const category = dataFeedElement.category;
+            if (!category) {
+                throw new Error('Submission is missing a category.');
+            }
             if (!submissionsByCategory.has(category)) {
                 submissionsByCategory.set(category, []);
             }
-            submissionsByCategory.get(category).push(submission);
+            submissionsByCategory.get(category)?.push(submission);
         }
 
         this.csvFilesToExport = [];

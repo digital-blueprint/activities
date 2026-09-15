@@ -112,13 +112,13 @@ export function buildSujetLinkLookup(parsedRTRCSV) {
  */
 export function buildCsvRow(dataFeedElement, rtrUrl, submissionIdentifier) {
     return {
-        Medium: dataFeedElement.mediaName,
+        Medium: dataFeedElement.mediaName || '',
         Medium_andere: dataFeedElement.otherMediumName || '',
         Medieninhaber: dataFeedElement.mediumOwnersName || '',
         Medieninhaber_andere: dataFeedElement.otherMediumOwnersName || '',
         Betrag: dataFeedElement.amountInEuro || '',
         Kampagnentitel: dataFeedElement.campaignTitle || '',
-        Sujetlink: rtrUrl,
+        Sujetlink: rtrUrl || '',
         Kategorie: dataFeedElement.category || '',
         ID: rtrUrl ? `${dataFeedElement.mediumOwnersName || ''}${rtrUrl}` : '',
         submissionIdentifier: submissionIdentifier || '',
