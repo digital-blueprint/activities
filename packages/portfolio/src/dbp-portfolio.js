@@ -164,15 +164,8 @@ export class DbpPortfolio extends AuthMixin(
                     timeout: 5,
                 });
             }
-            // Re-fetch the updated workflow and patch local state
-            const updated = await this._api().getWorkflow(workflowId);
-            this._workflows = this._workflows.map((w) =>
-                w.identifier === workflowId ? updated : w,
-            );
-            this._selectedWorkflow =
-                this._selectedWorkflow?.identifier === workflowId
-                    ? updated
-                    : this._selectedWorkflow;
+            // Refresh the list since the action may have deleted the workflow.
+            await this._fetchWorkflows();
         } catch (e) {
             notify({
                 summary: 'Error',
