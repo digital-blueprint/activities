@@ -228,6 +228,13 @@ export class DbpPortfolio extends AuthMixin(
     _renderDetail(workflow) {
         return html`
             <div class="workflow-detail">
+                ${
+                    workflow.description
+                        ? html`
+                              <p class="workflow-description">${workflow.description}</p>
+                          `
+                        : ''
+                }
                 <p class="status-display">
                     <strong>${workflow.statusDisplay.label}</strong>
                     &mdash; ${workflow.statusDisplay.description}
