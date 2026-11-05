@@ -22,6 +22,7 @@ export class DbpPortfolio extends AuthMixin(
         this._isLoading = false;
         this._iframeUrl = '';
         this._iframeTitle = '';
+        this._iframeDescription = '';
     }
 
     static get scopedElements() {
@@ -40,6 +41,7 @@ export class DbpPortfolio extends AuthMixin(
             _isLoading: {type: Boolean, state: true},
             _iframeUrl: {type: String, state: true},
             _iframeTitle: {type: String, state: true},
+            _iframeDescription: {type: String, state: true},
         };
     }
 
@@ -93,16 +95,19 @@ export class DbpPortfolio extends AuthMixin(
     /**
      * @param {string} url
      * @param {string} [title]
+     * @param {string} [description]
      */
-    _openInIframe(url, title = '') {
+    _openInIframe(url, title = '', description = '') {
         this._iframeUrl = url;
         this._iframeTitle = title;
+        this._iframeDescription = description;
         this._iframeModal?.open();
     }
 
     _onIframeModalClosed() {
         this._iframeUrl = '';
         this._iframeTitle = '';
+        this._iframeDescription = '';
     }
 
     get _loadingButton() {
@@ -140,8 +145,15 @@ export class DbpPortfolio extends AuthMixin(
      * @param {string} actionId
      * @param {string} [actionLabel]
      * @param {LoadingButton|null} [button]
+     * @param {string} [actionDescription]
      */
-    async _triggerAction(workflowId, actionId, actionLabel = '', button = null) {
+    async _triggerAction(
+        workflowId,
+        actionId,
+        actionLabel = '',
+        button = null,
+        actionDescription = '',
+    ) {
         button?.start();
         try {
             let response = await this._api().triggerWorkflowAction(workflowId, actionId);
@@ -151,7 +163,7 @@ export class DbpPortfolio extends AuthMixin(
                 // Ideally the response itself would tell us what to do with the
                 // result (e.g. open in an iframe/modal vs. a new tab).
                 if (this._isSameOrigin(response.url)) {
-                    this._openInIframe(response.url, actionLabel);
+                    this._openInIframe(response.url, actionLabel, actionDescription);
                 } else {
                     window.open(response.url, '_blank', 'noopener,noreferrer');
                 }
@@ -198,6 +210,7 @@ export class DbpPortfolio extends AuthMixin(
                         return html`
                             <a
                                 class="action-link"
+                                title=${action.description ?? ''}
                                 href="${action.url}"
                                 target="_blank"
                                 rel="noopener noreferrer">
@@ -208,6 +221,7 @@ export class DbpPortfolio extends AuthMixin(
                     return html`
                         <dbp-loading-button
                             class="action-button"
+                            title=${action.description ?? ''}
                             type="is-primary"
                             @click=${(e) =>
                                 this._triggerAction(
@@ -215,6 +229,7 @@ export class DbpPortfolio extends AuthMixin(
                                     action.id,
                                     action.label,
                                     /** @type {LoadingButton} */ (e.currentTarget),
+                                    action.description ?? '',
                                 )}>
                             ${action.label}
                         </dbp-loading-button>
@@ -304,6 +319,13 @@ export class DbpPortfolio extends AuthMixin(
                 subscribe="lang"
                 @dbp-modal-closed=${this._onIframeModalClosed}>
                 <div slot="content" class="iframe-modal-content">
+                    ${
+                        this._iframeDescription
+                            ? html`
+                                  <p class="iframe-description">${this._iframeDescription}</p>
+                              `
+                            : ''
+                    }
                     ${
                         this._iframeUrl
                             ? html`
@@ -457,6 +479,13 @@ export class DbpPortfolio extends AuthMixin(
                 height: 70vh;
                 max-width: 100%;
                 border: none;
+            }
+
+            .iframe-description {
+                margin: 0 0 1rem;
+                color: var(--dbp-muted);
+                overflow-wrap: anywhere;
+                white-space: pre-line;
             }
         `;
     }

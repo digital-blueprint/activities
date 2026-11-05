@@ -50,6 +50,7 @@ export class ApiError extends Error {
  * @typedef {object} PortfolioWorkflowAction
  * @property {string} id
  * @property {string} label
+ * @property {string} [description]
  * @property {"action"|"url"} type
  * @property {string} [url]
  */
