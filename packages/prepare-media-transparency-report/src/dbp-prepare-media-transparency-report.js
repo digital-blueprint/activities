@@ -552,6 +552,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                 submissions.map((submission) =>
                     this.buildReportRow(submission, rtrUrlBySubmissionId),
                 ),
+                {delimiter: ';', newline: '\r\n', header: true},
             );
             this.csvFilesToExport.push({category, csv});
         }
