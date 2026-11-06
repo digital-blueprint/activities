@@ -1035,6 +1035,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
 
                     <dbp-file-sink
                         ${ref(this.sujetExportFileSinkRef)}
+                        .auth="${this.auth}"
                         id="file-sink"
                         class="file-sink"
                         lang="${this.lang}"
@@ -1150,6 +1151,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
 
                     <dbp-file-sink
                         ${ref(this.csvExportSinkRef)}
+                        .auth="${this.auth}"
                         id="csv-export-sink"
                         class="file-sink"
                         lang="${this.lang}"
