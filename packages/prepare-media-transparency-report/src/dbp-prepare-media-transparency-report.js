@@ -16,7 +16,13 @@ import {
     getReportingCategoryItems,
 } from './categories.js';
 import {parseSubmissionData, filterSubmissions, deduplicateFileName} from './submissions.js';
-import {buildExportBaseName, parseCsvContent, buildSujetLinkLookup, buildCsvRow} from './csv.js';
+import {
+    buildExportBaseName,
+    parseCsvContent,
+    buildSujetLinkLookup,
+    buildCsvRow,
+    encodeLatin1,
+} from './csv.js';
 import {getMtReportCSS} from './styles.js';
 /** @typedef {import('./types.js').RTRCsvRow} RTRCsvRow */
 /** @typedef {import('./types.js').Submission} Submission */
@@ -602,14 +608,34 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         // One CSV file per category. When there is more than one file the
         // file-sink auto-zips them into a single archive for download.
         /** @type {File[]} */
-        const csvFiles = this.csvFilesToExport.map((entry) => {
-            const baseName = buildExportBaseName(
-                'media-transparency-report',
-                entry.category,
-                this.reportPeriod,
-            );
-            return new File([entry.csv], `${baseName}.csv`, {type: 'text/csv'});
-        });
+        let csvFiles;
+        try {
+            csvFiles = this.csvFilesToExport.map((entry) => {
+                const baseName = buildExportBaseName(
+                    'media-transparency-report',
+                    entry.category,
+                    this.reportPeriod,
+                );
+                return new File([encodeLatin1(entry.csv)], `${baseName}.csv`, {
+                    type: 'text/csv;charset=iso-8859-1',
+                });
+            });
+        } catch (error) {
+            if (!(error instanceof Error) || error.message !== 'description-csv-encoding-error') {
+                throw error;
+            }
+            sendNotification({
+                summary: this._i18n.t(
+                    'prepare-media-transparency-report.notifications.title-error',
+                ),
+                body: this._i18n.t(
+                    'prepare-media-transparency-report.notifications.description-csv-encoding-error',
+                ),
+                type: 'danger',
+                timeout: 0,
+            });
+            return;
+        }
 
         // Assigning the files opens the file-sink modal.
         if (this.csvExportSinkRef.value) {

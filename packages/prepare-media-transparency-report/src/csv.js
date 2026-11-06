@@ -4,6 +4,24 @@ import Papa from 'papaparse';
 /** @typedef {import('./types.js').DataFeedElement} DataFeedElement */
 
 /**
+ * Encode CSV text as ISO-8859-1 bytes without a BOM.
+ * Reject unrepresentable characters instead of silently truncating them.
+ * @param {string} text
+ * @returns {Uint8Array<ArrayBuffer>}
+ */
+export function encodeLatin1(text) {
+    const bytes = new Uint8Array(text.length);
+    for (let i = 0; i < text.length; i++) {
+        const code = text.charCodeAt(i);
+        if (code > 0xff) {
+            throw new Error('description-csv-encoding-error');
+        }
+        bytes[i] = code;
+    }
+    return bytes;
+}
+
+/**
  * Expected column headers of the CSV file imported from RTR.
  * @type {string[]}
  */
