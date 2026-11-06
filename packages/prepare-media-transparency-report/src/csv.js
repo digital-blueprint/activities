@@ -160,7 +160,15 @@ export function buildCsvRow(dataFeedElement, rtrUrl) {
 
         case 'Out of Home':
             return {
-                Art_der_Werbeleistung: dataFeedElement.advertisementSubcategory || '',
+                // Formalize stores this subtype under the name 'outdoorAdvertising'.
+                // RTR require the exact selection value 'Flächengebende Ausstattung'
+                // from its Out of Home list (FAQ 8.3).
+                // https://www.rtr.at/medien/was_wir_tun/medientransparenz/Medientransparenz_Bekanntgaben_fuer_Rechtstraeger/FAQ_MedKFTG_Neu/FAQ_MedKFTG_Neu.de.html#8_3_Up_und_Download_von_CSV_Daten
+                // @TODO: Consider changing this category in formalize to match RTR's expected value, so we don't have to translate it here.
+                Art_der_Werbeleistung:
+                    dataFeedElement.advertisementSubcategory === 'outdoorAdvertising'
+                        ? 'Flächengebende Ausstattung'
+                        : dataFeedElement.advertisementSubcategory || '',
                 ...owner,
                 ...details,
             };
