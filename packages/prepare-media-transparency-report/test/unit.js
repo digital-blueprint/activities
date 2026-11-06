@@ -98,22 +98,69 @@ suite('RTR category-specific CSV rows', () => {
         });
     }
 
-    test('exports Sonstiges as the RTR other-medium marker without changing the subtype', () => {
+    test('exports custom mediums with both RTR markers even when the primary owner is empty', () => {
         for (const category of ['Online', 'Print', 'Hörfunk', 'Fernsehen']) {
             const row = buildCsvRow(
                 {
                     ...submission,
                     category,
                     mediaName: 'Sonstiges',
+                    mediumOwnersName: '',
                     advertisementSubcategory: 'Sonstiges',
                 },
                 sujetLink,
             );
             assert.equal(row.Medium, '<Anderes Medium>');
             assert.equal(row.Medium_andere, submission.otherMediumName);
+            assert.equal(row.Medieninhaber, '<Anderer Medieninhaber>');
+            assert.equal(row.Medieninhaber_andere, submission.otherMediumOwnersName);
             if (category === 'Online') {
                 assert.equal(row.Art_der_Werbeleistung, 'Sonstiges');
             }
+        }
+    });
+
+    test('exports a custom owner using the RTR marker and preserves the subtype and company name', () => {
+        for (const category of ['Online', 'Print', 'Hörfunk', 'Fernsehen', 'Out of Home']) {
+            const row = buildCsvRow(
+                {
+                    ...submission,
+                    category,
+                    mediumOwnersName: 'Sonstiges',
+                    otherMediumOwnersName: 'Example; "Company"',
+                    advertisementSubcategory: 'Sonstiges',
+                },
+                sujetLink,
+            );
+            const parsed = Papa.parse(Papa.unparse([row], {delimiter: ';'}), {
+                delimiter: ';',
+                header: true,
+            });
+            assert.isEmpty(parsed.errors);
+            assert.equal(parsed.data[0].Medieninhaber, '<Anderer Medieninhaber>');
+            assert.equal(parsed.data[0].Medieninhaber_andere, 'Example; "Company"');
+            if (category === 'Online' || category === 'Out of Home') {
+                assert.equal(parsed.data[0].Art_der_Werbeleistung, 'Sonstiges');
+            }
+        }
+    });
+
+    test('does not infer a custom owner from the subtype or an Out of Home medium value', () => {
+        for (const category of ['Online', 'Out of Home']) {
+            const row = buildCsvRow(
+                {
+                    ...submission,
+                    category,
+                    mediaName: category === 'Out of Home' ? 'Sonstiges' : 'Listed medium',
+                    mediumOwnersName: 'Listed owner',
+                    otherMediumOwnersName: '',
+                    advertisementSubcategory: 'Sonstiges',
+                },
+                sujetLink,
+            );
+            assert.equal(row.Medieninhaber, 'Listed owner');
+            assert.equal(row.Medieninhaber_andere, '');
+            assert.equal(row.Art_der_Werbeleistung, 'Sonstiges');
         }
     });
 

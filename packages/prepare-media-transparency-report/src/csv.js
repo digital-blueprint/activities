@@ -138,8 +138,15 @@ export function buildCsvRow(dataFeedElement, rtrUrl) {
                 : dataFeedElement.mediaName || '',
         Medium_andere: dataFeedElement.otherMediumName || '',
     };
+    const hasOtherMedium =
+        dataFeedElement.category !== 'Out of Home' && dataFeedElement.mediaName === 'Sonstiges';
+    // RTR also requires an other-owner marker for a custom medium (FAQ 3.7).
+    // Formalize stores that owner's name only in otherMediumOwnersName.
+    const hasOtherOwner = dataFeedElement.mediumOwnersName === 'Sonstiges' || hasOtherMedium;
     const owner = {
-        Medieninhaber: dataFeedElement.mediumOwnersName || '',
+        Medieninhaber: hasOtherOwner
+            ? '<Anderer Medieninhaber>'
+            : dataFeedElement.mediumOwnersName || '',
         Medieninhaber_andere: dataFeedElement.otherMediumOwnersName || '',
     };
     const details = {
