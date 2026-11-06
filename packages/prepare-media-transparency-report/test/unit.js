@@ -98,6 +98,25 @@ suite('RTR category-specific CSV rows', () => {
         });
     }
 
+    test('exports Sonstiges as the RTR other-medium marker without changing the subtype', () => {
+        for (const category of ['Online', 'Print', 'Hörfunk', 'Fernsehen']) {
+            const row = buildCsvRow(
+                {
+                    ...submission,
+                    category,
+                    mediaName: 'Sonstiges',
+                    advertisementSubcategory: 'Sonstiges',
+                },
+                sujetLink,
+            );
+            assert.equal(row.Medium, '<Anderes Medium>');
+            assert.equal(row.Medium_andere, submission.otherMediumName);
+            if (category === 'Online') {
+                assert.equal(row.Art_der_Werbeleistung, 'Sonstiges');
+            }
+        }
+    });
+
     test('keeps empty optional fields and missing sujet links in their columns', () => {
         assert.deepEqual(buildCsvRow({category: 'Print'}, undefined), {
             Medium: '',

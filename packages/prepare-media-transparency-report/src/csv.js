@@ -131,7 +131,11 @@ export function buildSujetLinkLookup(parsedRTRCSV) {
  */
 export function buildCsvRow(dataFeedElement, rtrUrl) {
     const medium = {
-        Medium: dataFeedElement.mediaName || '',
+        // Translate Formalize's "other medium" option to RTR's CSV selection value.
+        Medium:
+            dataFeedElement.mediaName === 'Sonstiges'
+                ? '<Anderes Medium>'
+                : dataFeedElement.mediaName || '',
         Medium_andere: dataFeedElement.otherMediumName || '',
     };
     const owner = {
