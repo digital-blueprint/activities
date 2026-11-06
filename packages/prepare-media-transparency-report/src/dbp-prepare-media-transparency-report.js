@@ -431,7 +431,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                 `No RTR URL found for submission ID: ${submission.identifier}, skipping entry.`,
             );
         }
-        return buildCsvRow(dataFeedElement, rtrUrl, submission.identifier);
+        return buildCsvRow(dataFeedElement, rtrUrl);
     }
 
     /**
@@ -553,14 +553,33 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         }
 
         this.csvFilesToExport = [];
-        for (const [category, submissions] of submissionsByCategory) {
-            const csv = Papa.unparse(
-                submissions.map((submission) =>
-                    this.buildReportRow(submission, rtrUrlBySubmissionId),
+        try {
+            for (const [category, submissions] of submissionsByCategory) {
+                const csv = Papa.unparse(
+                    submissions.map((submission) =>
+                        this.buildReportRow(submission, rtrUrlBySubmissionId),
+                    ),
+                    {delimiter: ';', newline: '\r\n', header: true},
+                );
+                this.csvFilesToExport.push({category, csv});
+            }
+        } catch (error) {
+            if (!(error instanceof Error) || error.message !== 'description-csv-category-error') {
+                throw error;
+            }
+            // Do not offer a partial set of category files after validation fails.
+            this.csvFilesToExport = [];
+            sendNotification({
+                summary: this._i18n.t(
+                    'prepare-media-transparency-report.notifications.title-error',
                 ),
-                {delimiter: ';', newline: '\r\n', header: true},
-            );
-            this.csvFilesToExport.push({category, csv});
+                body: this._i18n.t(
+                    'prepare-media-transparency-report.notifications.description-csv-category-error',
+                ),
+                type: 'danger',
+                timeout: 0,
+            });
+            return;
         }
         this.hasReportToExport = this.csvFilesToExport.length > 0;
         // The report is "complete" when every matching submission got a sujet link.

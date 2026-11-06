@@ -7,6 +7,7 @@
  * The parsed content of a submission's dataFeedElement JSON string.
  * @typedef {object} DataFeedElement
  * @property {string} category
+ * @property {string} [advertisementSubcategory] - Required by the form for Online and Out of Home.
  * @property {string} reportingDeadline
  * @property {string} mediaName
  * @property {string} [otherMediumName]

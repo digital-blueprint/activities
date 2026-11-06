@@ -19,6 +19,7 @@
         "error-login-message": "Please log in to use this functionality.",
         "notifications": {
             "description-api-error": "Failed to fetch the submissions from the API.",
+            "description-csv-category-error": "A submission has an unsupported reporting category. Please correct the category and generate the report again.",
             "description-csv-encoding-error": "The report contains characters that cannot be exported in the ISO-8859-1 (Latin-1) encoding required by RTR. Please replace unsupported characters in the submissions and generate the report again.",
             "description-csv-header-error": "The CSV file doesn't have the all required fields.",
             "description-csv-parse-error": "The uploaded file doesn't appear to be a valid CSV file. Please check the file and try again.",

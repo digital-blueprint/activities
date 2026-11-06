@@ -1,6 +1,9 @@
 /** @typedef {import('./types.js').Submission} Submission */
 /** @typedef {import('./types.js').DataFeedElement} DataFeedElement */
 
+// Formalize's persisted state for a completed submission (drafts use 1).
+const SUBMISSION_STATE_SUBMITTED = 4;
+
 /**
  * Parse the dataFeedElement JSON string from a submission object.
  * @param {Submission} submission
@@ -20,7 +23,8 @@ export function parseSubmissionData(submission) {
 }
 
 /**
- * Filter submissions by the given category and reporting period.
+ * Select completed submissions for the given category and reporting period.
+ * Drafts must not contribute to reports, counts, or sujet downloads.
  * @param {Submission[]} submissions
  * @param {string} category
  * @param {string} period
@@ -28,6 +32,9 @@ export function parseSubmissionData(submission) {
  */
 export function filterSubmissions(submissions, category, period) {
     return submissions.filter((submission) => {
+        if (submission.submissionState !== SUBMISSION_STATE_SUBMITTED) {
+            return false;
+        }
         const dataFeedElement = parseSubmissionData(submission);
         return (
             (category === '_all' || dataFeedElement?.category === category) &&

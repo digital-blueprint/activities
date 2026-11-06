@@ -122,24 +122,50 @@ export function buildSujetLinkLookup(parsedRTRCSV) {
 
 /**
  * Build a single CSV row object from a parsed submission data feed element and
- * its (already looked up) RTR sujet link.
+ * its (already looked up) RTR sujet link, in RTR's category-specific column order.
+ * The form validates subcategories before submission; only completed submissions
+ * are included in reports. Throws when the reporting category is unsupported.
  * @param {Partial<DataFeedElement>} dataFeedElement - parsed submission data
  * @param {string|undefined} rtrUrl - RTR sujet link for the submission, if any
- * @param {string} submissionIdentifier - the submission identifier
  * @returns {Record<string, string>}
  */
-export function buildCsvRow(dataFeedElement, rtrUrl, submissionIdentifier) {
-    return {
+export function buildCsvRow(dataFeedElement, rtrUrl) {
+    const medium = {
         Medium: dataFeedElement.mediaName || '',
         Medium_andere: dataFeedElement.otherMediumName || '',
+    };
+    const owner = {
         Medieninhaber: dataFeedElement.mediumOwnersName || '',
         Medieninhaber_andere: dataFeedElement.otherMediumOwnersName || '',
+    };
+    const details = {
         Betrag: dataFeedElement.amountInEuro || '',
         Kampagnentitel: dataFeedElement.campaignTitle || '',
         Sujetlink: rtrUrl || '',
-        Kategorie: dataFeedElement.category || '',
-        ID: rtrUrl ? `${dataFeedElement.mediumOwnersName || ''}${rtrUrl}` : '',
-        submissionIdentifier: submissionIdentifier || '',
-        reportingDeadline: dataFeedElement.reportingDeadline || '',
     };
+
+    switch (dataFeedElement.category) {
+        case 'Hörfunk':
+        case 'Print':
+        case 'Fernsehen':
+            return {...medium, ...owner, ...details};
+
+        case 'Online':
+            return {
+                Art_der_Werbeleistung: dataFeedElement.advertisementSubcategory || '',
+                ...medium,
+                ...owner,
+                ...details,
+            };
+
+        case 'Out of Home':
+            return {
+                Art_der_Werbeleistung: dataFeedElement.advertisementSubcategory || '',
+                ...owner,
+                ...details,
+            };
+
+        default:
+            throw new Error('description-csv-category-error');
+    }
 }

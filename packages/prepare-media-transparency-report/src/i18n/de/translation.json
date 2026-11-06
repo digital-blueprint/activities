@@ -19,6 +19,7 @@
         "error-login-message": "Bitte melden Sie sich an, um diese Funktion nutzen zu können.",
         "notifications": {
             "description-api-error": "Die Einreichungen konnten nicht von der API abgerufen werden.",
+            "description-csv-category-error": "Eine Einreichung enthält eine nicht unterstützte Meldekategorie. Bitte korrigieren Sie die Kategorie und erstellen Sie den Bericht erneut.",
             "description-csv-encoding-error": "Der Bericht enthält Zeichen, die nicht in der von RTR benötigten Kodierung ISO-8859-1 (Latin-1) exportiert werden können. Bitte ersetzen Sie die nicht unterstützten Zeichen in den Einreichungen und erstellen Sie den Bericht erneut.",
             "description-csv-header-error": "Die CSV-Datei enthält nicht alle erforderlichen Felder.",
             "description-csv-parse-error": "Die hochgeladene CSV-Datei konnte nicht analysiert werden.",
