@@ -150,7 +150,8 @@ export function buildCsvRow(dataFeedElement, rtrUrl) {
         Medieninhaber_andere: dataFeedElement.otherMediumOwnersName || '',
     };
     const details = {
-        Betrag: dataFeedElement.amountInEuro || '',
+        // The form stores comma decimals; RTR's import expects a decimal point.
+        Betrag: (dataFeedElement.amountInEuro || '').replace(',', '.'),
         Kampagnentitel: dataFeedElement.campaignTitle || '',
         Sujetlink: rtrUrl || '',
     };

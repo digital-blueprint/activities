@@ -76,7 +76,7 @@ suite('RTR category-specific CSV rows', () => {
             const values = [
                 submission.mediumOwnersName,
                 submission.otherMediumOwnersName,
-                submission.amountInEuro,
+                '1234.56',
                 submission.campaignTitle,
                 sujetLink,
             ];
@@ -141,6 +141,29 @@ suite('RTR category-specific CSV rows', () => {
             assert.equal(parsed.data[0].Medieninhaber_andere, 'Example; "Company"');
             if (category === 'Online' || category === 'Out of Home') {
                 assert.equal(parsed.data[0].Art_der_Werbeleistung, 'Sonstiges');
+            }
+        }
+    });
+
+    test('exports amounts with a decimal point for every category', () => {
+        for (const category of ['Hörfunk', 'Print', 'Fernsehen', 'Online', 'Out of Home']) {
+            for (const [amountInEuro, expected] of [
+                ['1234,56', '1234.56'],
+                ['1234,5', '1234.5'],
+                ['1234', '1234'],
+                ['0,00', '0.00'],
+                [undefined, ''],
+            ]) {
+                const row = buildCsvRow(
+                    {
+                        ...submission,
+                        category,
+                        amountInEuro,
+                        advertisementSubcategory: category === 'Online' ? 'Website' : 'Plakat',
+                    },
+                    sujetLink,
+                );
+                assert.equal(row.Betrag, expected);
             }
         }
     });
