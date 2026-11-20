@@ -17,6 +17,7 @@
         },
         "error-login-link": "Anmelden",
         "error-login-message": "Bitte melden Sie sich an, um diese Funktion nutzen zu können.",
+        "missing-sujet-files-label": "Dateien mit fehlenden Sujet-Links",
         "notifications": {
             "description-api-error": "Die Einreichungen konnten nicht von der API abgerufen werden.",
             "description-csv-category-error": "Eine Einreichung enthält eine nicht unterstützte Meldekategorie. Bitte korrigieren Sie die Kategorie und erstellen Sie den Bericht erneut.",
@@ -32,17 +33,17 @@
             "title-success": "Erfolg",
             "title-warning": "Warnung"
         },
+        "report-incomplete-export-warning": "Der Bericht ist unvollständig, was dazu führen kann, dass beim RTR-Import leere Zellen entstehen.",
         "report-status": {
             "entries-found_one": "{{count}} Eintrag vorhanden",
             "entries-found_other": "{{count}} Einträge vorhanden",
             "loaded-file": "Geladene RTR-Datei: {{fileName}}",
             "missing-links_one": "Bei {{count}} Einreichung fehlt ein Sujet-Link",
             "missing-links_other": "Bei {{count}} Einreichungen fehlt ein Sujet-Link",
+            "partially-ready": "Der Bericht ist aufgrund fehlender Sujet-Links unvollständig. Sie können den Bericht dennoch herunterladen.",
             "ready": "Der Bericht steht zum Herunterladen bereit.",
             "rows-found_one": "{{count}} Zeile in der RTR-CSV-Datei gefunden",
-            "rows-found_other": "{{count}} Zeilen in der RTR-CSV-Datei gefunden",
-            "submissions-found_one": "{{count}} Einreichung entspricht der Kategorie \"{{category}}\" und der Meldeperiode \"{{period}}\"",
-            "submissions-found_other": "{{count}} Einreichungen entsprechen der Kategorie \"{{category}}\" und der Meldeperiode \"{{period}}\""
+            "rows-found_other": "{{count}} Zeilen in der RTR-CSV-Datei gefunden"
         },
         "section-title": {
             "download-sujet": "Sujets herunterladen",

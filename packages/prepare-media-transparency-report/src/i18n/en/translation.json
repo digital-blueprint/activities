@@ -17,6 +17,7 @@
         },
         "error-login-link": "Login",
         "error-login-message": "Please log in to use this functionality.",
+        "missing-sujet-files-label": "Files with missing sujet links",
         "notifications": {
             "description-api-error": "Failed to fetch the submissions from the API.",
             "description-csv-category-error": "A submission has an unsupported reporting category. Please correct the category and generate the report again.",
@@ -32,17 +33,17 @@
             "title-success": "Success",
             "title-warning": "Warning"
         },
+        "report-incomplete-export-warning": "The report is not complete and may result in empty cells in the RTR import.",
         "report-status": {
             "entries-found_one": "{{count}} entry found",
             "entries-found_other": "{{count}} entries found",
             "loaded-file": "Loaded RTR file: {{fileName}}",
             "missing-links_one": "{{count}} submission is missing a sujet link",
             "missing-links_other": "{{count}} submissions are missing a sujet link",
+            "partially-ready": "The report is not complete because of the missing sujet links. You can still download the report.",
             "ready": "The report is ready to download.",
             "rows-found_one": "Found {{count}} row in the RTR CSV file",
-            "rows-found_other": "Found {{count}} rows in the RTR CSV file",
-            "submissions-found_one": "{{count}} submission matches the category \"{{category}}\" and period \"{{period}}\"",
-            "submissions-found_other": "{{count}} submissions match the category \"{{category}}\" and period \"{{period}}\""
+            "rows-found_other": "Found {{count}} rows in the RTR CSV file"
         },
         "section-title": {
             "download-sujet": "Download the sujets",

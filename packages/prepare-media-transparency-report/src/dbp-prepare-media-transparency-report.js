@@ -68,6 +68,8 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         this.hasReportToExport = false;
         /** @type {number} */
         this.missingSujetLinksCount = 0;
+        /** @type {Map<string, SubmittedFile>} */
+        this.missingSujetLinks = new Map();
         /** @type {number} */
         this.parsedCSVRowCount = 0;
         /** @type {number} */
@@ -110,6 +112,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
             reportSubmissionCount: {type: Number, attribute: false},
             reportIsComplete: {type: Boolean, attribute: false},
             missingSujetLinksCount: {type: Number, attribute: false},
+            missingSujetLinks: {type: Object, attribute: false},
             importedRTRCSVFile: {type: Object, attribute: false},
         };
     }
@@ -427,6 +430,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         const rtrUrl = rtrUrlBySubmissionId.get(submission.identifier);
         if (!rtrUrl) {
             this.missingSujetLinksCount++;
+            this.missingSujetLinks.set(submission.identifier, submission.submittedFiles[0]);
             console.warn(
                 `No RTR URL found for submission ID: ${submission.identifier}, skipping entry.`,
             );
@@ -444,6 +448,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         this.parsedCSVRowCount = 0;
         this.reportSubmissionCount = 0;
         this.missingSujetLinksCount = 0;
+        this.missingSujetLinks = new Map();
     }
 
     /**
@@ -858,15 +863,33 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
 
     /**
      * Render a single line of the report status block with a leading status icon.
-     * @param {boolean} ok - whether this line represents a positive (checkmark) or negative (cross) state
+     * @param {string} state - state of the report line <success|warning|error>
      * @param {string} text - the line text
      * @returns {TemplateResult}
      */
-    renderStatusLine(ok, text) {
+    renderStatusLine(state, text) {
+        let iconName = '';
+        let iconColor = '';
+        switch (state) {
+            case 'success':
+                iconName = 'checkmark-circle';
+                iconColor = 'var(--dbp-success)';
+                break;
+            case 'warning':
+                iconName = 'warning-high';
+                iconColor = 'var(--dbp-warning)';
+                break;
+            case 'error':
+                iconName = 'cross-circle';
+                iconColor = 'var(--dbp-danger)';
+                break;
+        }
         return html`
             <div class="report-status-line">
                 <dbp-icon
-                    name="${ok ? 'checkmark-circle' : 'cross-circle'}"
+                    name="${iconName}"
+                    style="color: ${iconColor};"
+                    title="${state}"
                     aria-hidden="true"></dbp-icon>
                 <span>${text}</span>
             </div>
@@ -884,7 +907,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         if (this.sujetStatusIsWarning && this.sujetStatusMessage) {
             return html`
                 <div class="export-sujet-status notification is-warning">
-                    ${this.renderStatusLine(false, this.sujetStatusMessage)}
+                    ${this.renderStatusLine('error', this.sujetStatusMessage)}
                 </div>
             `;
         }
@@ -895,7 +918,7 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
             return html`
                 <div class="export-sujet-status notification is-success">
                     ${this.renderStatusLine(
-                        true,
+                        'success',
                         i18n.t('prepare-media-transparency-report.sujet-status.files-exported', {
                             count: this.sujetFilesToDownload.length,
                         }),
@@ -924,9 +947,6 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
         // The report is ready when there is something to export and all sujet
         // links are present.
         const isSuccess = this.reportIsComplete;
-        // Localized display name of the selected category (e.g. "All", "Online").
-        const categoryLabel =
-            getReportingCategoryItems(this._i18n)[this.reportCategory] || this.reportCategory;
 
         return html`
             <div
@@ -935,31 +955,22 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                     'is-warning': !isSuccess,
                 })}">
                 ${this.renderStatusLine(
-                    true,
+                    'success',
                     i18n.t('prepare-media-transparency-report.report-status.loaded-file', {
                         fileName: this.importedRTRCSVFile.name,
                         interpolation: {escapeValue: false},
                     }),
                 )}
                 ${this.renderStatusLine(
-                    this.parsedCSVRowCount > 0,
+                    this.parsedCSVRowCount > 0 ? 'success' : 'error',
                     i18n.t('prepare-media-transparency-report.report-status.rows-found', {
                         count: this.parsedCSVRowCount,
-                    }),
-                )}
-                ${this.renderStatusLine(
-                    this.reportSubmissionCount > 0,
-                    i18n.t('prepare-media-transparency-report.report-status.submissions-found', {
-                        count: this.reportSubmissionCount,
-                        category: categoryLabel,
-                        period: this.reportPeriod,
-                        interpolation: {escapeValue: false},
                     }),
                 )}
                 ${
                     this.missingSujetLinksCount > 0
                         ? this.renderStatusLine(
-                              false,
+                              'error',
                               i18n.t(
                                   'prepare-media-transparency-report.report-status.missing-links',
                                   {
@@ -969,14 +980,43 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                           )
                         : ''
                 }
+                ${this.missingSujetLinksCount > 0 ? this.renderMissingSujetFiles() : ''}
                 ${
-                    this.hasReportToExport
+                    this.hasReportToExport && this.missingSujetLinksCount === 0
                         ? this.renderStatusLine(
-                              isSuccess,
+                              isSuccess ? 'success' : 'error',
                               i18n.t('prepare-media-transparency-report.report-status.ready'),
                           )
-                        : ''
+                        : this.renderStatusLine(
+                              'warning',
+                              i18n.t(
+                                  'prepare-media-transparency-report.report-status.partially-ready',
+                              ),
+                          )
                 }
+            </div>
+        `;
+    }
+
+    /**
+     * Render the list of missing sujet files.
+     * @returns {TemplateResult}
+     */
+    renderMissingSujetFiles() {
+        const i18n = this._i18n;
+        const missingFiles = Array.from(this.missingSujetLinks.entries()).map(
+            ([submissionId, file]) => {
+                const fileName = file.fileName;
+                return fileName;
+            },
+        );
+
+        return html`
+            <div class="missing-sujet-files-container">
+                <span class="missing-sujet-files-label">
+                    ${i18n.t('prepare-media-transparency-report.missing-sujet-files-label')}
+                </span>
+                <textarea disabled class="missing-sujet-files">${missingFiles.join('\n')}</textarea>
             </div>
         `;
     }
@@ -1177,6 +1217,20 @@ export class DbpPrepareMediaTransparencyReport extends AuthMixin(
                                 'prepare-media-transparency-report.buttons.button-text-download-csv',
                             )}
                         </dbp-button>
+                        <div class="report-export-warning">
+                            ${
+                                this.hasReportToExport && this.missingSujetLinksCount > 0
+                                    ? html`
+                                          <dbp-icon
+                                              name="warning-high"
+                                              aria-hidden="true"></dbp-icon>
+                                          ${i18n.t(
+                                              'prepare-media-transparency-report.report-incomplete-export-warning',
+                                          )}
+                                      `
+                                    : ''
+                            }
+                        </div>
                     </div>
 
                     ${this.renderReportStatus()}

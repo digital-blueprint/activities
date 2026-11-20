@@ -149,6 +149,24 @@ export function getMtReportCSS() {
             justify-content: flex-start;
         }
 
+        .report-export-warning {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+        }
+
+        .report-export-warning dbp-icon {
+            font-size: 1.5em;
+            color: var(--dbp-warning);
+            top: initial;
+        }
+
+        .notification.report-status {
+            background-color: transparent;
+            border-width: 5px;
+            color: var(--dbp-content);
+        }
+
         .report-status {
             width: 100%;
             display: flex;
@@ -169,6 +187,19 @@ export function getMtReportCSS() {
             top: initial;
         }
 
+        .missing-sujet-files-container {
+            margin-left: 2.5em;
+        }
+
+        textarea.missing-sujet-files {
+            width: 100%;
+            min-height: 9em;
+            resize: vertical;
+            padding: 0.3em 0.5em;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
         /* buttons */
         dbp-button dbp-icon {
             margin-right: 0.5em;
@@ -181,6 +212,28 @@ export function getMtReportCSS() {
 
         dbp-button[disabled]:hover dbp-icon {
             transform: none;
+        }
+
+        .export-csv-button:not([disabled]) dbp-icon {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            10% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+            }
+            90% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         a[target='_blank']::after {
